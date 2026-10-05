@@ -79,9 +79,19 @@
   const shadowRoots = new Set();
   let scanTimer = null;
 
-  const mo = new MutationObserver(() => {
+  let pendingRoots = [];
+  const mo = new MutationObserver((records) => {
+    for (const r of records) {
+      for (const n of r.addedNodes) if (n.nodeType === 1 && pendingRoots.length < 50) pendingRoots.push(n);
+    }
     if (scanTimer) return;
-    scanTimer = setTimeout(() => { scanTimer = null; quickScan(); }, 250);
+    scanTimer = setTimeout(() => {
+      scanTimer = null;
+      // New subtrees may contain shadow roots we are not observing yet.
+      const roots = pendingRoots.splice(0);
+      for (const n of roots) if (n.isConnected) deepScan(n, 25);
+      quickScan();
+    }, 250);
   });
 
   function observeRoot(root) {
@@ -97,6 +107,7 @@
   }
 
   function shadowOf(el) {
+    if (el.nodeType !== 1) return null;
     if (el.shadowRoot) return el.shadowRoot;
     if (el.localName.includes('-') && chrome.dom && chrome.dom.openOrClosedShadowRoot) {
       try { return chrome.dom.openOrClosedShadowRoot(el); } catch (_) { return null; }
@@ -105,7 +116,10 @@
   }
 
   function deepScan(root = document, depth = 0) {
-    if (depth > 30) return;
+    if (depth > 30 || !root.querySelectorAll) return;
+    if (root instanceof HTMLVideoElement) attach(root);
+    const own = shadowOf(root);
+    if (own) { observeRoot(own); deepScan(own, depth + 1); }
     for (const v of root.querySelectorAll('video')) attach(v);
     for (const el of root.querySelectorAll('*')) {
       const sr = shadowOf(el);

@@ -1,0 +1,44 @@
+/* Shared styles for the JSON tree (extension page + content-script viewer). */
+.jt-root {
+  font-family: var(--aw-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace);
+  font-size: var(--jt-size, 12.5px);
+  line-height: 1.6;
+  color: var(--jt-fg, #1f2328);
+  outline: none;
+  overflow-wrap: anywhere;
+}
+.jt-children { margin-left: 15px; border-left: 1px solid var(--jt-guide, #e3e6ea); padding-left: 9px; display: none; }
+.jt-node.open > .jt-children { display: block; }
+.jt-node.open > .jt-line > .jt-summary,
+.jt-node.open > .jt-line > .jt-brace:last-of-type { display: none; }
+.jt-tail { display: none; margin-left: 15px; }
+.jt-node.open > .jt-tail { display: block; }
+.jt-line { position: relative; padding: 0 2px; border-radius: 3px; }
+.jt-line:hover { background: var(--jt-hover, rgba(0, 0, 0, 0.04)); }
+.jt-tw {
+  display: inline-block; width: 13px; text-align: center; cursor: pointer;
+  color: var(--jt-muted, #6b7280); user-select: none;
+}
+.jt-tw::before { content: "\25B8"; display: inline-block; transition: transform 0.12s ease; }
+.jt-node.open > .jt-line > .jt-tw::before { transform: rotate(90deg); }
+.jt-node.jt-empty > .jt-line > .jt-tw::before { content: "\00B7"; }
+.jt-tw.jt-leaf { cursor: default; }
+.jt-tw.jt-leaf::before { content: ""; }
+.jt-key { color: var(--jt-key, #8250df); }
+.jt-index { color: var(--jt-muted, #6b7280); }
+.jt-colon { color: var(--jt-muted, #6b7280); }
+.jt-str { color: var(--jt-str, #0a7c42); white-space: pre-wrap; }
+.jt-link { text-decoration: underline; text-decoration-style: dotted; }
+.jt-num { color: var(--jt-num, #0550ae); }
+.jt-bool { color: var(--jt-bool, #bc4c00); }
+.jt-null { color: var(--jt-muted, #6b7280); font-style: italic; }
+.jt-brace { color: var(--jt-muted, #6b7280); cursor: pointer; }
+.jt-summary { color: var(--jt-muted, #6b7280); cursor: pointer; font-style: italic; }
+.jt-copy {
+  position: absolute; right: 4px; top: 1px; display: none; font: inherit; font-size: 10px;
+  padding: 0 5px; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--jt-guide, #e3e6ea); background: var(--jt-chip, #fff); color: var(--jt-muted, #6b7280);
+}
+.jt-line:hover > .jt-copy, .jt-copy:focus-visible { display: inline-block; }
+mark.jt-mark { background: var(--jt-mark, #ffe08a); color: inherit; border-radius: 2px; }
+.jt-line.jt-current { outline: 2px solid var(--jt-accent, #2563eb); outline-offset: -1px; }

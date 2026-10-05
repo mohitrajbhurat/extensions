@@ -200,12 +200,16 @@ setTimeout(() => {
 
     const lib = await ctx.newPage();
     await lib.goto(extUrl('library/library.html'));
-    const dbq = (fn, arg) => lib.evaluate(async ([src, a]) => { const db = await import('/lib/db.js'); return (0, eval)(src)(db, a); }, [fn.toString(), arg]);
-    let notes = await dbq((db, k) => db.getNotes(k), st.key);
+    // The library page has an extension CSP (no eval), so call db functions by name.
+    const dbq = (name, ...args) => lib.evaluate(async ([n, a]) => {
+      const db = await import('/lib/db.js');
+      return db[n](...a);
+    }, [name, args]);
+    let notes = await dbq('getNotes', st.key);
     check('N created a note stamped at the current time', notes.length >= 1 && Math.abs(notes[0].t - 4) < 0.3, notes.map((n) => n.t));
     const shot = notes.find((n) => n.image);
     check('P created a note with a JPEG frame screenshot', !!shot && shot.image.startsWith('data:image/jpeg'), shot && shot.image.length);
-    let video = await dbq((db, k) => db.getVideo(k), st.key);
+    let video = await dbq('getVideo', st.key);
     check('B created a bookmark', video && video.bookmarks.length === 1, video && video.bookmarks);
     check('video record has title and thumbnail', video && video.title === 'Lecture 1: Test video' && /^data:image/.test(video.thumb || ''), video && video.title);
 
@@ -297,11 +301,11 @@ setTimeout(() => {
     const jsonPath = await (await dlJson).path();
     const backup = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
     check('JSON backup contains videos and notes', backup.app === 'video-studio' && backup.videos.length === 1 && backup.notes.length === notes.length + 1);
-    await dbq((db) => db.clearAll());
+    await dbq('clearAll');
     await sleep(300);
     await lib.setInputFiles('#import-file', { name: 'backup.json', mimeType: 'application/json', buffer: fs.readFileSync(jsonPath) });
     await sleep(800);
-    const restored = await dbq((db) => db.allNotes());
+    const restored = await dbq('allNotes');
     check('JSON import restores all notes', restored.length === backup.notes.length, restored.length);
     const print = await ctx.newPage();
     await print.goto(extUrl('library/print.html?id=' + encodeURIComponent(st.key)));

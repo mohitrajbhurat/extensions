@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Design Inspector",
+  "short_name": "Design Inspector",
+  "description": "Inspect any page's box model, type and colors, measure gaps, pick colors, extract design tokens, live-edit styles and list assets.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Design Inspector (Alt+Shift+D)",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "downloads"],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+D" },
+      "description": "Toggle the Design Inspector toolbar on this tab"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/app.js",
+        "content/color.js",
+        "content/css.js",
+        "content/util.js",
+        "content/inspect.js",
+        "content/measure.js",
+        "content/eyedropper.js",
+        "content/extract.js",
+        "content/liveedit.js",
+        "content/assets.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
