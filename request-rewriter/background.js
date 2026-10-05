@@ -225,9 +225,6 @@ chrome.tabs.onRemoved.addListener(async tabId => {
     await update(s => { for (const g of s.groups) if (g.tabScope === tabId) delete g.tabScope; });
   }
 });
-chrome.webNavigation && chrome.webNavigation.onCommitted
-  ? chrome.webNavigation.onCommitted.addListener(() => {})
-  : null;
 chrome.tabs.onUpdated.addListener((tabId, change) => {
   if (change.status === 'loading' && change.url) {
     const e = tabEntry(tabId);
