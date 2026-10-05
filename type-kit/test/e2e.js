@@ -180,7 +180,6 @@ const today = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.g
     // 12. picker (Alt+Shift+V is delivered by chrome.commands; send the same message here)
     await page.bringToFront();
     const tabId = await sw.evaluate(async () => (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0].id);
-    console.log('     probe:', JSON.stringify(await sw.evaluate(async (t) => { const tab = await chrome.tabs.get(t); let inj; try { await chrome.scripting.executeScript({ target: { tabId: t }, func: () => 1 }); inj = 'ok'; } catch (e) { inj = e.message; } return { url: tab.url, inj, q: (await chrome.tabs.query({ url: ['http://*/*'] })).length }; }, tabId)));
     const openPicker = () => sw.evaluate((t) => chrome.tabs.sendMessage(t, { type: 'tk:open-picker' }), tabId);
     await page.click('#plain3');
     await openPicker();
@@ -264,7 +263,8 @@ const today = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.g
     await mgr.fill('#f-shortcut', '/sig');
     await mgr.waitForTimeout(100);
     check('manager flags duplicate shortcuts', /already uses/.test(await mgr.textContent('#shortcut-msg')));
-    await mgr.goto(`chrome-extension://${id}/manager/manager.html#stats`);
+    await mgr.click('#snip-revert');
+    await mgr.click('a[data-view=stats]');
     await mgr.waitForTimeout(400);
     check('stats view shows uses', (await mgr.$$eval('#top-table tbody tr', (r) => r.length)) >= 3);
     await mgr.close();

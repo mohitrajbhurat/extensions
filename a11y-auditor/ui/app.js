@@ -647,9 +647,10 @@ async function init() {
   initTabs();
   state.settings = await getSettings();
   $('#group-by').value = state.settings.groupBy;
-  $('#group-by').addEventListener('change', async (e) => {
-    state.settings = await saveSettings({ groupBy: e.target.value });
+  $('#group-by').addEventListener('change', (e) => {
+    state.settings.groupBy = e.target.value;
     renderIssues();
+    saveSettings({ groupBy: e.target.value }).catch(() => {});
   });
   $('#search').addEventListener('input', (e) => {
     state.search = e.target.value;

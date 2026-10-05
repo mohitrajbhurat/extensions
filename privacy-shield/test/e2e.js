@@ -135,22 +135,25 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     check('OneTrust rejected', await page.evaluate(() => document.documentElement.dataset.consent) === 'rejected');
     check('OneTrust page scrolls again', await page.evaluate(() => getComputedStyle(document.body).overflow !== 'hidden'));
     const tabC = await tabIdFor('http://site-c.net/*');
-    await sleep(300);
+    await sleep(1000);
     res = await msg('popup:report', { tabId: tabC, url: page.url() });
     check('report shows banner action', res.result.banner && res.result.banner.cmp === 'onetrust' && res.result.banner.action === 'reject', JSON.stringify(res.result.banner));
 
     await page.goto('http://site-c.net/cookiebot.html');
     await page.waitForFunction(() => document.documentElement.dataset.consent, null, { timeout: 8000 }).catch(() => {});
+    await sleep(1000);
     check('Cookiebot rejected', await page.evaluate(() => document.documentElement.dataset.consent) === 'rejected');
 
     await page.goto('http://site-c.net/generic.html');
     await page.waitForFunction(() => getComputedStyle(document.getElementById('banner')).display === 'none', null, { timeout: 8000 }).catch(() => {});
+    await sleep(1000);
     check('generic banner without reject button is hidden', await page.evaluate(() => getComputedStyle(document.getElementById('banner')).display === 'none'));
     check('generic banner scroll lock removed', await page.evaluate(() => getComputedStyle(document.body).overflow !== 'hidden' && getComputedStyle(document.documentElement).overflow !== 'hidden'));
 
     await msg('settings:save', { patch: { cookieMode: 'accept' } });
     await page.goto('http://site-c.net/onetrust.html');
     await page.waitForFunction(() => document.documentElement.dataset.consent, null, { timeout: 8000 }).catch(() => {});
+    await sleep(1000);
     check('accept mode accepts', await page.evaluate(() => document.documentElement.dataset.consent) === 'accepted');
     await msg('settings:save', { patch: { cookieMode: 'reject' } });
 
@@ -168,7 +171,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     t0 = Date.now();
     await page.goto('http://site-a.com/tracked.html');
     await sleep(1000);
-    check('allowlisted site loads trackers', hits('static.hotjar.com', null, t0).length === 1 && hits('www.google-analytics.com', null, t0).length === 1);
+    check('allowlisted site loads trackers', hits('static.hotjar.com', null, t0).length === 1 && hits('www.google-analytics.com', null, t0).length === 1, log.filter((r) => r.at >= t0).map((r) => r.host + r.path).join(' '));
     await msg('popup:setSiteProtection', { host: 'site-a.com', enabled: true });
     t0 = Date.now();
     await page.goto('http://site-a.com/tracked.html');

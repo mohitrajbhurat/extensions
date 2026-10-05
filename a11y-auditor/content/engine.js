@@ -137,7 +137,7 @@
   }
 
   // BCP 47 shape check: language[-script][-region][-variant...][-extension][-private].
-  const LANG_RE = /^(?:[a-z]{2,3}(?:-[a-z]{3}){0,3}|[a-z]{4,8})(?:-[a-z]{4})?(?:-(?:[a-z]{2}|\d{3}))?(?:-(?:[a-z\d]{5,8}|\d[a-z\d]{3}))*(?:-[a-wyz\d](?:-[a-z\d]{2,8})+)*(?:-x(?:-[a-z\d]{1,8})+)?$|^x(?:-[a-z\d]{1,8})+$|^i-[a-z]+$/i;
+  const LANG_RE = /^(?:[a-z]{2,3}(?:-[a-z]{3}){0,3})(?:-[a-z]{4})?(?:-(?:[a-z]{2}|\d{3}))?(?:-(?:[a-z\d]{5,8}|\d[a-z\d]{3}))*(?:-[a-wyz\d](?:-[a-z\d]{2,8})+)*(?:-x(?:-[a-z\d]{1,8})+)?$|^x(?:-[a-z\d]{1,8})+$|^i-[a-z]+$/i;
 
   function validLang(v) {
     return LANG_RE.test(String(v).trim());
@@ -1634,7 +1634,7 @@
         if (ctx.hidden(el)) continue;
         const n = lc(ctx.name(el).name);
         if (!n) continue;
-        const src = el.getAttribute('src') || '';
+        const src = el.getAttribute('src') || el.getAttribute('srcdoc') || '';
         if (seen.has(n) && seen.get(n) !== src) ctx.report('frame-title-unique', el, `Another frame is also titled "${n}".`);
         else seen.set(n, src);
       }

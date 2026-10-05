@@ -11,7 +11,6 @@ const PRUNE_ALARM = 'tk-prune-clips';
 chrome.runtime.onInstalled.addListener(async (details) => {
   await S.loadAll();                       // seeds starter snippets on first run
   chrome.alarms.create(PRUNE_ALARM, { periodInMinutes: 60 });
-  await injectIntoOpenTabs();
   if (details.reason === 'install') chrome.tabs.create({ url: chrome.runtime.getURL('manager/manager.html#welcome') });
 });
 
@@ -23,15 +22,6 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.alarms.onAlarm.addListener((a) => {
   if (a.name === PRUNE_ALARM) S.getClips().catch(() => {});
 });
-
-/** Make expansion work in tabs that were open before install/update (best effort). */
-async function injectIntoOpenTabs() {
-  let tabs = [];
-  try { tabs = await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] }); } catch (e) { return; }
-  await Promise.all(tabs.map((t) => chrome.scripting.executeScript({
-    target: { tabId: t.id, allFrames: true }, files: CONTENT_FILES,
-  }).catch(() => {})));
-}
 
 async function ensureContent(tabId) {
   const alive = await chrome.tabs.sendMessage(tabId, { type: 'tk:ping' }, { frameId: 0 }).catch(() => null);

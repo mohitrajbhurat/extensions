@@ -153,7 +153,7 @@
       const el = await waitFor(() => findClickable(step.click, step.text), step.timeout ?? 600);
       if (!el) return false;
       click(el);
-      await sleep(step.after ?? 400);
+      await sleep(step.after ?? 250);
       return true;
     }
     if (step.waitFor) {
@@ -370,10 +370,10 @@
       hide(rule.hide);
       action = 'hide';
     }
+    report(rule, action, true);
     // Give the CMP a moment to unlock scrolling by itself before forcing it.
     await sleep(300);
     restoreScroll(rule, wasLocked);
-    report(rule, action, true);
     return true;
   }
 

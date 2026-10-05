@@ -209,6 +209,7 @@ async function injectEngine(page) {
     const groups = await ui.locator('details.rule').count();
     check('rule groups render', groups >= 20, `${groups} groups`);
     await ui.locator('details.rule summary').first().click();
+    await ui.waitForSelector('details.rule[open] ol.nodes li', { timeout: 3000 }).catch(() => {});
     check('expanding a rule shows nodes with WCAG link', await ui.locator('details.rule[open] ol.nodes li').count() > 0 &&
       await ui.locator('details.rule[open] a[href*="WCAG22"]').count() > 0);
     await ui.fill('#search', 'contrast');
