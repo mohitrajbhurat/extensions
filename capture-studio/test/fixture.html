@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Capture Studio fixture</title>
+<style>
+  body { margin: 0; font: 16px system-ui, sans-serif; }
+  header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: rgb(0, 0, 128); color: #fff; display: flex; align-items: center; padding: 0 16px; z-index: 10; }
+  .band { height: 500px; display: flex; align-items: flex-start; padding-top: 80px; box-sizing: border-box; }
+  .sticky { position: sticky; top: 70px; background: rgb(255, 0, 255); width: 120px; height: 40px; margin-left: 900px; }
+</style>
+</head>
+<body>
+<header>Fixed header</header>
+<div id="bands"></div>
+<script>
+  // 10 bands of 500px with known colors (total 5000px).
+  const colors = [[220,20,60],[255,140,0],[255,215,0],[50,205,50],[0,206,209],[30,144,255],[138,43,226],[255,105,180],[139,69,19],[112,128,144]];
+  const root = document.getElementById('bands');
+  colors.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'band';
+    d.style.background = `rgb(${c.join(',')})`;
+    d.textContent = 'Band ' + (i + 1);
+    if (i === 1) { const s = document.createElement('div'); s.className = 'sticky'; d.appendChild(s); }
+    root.appendChild(d);
+  });
+  window.BAND_COLORS = colors;
+</script>
+</body>
+</html>

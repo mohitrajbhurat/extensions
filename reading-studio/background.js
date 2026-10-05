@@ -57,7 +57,7 @@ async function toggleDarkForTab(tab, forceValue) {
   const st = await runInTab(tab.id, 'dark-state');
   if (st && st.ok && st.result) active = !!st.result.active;
   const next = typeof forceValue === 'boolean' ? forceValue : !active;
-  await S.setSiteRule(host || location.hostname, 'dark', next ? 'on' : 'off');
+  await S.setSiteRule(host, 'dark', next ? 'on' : 'off');
   // The content script listens to storage changes; nudge it in case it was just injected.
   const res = await runInTab(tab.id, 'dark-evaluate');
   return { ok: true, active: next, state: res && res.result };

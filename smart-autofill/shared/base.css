@@ -70,3 +70,4 @@ label.field > span { font-weight: 500; }
 .muted { color: var(--muted); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .kbd { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg-soft); }
+[hidden] { display: none !important; }

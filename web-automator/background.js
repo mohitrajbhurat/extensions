@@ -107,7 +107,7 @@ function sampleMacro() {
       s('extract', 'css=h1', 'heading', 'Saves the text into ${heading}'),
       s('extract', 'css=a', 'link@href'),
       s('assertText', 'css=h1', 'Example'),
-      s('if', 'text=More information...', '', 'Branch on whether an element exists'),
+      s('if', 'text=/More information|Learn more/', '', 'Branch on whether an element exists (text= accepts /regex/)'),
       s('echo', '', 'Found link: ${link}'),
       s('else'),
       s('echo', '', 'No link on this page'),

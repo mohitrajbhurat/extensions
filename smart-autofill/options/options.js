@@ -222,7 +222,7 @@ function entryCard(kind, list, index, rerender) {
     bindInput(cur, base + 'current');
     grid = h('div', { class: 'grid' },
       fieldControl(base + 'company', 'Company'), fieldControl(base + 'title', 'Job title'),
-      fieldControl(base + 'location', 'Location'), h('label', { class: 'inline-check field' }, cur, 'I currently work here'),
+      fieldControl(base + 'location', 'Location'), h('label', { class: 'inline-check current-job' }, cur, 'I currently work here'),
       fieldControl(base + 'startDate', 'Start (month)', { type: 'month' }), fieldControl(base + 'endDate', 'End (month)', { type: 'month' }),
       fieldControl(base + 'description', 'Description / responsibilities', { span: 2, textarea: true, rows: 4 }));
   } else {

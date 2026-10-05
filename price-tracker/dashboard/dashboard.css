@@ -113,3 +113,4 @@ dialog h2 { font-size: 17px; margin-bottom: 8px; }
   .detail-head { grid-template-columns: 64px minmax(0, 1fr) auto; }
   .thumb { width: 64px; height: 64px; }
 }
+@media (max-width: 1700px) { .with-detail .hide-md, .with-detail .hide-sm { display: none; } }

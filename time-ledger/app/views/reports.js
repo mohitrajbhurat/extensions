@@ -185,7 +185,7 @@ function timesheetTable(ts, data, byWeek, weekStart) {
       return `<tr><td><span class="proj"><span class="dot" style="background:${projectColor(r.key, data)}"></span>${escapeHtml(projectName(r.key, data))}${c ? `<span class="muted small">${escapeHtml(c.name)}</span>` : ''}</span></td>
         ${cols.map((col) => cell(sum(r.cells, col.idx))).join('')}<td class="num"><strong>${fmtDur(r.total)}</strong></td></tr>`;
     }).join('')}</tbody>
-    <tfoot><tr><td>Total</td>${cols.map((col) => `<td class="num">${fmtDur(sum(ts.dayTotals, col.idx))}</td>`).join('')}<td class="num">${fmtDur(ts.total)}</td></tr></tfoot>
+    <tfoot><tr><td>Total</td>${cols.map((col) => cell(sum(ts.dayTotals, col.idx))).join('')}<td class="num">${fmtDur(ts.total)}</td></tr></tfoot>
   </table></div>`;
 }
 

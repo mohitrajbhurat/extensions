@@ -257,7 +257,7 @@
     tokenBox.addEventListener('click', e => { const s = e.target.closest('.tok'); if (s) toggleTok(s); });
     tokenBox.addEventListener('keydown', e => {
       const s = e.target.closest('.tok');
-      if (!s) return;
+      if (!s || e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTok(s); }
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         e.preventDefault();

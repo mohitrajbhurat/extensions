@@ -30,6 +30,7 @@ function check(cond, msg) {
   try {
     let [sw] = ctx.serviceWorkers();
     if (!sw) sw = await ctx.waitForEvent('serviceworker');
+    for (let i = 0; i < 40 && !(await sw.evaluate(() => !!(globalThis.chrome && chrome.storage && globalThis.LIM))); i++) await new Promise((r) => setTimeout(r, 250));
     const setSettings = (patch) => sw.evaluate(async (p) => {
       const { settings } = await chrome.storage.sync.get('settings');
       await chrome.storage.sync.set({ settings: { ...globalThis.LIM.DEFAULT_SETTINGS, ...(settings || {}), ...p } });

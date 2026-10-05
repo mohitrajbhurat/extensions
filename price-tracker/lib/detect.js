@@ -401,7 +401,7 @@
   function isShopify(doc) {
     if (!doc || !doc.querySelector) return false;
     return !!(doc.querySelector('meta[name="shopify-digital-wallet"], meta[name="shopify-checkout-api-token"], link[href*="cdn.shopify.com"], script[src*="cdn.shopify.com"], script[data-product-json], [id^="ProductJson"]') ||
-      Array.from(doc.querySelectorAll('script:not([src])')).some(s => (s.textContent || '').includes('Shopify.shop')));
+      Array.from(doc.querySelectorAll('script:not([src])')).some(s => /Shopify\.shop\s*=\s*["']/.test(s.textContent || '')));
   }
 
   function shopifyJson(doc, url) {

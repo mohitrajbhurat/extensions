@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Studio library</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="library.css">
+  <script src="../lib/defaults.js"></script>
+  <script type="module" src="library.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="../icons/icon32.png" width="28" height="28" alt=""><span>Video Studio</span></div>
+    <label class="search">
+      <span id="search-icon"></span>
+      <input id="q" type="search" placeholder="Search all notes, bookmarks and titles" autocomplete="off" aria-label="Search notes">
+      <kbd>/</kbd>
+    </label>
+    <div class="top-actions">
+      <button class="btn" id="btn-import" title="Import a Video Studio JSON backup"></button>
+      <button class="btn" id="btn-export-all" title="Download a JSON backup of everything"></button>
+      <a class="btn ghost icon" id="btn-settings" href="../options/options.html" title="Settings"></a>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-head">
+        <span id="video-count" class="muted">0 videos</span>
+        <select class="input small-select" id="sort" aria-label="Sort videos">
+          <option value="recent">Recently updated</option>
+          <option value="created">Recently added</option>
+          <option value="title">Title</option>
+          <option value="notes">Most notes</option>
+        </select>
+      </div>
+      <ul class="video-list" id="video-list" role="listbox" aria-label="Videos"></ul>
+    </aside>
+
+    <main class="main" id="main">
+      <section id="welcome" class="welcome" hidden>
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10l4 4v12H5V4zm9 1.5V9h3.5L14 5.5zM8 12h8v1.6H8V12zm0 3.2h6v1.6H8v-1.6z"/></svg>
+          <h3>Your video notes will appear here</h3>
+          <p>Open any lecture or tutorial, then press <kbd>N</kbd> to add a note at the current time, <kbd>P</kbd> for a note with a screenshot, or <kbd>B</kbd> to bookmark a chapter.</p>
+          <p>Speed keys work on every video: <kbd>S</kbd> slower, <kbd>D</kbd> faster, <kbd>R</kbd> reset, <kbd>Z</kbd>/<kbd>X</kbd> back and forward, <kbd>G</kbd> preferred speed.</p>
+        </div>
+      </section>
+
+      <section id="results" class="results" hidden></section>
+
+      <section id="detail" class="detail" hidden>
+        <div class="detail-head">
+          <img id="d-thumb" class="d-thumb" alt="" hidden>
+          <div class="d-text">
+            <input id="d-title" class="d-title" aria-label="Video title" maxlength="500">
+            <div class="d-meta muted" id="d-meta"></div>
+          </div>
+        </div>
+        <div class="d-actions">
+          <a class="btn primary" id="d-open" target="_blank" rel="noopener"></a>
+          <button class="btn" id="d-md"></button>
+          <button class="btn" id="d-html"></button>
+          <button class="btn" id="d-print"></button>
+          <div class="more">
+            <button class="btn" id="d-more" aria-haspopup="menu" aria-expanded="false">More</button>
+            <div class="menu" id="d-menu" role="menu" hidden>
+              <button role="menuitem" data-m="md-images">Markdown with embedded screenshots</button>
+              <button role="menuitem" data-m="json">JSON (this video)</button>
+              <button role="menuitem" data-m="copy-md">Copy notes as Markdown</button>
+              <button role="menuitem" data-m="copy-chapters">Copy chapter list</button>
+              <button role="menuitem" data-m="delete" class="danger">Delete video and notes</button>
+            </div>
+          </div>
+        </div>
+        <div id="d-chapters-wrap" hidden>
+          <h2 class="sec">Bookmarks</h2>
+          <ol class="d-chapters" id="d-chapters"></ol>
+        </div>
+        <h2 class="sec">Notes <span class="count" id="d-count"></span></h2>
+        <ol class="d-notes" id="d-notes"></ol>
+        <p class="muted" id="d-empty" hidden>No notes for this video yet.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -65,7 +65,7 @@ async function render() {
   const sel = $('profileSel');
   sel.replaceChildren(...data.profiles.map(p => {
     const kind = (PROFILE_KINDS.find(k => k.id === p.kind) || {}).label || 'Custom';
-    const o = new Option(`${p.name} (${kind})`, p.id);
+    const o = new Option(p.name.toLowerCase() === kind.toLowerCase() ? p.name : `${p.name} (${kind})`, p.id);
     return o;
   }));
   sel.value = data.activeProfileId;
