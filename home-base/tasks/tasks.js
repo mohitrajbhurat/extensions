@@ -263,7 +263,14 @@ store.watch(['tasks', 'projects', 'settings'], (vals) => {
   Object.assign(state, vals);
   render();
 });
-window.addEventListener('hashchange', () => { const p = parseHash(); state.view = p.view; state.query = p.query; render(); });
+window.addEventListener('hashchange', () => {
+  const p = parseHash();
+  state.view = p.view;
+  state.query = p.query;
+  $('search').value = p.view === 'search' ? p.query : '';
+  if (p.view !== 'search') lastNonSearch = p.view;
+  render();
+});
 // Re-render when the day changes so Today/Overdue stay right.
 let lastDay = today();
 setInterval(() => { if (today() !== lastDay) { lastDay = today(); render(); } }, 60000);

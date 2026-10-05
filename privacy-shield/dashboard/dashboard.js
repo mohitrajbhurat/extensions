@@ -87,7 +87,7 @@ function renderChart(keys) {
       svg.append(r);
     }
     const every = Math.ceil(series.length / 8);
-    if (i % every === 0 || i === series.length - 1) {
+    if ((series.length - 1 - i) % every === 0) {
       const t = el('text', { x: x + w / 2, y: H - 6, 'text-anchor': 'middle' });
       t.textContent = s.key.slice(5);
       svg.append(t);
@@ -102,10 +102,15 @@ function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888';
 }
 
+/** Smallest "nice" axis maximum (4 equal integer steps) that fits n. */
 function niceCeil(n) {
-  const p = 10 ** Math.floor(Math.log10(n));
-  for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= n) return Math.max(4, m * p);
-  return n;
+  const raw = Math.max(1, n / 4);
+  const p = 10 ** Math.floor(Math.log10(raw));
+  for (const m of [1, 2, 2.5, 5, 10]) {
+    const step = m * p;
+    if (step >= raw && Number.isInteger(step)) return step * 4;
+  }
+  return Math.ceil(raw) * 4;
 }
 
 function renderCategories(totals) {

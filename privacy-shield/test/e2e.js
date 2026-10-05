@@ -168,7 +168,6 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
     // ── 8. Per-site allowlist ──
     await msg('popup:setSiteProtection', { host: 'site-a.com', enabled: false });
-    console.log('DEBUG', JSON.stringify(await ext.evaluate(() => chrome.declarativeNetRequest.getDynamicRules())));
     t0 = Date.now();
     await page.goto('http://site-a.com/tracked.html');
     await sleep(1000);

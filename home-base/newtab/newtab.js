@@ -16,7 +16,7 @@ const $ = (id) => document.getElementById(id);
 const WIDGET_MODULES = { tasks: wTasks, notes: wNotes, calendar: wCalendar, clocks: wClocks, habits: wHabits, pomodoro: wPomodoro };
 const DEFAULT_SIZE = {
   tasks: { w: 344, h: 440 }, notes: { w: 336, h: 320 }, calendar: { w: 312, h: 420 },
-  clocks: { w: 272, h: 232 }, habits: { w: 336, h: 280 }, pomodoro: { w: 256, h: 272 },
+  clocks: { w: 272, h: 232 }, habits: { w: 320, h: 280 }, pomodoro: { w: 272, h: 312 },
 };
 const app = { state: {}, widgets: new Map() };
 let quotes = [];
@@ -35,9 +35,9 @@ function renderClock() {
   const el = $('clock');
   if (el.dataset.key === key) return;
   el.dataset.key = key;
-  el.replaceChildren(`${hh}:${mm}`,
+  el.replaceChildren(...[`${hh}:${mm}`,
     s.showSeconds ? h('span.secs', ':' + pad(now.getSeconds())) : null,
-    ampm ? h('span.ampm', ampm) : null);
+    ampm ? h('span.ampm', ampm) : null].filter(Boolean));
   el.setAttribute('aria-label', now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: !s.h24 }));
   $('today-label').textContent = longLabel(ymd(now));
   if (now.getSeconds() === 0 || !renderClock.greeted) { renderGreeting(); renderClock.greeted = true; }
@@ -339,7 +339,11 @@ function wireSearch() {
     }
     const engine = app.state.settings.searchEngine;
     if ((engine === 'default' || !ENGINES[engine]) && chrome.search && chrome.search.query) {
-      await chrome.search.query({ text, disposition: 'CURRENT_TAB' });
+      try {
+        await chrome.search.query({ text, disposition: 'CURRENT_TAB' });
+        return;
+      } catch { /* fall through to a fixed engine */ }
+      location.href = ENGINES.duckduckgo + encodeURIComponent(text);
     } else {
       location.href = (ENGINES[engine] || ENGINES.duckduckgo) + encodeURIComponent(text);
     }
@@ -348,17 +352,30 @@ function wireSearch() {
 
 // ---------------------------------------------------------------- widgets
 
-function defaultRect(id, index) {
-  const size = DEFAULT_SIZE[id];
+const RIGHT_SIDE = ['tasks', 'notes', 'calendar'];
+
+/** Place widgets without a saved position: stack down each edge, then start a column further in. */
+function placeDefaults(ids) {
   const margin = 16;
-  const top = 72;
-  // Stack down the right edge, then start a new column to the left; pomodoro and clocks prefer the left.
-  const right = ['tasks', 'notes', 'calendar'].includes(id);
-  const col = Math.floor(index / 2);
-  const row = index % 2;
-  const x = right ? innerWidth - size.w - margin - col * (size.w + margin) : margin + col * (size.w + margin);
-  const y = top + row * (Math.min(size.h, (innerHeight - top - 80) / 2) + margin);
-  return clampRect({ x, y, ...size });
+  const top = app.state.settings.show.links ? 120 : 72;
+  const bottom = innerHeight - 64;
+  const cursor = { left: { x: margin, y: top, colW: 0 }, right: { x: innerWidth - margin, y: top, colW: 0 } };
+  const out = {};
+  for (const id of ids) {
+    const size = DEFAULT_SIZE[id];
+    const side = RIGHT_SIDE.includes(id) ? 'right' : 'left';
+    const c = cursor[side];
+    if (c.y + size.h > bottom && c.y > top) {
+      c.x = side === 'left' ? c.x + c.colW + margin : c.x - c.colW - margin;
+      c.y = top;
+      c.colW = 0;
+    }
+    const x = side === 'left' ? c.x : c.x - size.w;
+    out[id] = clampRect({ x, y: c.y, ...size });
+    c.y += size.h + margin;
+    c.colW = Math.max(c.colW, size.w);
+  }
+  return out;
 }
 
 function syncWidgets() {
@@ -372,16 +389,14 @@ function syncWidgets() {
       app.widgets.delete(id);
     }
   }
-  let rightIdx = 0, leftIdx = 0;
+  const defaults = placeDefaults(wanted);
   for (const id of wanted) {
-    const right = ['tasks', 'notes', 'calendar'].includes(id);
-    const idx = right ? rightIdx++ : leftIdx++;
     if (app.widgets.has(id)) continue;
     const def = store.WIDGETS.find((w) => w.id === id);
     const saved = app.state.layout[id];
     const frame = createFrame({
       id, title: def.name,
-      rect: saved && saved.w ? saved : defaultRect(id, idx),
+      rect: saved && saved.w ? saved : defaults[id],
       onChange: (rect) => store.update('layout', (l) => ({ ...l, [id]: rect })),
       onClose: () => store.update('settings', (st) => ({ ...st, widgets: { ...st.widgets, [id]: false } })),
     });
@@ -494,7 +509,11 @@ async function init() {
 
   window.addEventListener('resize', debounce(() => {
     renderBackground();
-    for (const [, w] of app.widgets) w.frame.reclamp();
+    const defaults = placeDefaults([...app.widgets.keys()]);
+    for (const [id, w] of app.widgets) {
+      if (app.state.layout[id]) w.frame.reclamp();
+      else w.frame.setRect(defaults[id]); // never moved by the user: keep the automatic layout
+    }
   }, 200));
 
   document.addEventListener('keydown', (e) => {

@@ -200,7 +200,7 @@ body { background: #2b2f3a; color: #fff; }
 
 /* Narrow windows: widgets flow below the dashboard instead of floating. */
 @media (max-width: 860px), (max-height: 520px) {
-  html, body { overflow: auto; }
+  html, body { height: auto; overflow: visible; }
   .shell { min-height: 100vh; height: auto; }
   .widgets { position: static; display: grid; gap: 16px; padding: 16px; pointer-events: auto; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); position: relative; z-index: 2; }
   .widget { position: relative; left: auto; top: auto; width: auto; height: 360px; }

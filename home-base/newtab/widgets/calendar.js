@@ -141,11 +141,11 @@ export function mount(frame, app) {
 
     const upcoming = events.map((ev) => ({ ev, next: nextEventDate(ev, today) }))
       .filter((x) => x.next).sort((a, b) => a.next.localeCompare(b.next)).slice(0, 5);
-    countdowns.replaceChildren(
+    countdowns.replaceChildren(...[
       upcoming.length ? h('div.cal-day-title', 'Countdowns') : null,
       upcoming.length ? h('ul.cal-items', upcoming.map(({ ev, next }) => h('li',
         h('span.countdown', countdownLabel(next, today)), h('span.grow', ev.title),
-        h('button.icon-btn', { type: 'button', 'aria-label': `Delete event ${ev.title}`, onclick: () => removeEvent(ev) }, icon('trash', 14))))) : null);
+        h('button.icon-btn', { type: 'button', 'aria-label': `Delete event ${ev.title}`, onclick: () => removeEvent(ev) }, icon('trash', 14))))) : null].filter(Boolean));
   }
   render();
   return { keys: ['events', 'tasks', 'settings'], update: render };

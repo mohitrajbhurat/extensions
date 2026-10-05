@@ -128,6 +128,9 @@ async function doSyncRules() {
   });
 
   await syncGpcScript(s.gpc);
+  // Rule updates resolve before the network service has always picked them up, and the UI
+  // usually reloads the tab right after a change, so give them a moment to propagate.
+  await new Promise((r) => setTimeout(r, 200));
 }
 
 async function syncGpcScript(enabled) {
@@ -286,7 +289,11 @@ chrome.webRequest.onBeforeRequest.addListener((details) => {
     if (!host || registrableDomain(host) === tab.site) return;
     const hit = classify(host, tab.host);
     if (!hit) return;
-    const rec = tab.trackers[hit.domain] || (tab.trackers[hit.domain] = { category: hit.category, requests: 0, blocked: 0 });
+    let rec = tab.trackers[hit.domain];
+    if (!rec) {
+      rec = tab.trackers[hit.domain] = { category: hit.category, requests: 0, blocked: 0 };
+      updateSiteRecord(tab);
+    }
     rec.requests++;
     today().seen++;
     markDirty('tabs', KEYS.stats);

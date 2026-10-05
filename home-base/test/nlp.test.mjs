@@ -1,4 +1,4 @@
-// Run: node --test home-base/test/
+// Run: node --test home-base/test/*.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseTask, parseDateText, matchesRecur, firstOccurrence, nextOccurrence, describeRecur } from '../lib/nlp.js';
