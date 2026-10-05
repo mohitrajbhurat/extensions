@@ -1,0 +1,124 @@
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --surface: #f5f7f9;
+  --surface-2: #eaeef2;
+  --fg: #1b1f24;
+  --muted: #5d6673;
+  --line: #d9dee5;
+  --accent: #0f7b6c;
+  --accent-fg: #ffffff;
+  --accent-soft: #dff3ef;
+  --danger: #c2372f;
+  --warn: #b7791f;
+  --ok: #2f855a;
+  --focus: #1a73e8;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 16px;
+  --s4: 24px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16191d;
+    --surface: #1f2329;
+    --surface-2: #2a3038;
+    --fg: #e8ecf1;
+    --muted: #a2acb8;
+    --line: #3a414b;
+    --accent: #4fd1b8;
+    --accent-fg: #0b1f1b;
+    --accent-soft: #19362f;
+    --danger: #ff7b72;
+    --warn: #f6c35b;
+    --ok: #68d391;
+    --focus: #8ab4f8;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.small { min-height: 26px; padding: 0 8px; font-size: 12px; }
+.btn.icon { width: 32px; padding: 0; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+input[type="text"], input[type="number"], input[type="search"], input[type="password"], input[type="email"],
+input[type="tel"], input[type="url"], input[type="date"], input[type="datetime-local"], input[type="time"], select, textarea {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+textarea { resize: vertical; }
+input[type="color"] { width: 40px; height: 32px; padding: 2px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+label.check { display: inline-flex; align-items: center; gap: var(--s2); cursor: pointer; }
+
+.field { display: grid; gap: var(--s1); }
+.field > span, .field-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+.row { display: flex; gap: var(--s2); align-items: center; flex-wrap: wrap; }
+.grow { flex: 1; min-width: 0; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--mono); }
+.hidden { display: none !important; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.segmented { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); gap: 2px; flex-wrap: wrap; }
+.segmented button { border: 0; background: transparent; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--muted); }
+.segmented button[aria-pressed="true"], .segmented button[aria-selected="true"] { background: var(--bg); color: var(--fg); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+
+.card { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); padding: var(--s3); }
+
+details > summary { cursor: pointer; font-weight: 600; font-size: 13px; padding: var(--s1) 0; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background: var(--fg);
+  color: var(--bg);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  z-index: 10;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}

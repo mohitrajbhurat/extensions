@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tasks · Home Base</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/tasks.css">
+  <link rel="stylesheet" href="tasks.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Task views">
+      <div class="brand">
+        <img src="../icons/icon32.png" alt="" width="24" height="24">
+        <span>Tasks</span>
+      </div>
+      <nav>
+        <ul class="nav" id="nav-main" role="list"></ul>
+        <div class="nav-head">
+          <span>Projects</span>
+          <button class="icon-btn" id="add-project" type="button" aria-label="Add project" title="Add project"></button>
+        </div>
+        <ul class="nav" id="nav-projects" role="list"></ul>
+        <div class="nav-head" id="labels-head"><span>Labels</span></div>
+        <ul class="nav" id="nav-labels" role="list"></ul>
+      </nav>
+      <div class="sidebar-foot">
+        <button class="btn small" id="open-shortcuts" type="button">Shortcuts <kbd>?</kbd></button>
+        <button class="btn small" id="open-settings" type="button">Settings</button>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="main-head">
+        <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Show views" aria-controls="sidebar" aria-expanded="false"></button>
+        <h1 id="view-title">Today</h1>
+        <span class="muted" id="view-sub"></span>
+        <div class="search-wrap">
+          <input class="input" id="search" type="search" placeholder="Search tasks  /" aria-label="Search tasks" autocomplete="off">
+        </div>
+      </header>
+      <div class="quick-add">
+        <input class="input" id="quick-add" type="text" autocomplete="off"
+          placeholder="Add a task: “Call Sam tomorrow 5pm p2 #work @phone”  (q)" aria-label="Add a task" aria-describedby="qa-hint">
+        <div class="hint" id="qa-hint" hidden></div>
+      </div>
+      <div id="list" class="list"></div>
+      <div class="list-foot" id="list-foot"></div>
+    </main>
+  </div>
+
+  <dialog id="shortcuts" aria-labelledby="sc-title">
+    <div class="dialog-body">
+      <div class="dialog-head">
+        <h2 id="sc-title" style="font-size:16px">Keyboard shortcuts</h2>
+        <form method="dialog"><button class="btn small" type="submit">Close</button></form>
+      </div>
+      <table class="shortcuts">
+        <tbody>
+          <tr><td><kbd>q</kbd> or <kbd>n</kbd></td><td>Add a task</td></tr>
+          <tr><td><kbd>/</kbd></td><td>Search</td></tr>
+          <tr><td><kbd>j</kbd> <kbd>k</kbd> or <kbd>↓</kbd> <kbd>↑</kbd></td><td>Move selection</td></tr>
+          <tr><td><kbd>x</kbd> or <kbd>Space</kbd></td><td>Complete / reopen</td></tr>
+          <tr><td><kbd>Enter</kbd> or <kbd>e</kbd></td><td>Edit task</td></tr>
+          <tr><td><kbd>Delete</kbd></td><td>Delete task (with undo)</td></tr>
+          <tr><td><kbd>1</kbd> to <kbd>4</kbd></td><td>Set priority</td></tr>
+          <tr><td><kbd>t</kbd> / <kbd>m</kbd> / <kbd>0</kbd></td><td>Due today / tomorrow / no date</td></tr>
+          <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> <kbd>↓</kbd></td><td>Reorder task</td></tr>
+          <tr><td><kbd>g</kbd> then <kbd>i</kbd> <kbd>t</kbd> <kbd>u</kbd> <kbd>o</kbd> <kbd>c</kbd></td><td>Go to Inbox, Today, Upcoming, Overdue, Completed</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Clear selection / leave field</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td>Save in the editor</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin:0">Quick add understands dates (“tomorrow 5pm”, “next fri”, “oct 12”, “in 3 days”), repeats (“every monday”, “every 2 weeks”, “every 15th”), priority (p1 to p4, !!!), #project and @labels.</p>
+    </div>
+  </dialog>
+
+  <dialog id="project-dialog" aria-labelledby="pd-title">
+    <form class="dialog-body" method="dialog" id="project-form">
+      <h2 id="pd-title" style="font-size:16px">New project</h2>
+      <label class="field"><span>Name</span><input class="input" id="pd-name" type="text" required maxlength="60"></label>
+      <label class="field"><span>Color</span><input id="pd-color" type="color" value="#3b82f6"></label>
+      <div class="dialog-foot">
+        <button class="btn danger" id="pd-delete" type="button" style="margin-right:auto" hidden>Delete project</button>
+        <button class="btn" type="submit" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" type="submit" value="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+  <script type="module" src="tasks.js"></script>
+</body>
+</html>

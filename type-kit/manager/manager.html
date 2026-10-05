@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type Kit</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="manager.css">
+</head>
+<body>
+  <a class="skip sr-only" href="#main">Skip to content</a>
+  <header class="appbar">
+    <div class="brand"><img src="../icons/icon48.png" alt="" width="28" height="28"><span>Type Kit</span></div>
+    <nav class="nav" aria-label="Sections">
+      <a href="#snippets" data-view="snippets">Snippets</a>
+      <a href="#clipboard" data-view="clipboard">Clipboard</a>
+      <a href="#stats" data-view="stats">Stats</a>
+      <a href="#settings" data-view="settings">Settings</a>
+      <a href="#data" data-view="data">Import / Export</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- Snippets -->
+    <section class="view" id="view-snippets" aria-label="Snippets">
+      <div id="welcome" class="welcome" hidden>
+        <div>
+          <strong>Welcome to Type Kit.</strong> Type a shortcut such as <span class="kbd">/sig</span> or <span class="kbd">;addr</span> in any text field and it expands.
+          Backspace right after an expansion undoes it. Press <span class="kbd">Alt+Shift+V</span> on any page to search snippets and your clipboard history.
+          Starter snippets are below; edit them or make your own.
+        </div>
+        <button class="btn ghost icon" id="welcome-close" aria-label="Dismiss">✕</button>
+      </div>
+      <div class="snip-layout">
+        <aside class="folders" aria-label="Folders">
+          <div class="pane-head"><h2>Folders</h2>
+            <button class="btn ghost icon" id="folder-add" title="New folder" aria-label="New folder">+</button></div>
+          <ul id="folder-list" class="folder-list"></ul>
+        </aside>
+        <section class="snip-list-pane" aria-label="Snippet list">
+          <div class="pane-head">
+            <input class="input" id="snip-q" type="search" placeholder="Search snippets" aria-label="Search snippets" autocomplete="off">
+            <button class="btn primary" id="snip-new" title="New snippet (Alt+N)">New</button>
+          </div>
+          <div class="list-tools">
+            <label class="muted" for="snip-sort">Sort</label>
+            <select id="snip-sort" class="input small">
+              <option value="name">Name</option>
+              <option value="uses">Most used</option>
+              <option value="recent">Recently used</option>
+              <option value="updated">Recently edited</option>
+            </select>
+            <span class="muted" id="snip-count"></span>
+          </div>
+          <ul id="snip-list" class="snip-list" role="listbox" aria-label="Snippets"></ul>
+        </section>
+        <section class="editor" id="editor" aria-label="Snippet editor">
+          <div class="editor-empty" id="editor-empty">
+            <p>Select a snippet to edit, or create a new one.</p>
+            <button class="btn primary" id="snip-new-2">New snippet</button>
+          </div>
+          <form id="snip-form" hidden autocomplete="off">
+            <div class="ed-row">
+              <div class="field grow">
+                <label for="f-name">Name</label>
+                <input class="input" id="f-name" required maxlength="120" placeholder="Meeting follow-up">
+              </div>
+              <div class="field">
+                <label for="f-shortcut">Shortcut</label>
+                <input class="input mono" id="f-shortcut" maxlength="40" placeholder="/followup" spellcheck="false" aria-describedby="shortcut-msg">
+              </div>
+            </div>
+            <div id="shortcut-msg" class="hint" aria-live="polite"></div>
+            <div class="ed-row">
+              <div class="field">
+                <label for="f-folder">Folder</label>
+                <select class="input" id="f-folder"></select>
+              </div>
+              <div class="field">
+                <span class="label" id="fmt-label">Format</span>
+                <div class="seg" role="group" aria-labelledby="fmt-label">
+                  <button type="button" id="fmt-plain" data-fmt="plain" aria-pressed="true">Plain text</button>
+                  <button type="button" id="fmt-rich" data-fmt="rich" aria-pressed="false">Rich text</button>
+                </div>
+              </div>
+              <div class="field">
+                <span class="label">Status</span>
+                <label class="switch"><input type="checkbox" id="f-enabled" checked><span>Enabled</span></label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="body-head">
+                <label for="f-body" id="body-label">Snippet text</label>
+                <div class="toolbar" id="rich-toolbar" hidden role="toolbar" aria-label="Formatting">
+                  <button type="button" class="btn ghost icon" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button>
+                  <button type="button" class="btn ghost icon" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button>
+                  <button type="button" class="btn ghost icon" data-cmd="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button>
+                  <button type="button" class="btn ghost icon" data-cmd="insertUnorderedList" title="Bulleted list" aria-label="Bulleted list">•≡</button>
+                  <button type="button" class="btn ghost icon" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list">1≡</button>
+                  <button type="button" class="btn ghost icon" data-cmd="createLink" title="Link" aria-label="Insert link">🔗</button>
+                  <button type="button" class="btn ghost icon" data-cmd="removeFormat" title="Clear formatting" aria-label="Clear formatting">⨯</button>
+                </div>
+                <div class="ph-menu">
+                  <button type="button" class="btn" id="ph-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="ph-list">Insert placeholder ▾</button>
+                  <ul class="menu" id="ph-list" role="menu" hidden></ul>
+                </div>
+              </div>
+              <textarea class="input body mono" id="f-body" rows="10" spellcheck="true"></textarea>
+              <div class="input body rich" id="f-rich" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="body-label" hidden></div>
+            </div>
+            <div class="field">
+              <span class="label">Preview</span>
+              <div class="preview" id="preview" aria-live="polite"></div>
+            </div>
+            <details class="cheats">
+              <summary>Placeholder reference</summary>
+              <table>
+                <tbody>
+                  <tr><td><code>{date}</code> <code>{time}</code></td><td>Today's date or time in your default format</td></tr>
+                  <tr><td><code>{date:DD/MM/YYYY}</code></td><td>Custom format: YYYY YY MMMM MMM MM M DD D Do dddd ddd HH H hh h mm ss A WW, literal text in [brackets]</td></tr>
+                  <tr><td><code>{date:+3d:YYYY-MM-DD}</code></td><td>Offset first: +/- with y, M (months), w, d, h, m (minutes), s. Combine: <code>+1M-1d</code></td></tr>
+                  <tr><td><code>{time:+90m:h:mm A}</code></td><td>Time with an offset and format</td></tr>
+                  <tr><td><code>{clipboard}</code></td><td>Your clipboard (latest history item, or the system clipboard if allowed in Settings)</td></tr>
+                  <tr><td><code>{cursor}</code></td><td>Where the caret lands after expanding</td></tr>
+                  <tr><td><code>{input:Name}</code> <code>{input:Name:default}</code></td><td>Fill-in field; the same name reuses the value. <code>{input:Notes:multiline}</code> for a text area</td></tr>
+                  <tr><td><code>{select:A|B|C}</code> <code>{select:Label:A|B}</code></td><td>Dropdown choice</td></tr>
+                  <tr><td><code>{snippet:/other}</code></td><td>Insert another snippet by shortcut or name</td></tr>
+                  <tr><td><code>{url}</code> <code>{title}</code> <code>{host}</code></td><td>Current page address, title and site</td></tr>
+                  <tr><td><code>{uuid}</code> <code>{random:1:6}</code></td><td>Random ID or number</td></tr>
+                  <tr><td><code>{{</code> <code>}}</code></td><td>Literal braces</td></tr>
+                </tbody>
+              </table>
+            </details>
+            <div class="ed-meta muted" id="ed-meta"></div>
+            <div class="ed-actions">
+              <button type="button" class="btn danger" id="snip-delete">Delete</button>
+              <button type="button" class="btn" id="snip-dup">Duplicate</button>
+              <span class="spacer"></span>
+              <span class="dirty muted" id="dirty" aria-live="polite"></span>
+              <button type="button" class="btn" id="snip-revert">Revert</button>
+              <button type="submit" class="btn primary" id="snip-save" title="Save (Ctrl+S)">Save</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </section>
+
+    <!-- Clipboard -->
+    <section class="view page" id="view-clipboard" hidden aria-labelledby="clip-h">
+      <div class="page-head">
+        <h1 id="clip-h">Clipboard history</h1>
+        <div class="row-gap">
+          <button class="btn" id="clip-clear">Clear (keep pinned)</button>
+          <button class="btn danger" id="clip-clear-all">Clear all</button>
+        </div>
+      </div>
+      <p class="muted" id="clip-status"></p>
+      <div class="row-gap">
+        <input class="input" id="clip-q" type="search" placeholder="Search clipboard history" aria-label="Search clipboard history">
+        <label class="switch"><input type="checkbox" id="clip-pinned-only"><span>Pinned only</span></label>
+      </div>
+      <ul id="clip-list" class="clip-list"></ul>
+    </section>
+
+    <!-- Stats -->
+    <section class="view page" id="view-stats" hidden aria-labelledby="stats-h">
+      <div class="page-head"><h1 id="stats-h">Usage and time saved</h1></div>
+      <div class="cards" id="stat-cards"></div>
+      <h2>Most used snippets</h2>
+      <table class="table" id="top-table">
+        <thead><tr><th scope="col">Snippet</th><th scope="col">Shortcut</th><th scope="col">Uses</th><th scope="col">Characters saved</th><th scope="col">Last used</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted small">Time saved is estimated from characters you did not have to type, at your typing speed (Settings).</p>
+    </section>
+
+    <!-- Settings -->
+    <section class="view page" id="view-settings" hidden aria-labelledby="set-h">
+      <div class="page-head"><h1 id="set-h">Settings</h1><span class="muted" id="set-saved" aria-live="polite"></span></div>
+      <form id="settings-form" class="settings" autocomplete="off">
+        <fieldset>
+          <legend>Expansion</legend>
+          <label class="switch"><input type="checkbox" name="expanderEnabled"><span>Expand shortcuts while typing</span></label>
+          <div class="field">
+            <label for="s-trigger">Trigger</label>
+            <select class="input" id="s-trigger" name="triggerMode">
+              <option value="instant">Instantly, as soon as the shortcut is typed</option>
+              <option value="space">After a space, Enter or punctuation</option>
+            </select>
+          </div>
+          <label class="switch"><input type="checkbox" name="caseSensitive"><span>Case-sensitive shortcuts</span></label>
+          <label class="switch"><input type="checkbox" name="requireWordBoundary"><span>Only expand at the start of a word (shortcuts that start with a letter)</span></label>
+          <label class="switch"><input type="checkbox" name="showToast"><span>Show a small notice after expanding</span></label>
+          <div class="ed-row">
+            <div class="field"><label for="s-df">Default date format</label><input class="input mono" id="s-df" name="dateFormat"><span class="hint" id="s-df-ex"></span></div>
+            <div class="field"><label for="s-tf">Default time format</label><input class="input mono" id="s-tf" name="timeFormat"><span class="hint" id="s-tf-ex"></span></div>
+          </div>
+          <div class="field">
+            <label for="s-ex-exp">Never expand on these sites (one per line, <code>*.example.com</code> allowed)</label>
+            <textarea class="input mono" id="s-ex-exp" name="expanderExcludedSites" rows="3"></textarea>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Clipboard history</legend>
+          <label class="switch"><input type="checkbox" name="historyEnabled"><span>Record text I copy or cut on web pages</span></label>
+          <p class="hint">Never recorded: password and card fields, incognito windows, and the sites below. Text copied outside the browser is not captured.</p>
+          <div class="ed-row">
+            <div class="field"><label for="s-limit">Keep the last</label><input class="input" id="s-limit" name="historyLimit" type="number" min="5" max="1000" step="5"><span class="hint">items (pinned items do not count)</span></div>
+            <div class="field"><label for="s-exp">Delete items older than</label><input class="input" id="s-exp" name="historyExpiryDays" type="number" min="0" max="3650"><span class="hint">days (0 = keep)</span></div>
+            <div class="field"><label for="s-min">Ignore copies shorter than</label><input class="input" id="s-min" name="minClipLength" type="number" min="1" max="100"><span class="hint">characters</span></div>
+          </div>
+          <div class="field">
+            <label for="s-ex-clip">Never record on these sites (one per line)</label>
+            <textarea class="input mono" id="s-ex-clip" name="excludedSites" rows="3" placeholder="*.mybank.com&#10;accounts.example.com"></textarea>
+          </div>
+          <div class="perm">
+            <div>
+              <strong>System clipboard for <code>{clipboard}</code></strong>
+              <p class="hint" id="perm-status">Off: <code>{clipboard}</code> uses your latest clipboard history item.</p>
+            </div>
+            <button type="button" class="btn" id="perm-btn">Allow</button>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Time saved</legend>
+          <div class="field"><label for="s-wpm">Your typing speed (words per minute)</label><input class="input" id="s-wpm" name="wpm" type="number" min="5" max="200"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Keyboard shortcut</legend>
+          <p>Picker on the page: <span class="kbd" id="cmd-key">Alt+Shift+V</span></p>
+          <button type="button" class="btn" id="cmd-change">Change at chrome://extensions/shortcuts</button>
+        </fieldset>
+      </form>
+    </section>
+
+    <!-- Import / export -->
+    <section class="view page" id="view-data" hidden aria-labelledby="data-h">
+      <div class="page-head"><h1 id="data-h">Import and export</h1></div>
+      <div class="cards two">
+        <div class="card">
+          <h2>Export</h2>
+          <p class="muted">JSON keeps everything: folders, snippets, usage, settings and pinned clipboard items. CSV has one snippet per row (shortcut, name, folder, format, body, uses) for spreadsheets.</p>
+          <div class="row-gap">
+            <button class="btn primary" id="exp-json">Download JSON</button>
+            <button class="btn" id="exp-csv">Download CSV</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Import</h2>
+          <p class="muted">JSON from Type Kit, or CSV with a header row (shortcut, body, and optionally name, folder, format).</p>
+          <div class="field">
+            <label for="imp-mode">When a shortcut already exists</label>
+            <select class="input" id="imp-mode">
+              <option value="merge">Update the existing snippet</option>
+              <option value="skip">Keep the existing snippet</option>
+              <option value="add">Add as a new snippet</option>
+              <option value="replace">Replace ALL snippets and folders</option>
+            </select>
+          </div>
+          <div class="row-gap">
+            <label class="btn primary" for="imp-file" tabindex="0" id="imp-file-label">Choose file…</label>
+            <input type="file" id="imp-file" accept=".json,.csv,application/json,text/csv" class="sr-only">
+          </div>
+          <div class="field">
+            <label for="imp-text">Or paste JSON or CSV</label>
+            <textarea class="input mono" id="imp-text" rows="5"></textarea>
+          </div>
+          <button class="btn" id="imp-go">Import pasted text</button>
+          <p id="imp-result" class="hint" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="../shared/store.js"></script>
+  <script src="../shared/engine.js"></script>
+  <script src="manager.js"></script>
+</body>
+</html>

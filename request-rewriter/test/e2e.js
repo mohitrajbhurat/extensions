@@ -47,8 +47,17 @@ function check(name, ok, detail = '') {
     // Close the welcome tab opened on install.
     for (const p of ctx.pages()) if (p.url().includes('welcome=1')) { check('welcome page opens on install', true); await p.close(); }
 
+    // Writes the state like an extension page would, then waits for the worker to finish syncing it.
     const setState = async state => {
-      await sw.evaluate(async s => { await chrome.storage.local.set({ state: s }); await self.requestRewriter.syncRules(); }, state);
+      const expected = R.countActiveRules(state);
+      const before = await sw.evaluate(async () => ((await chrome.storage.local.get('syncStatus')).syncStatus || { at: 0 }).at);
+      await sw.evaluate(async s => { await chrome.storage.local.set({ state: s }); }, state);
+      for (let i = 0; i < 50; i++) {
+        await sleep(100);
+        const st = await sw.evaluate(async () => (await chrome.storage.local.get('syncStatus')).syncStatus);
+        if (st && st.at > before && st.active === expected) break;
+      }
+      await sleep(150);
     };
     const installed = () => sw.evaluate(async () => ({
       dyn: (await chrome.declarativeNetRequest.getDynamicRules()).length,
@@ -185,7 +194,7 @@ function check(name, ok, detail = '') {
     const tryText = await ed.$eval('#tryResult', n => n.textContent);
     check('editor "try it" shows a match', /Matches/.test(tryText), tryText);
     await ed.click('#ruleSave');
-    await ed.waitForSelector('#ruleDialog:not([open])');
+    await ed.waitForFunction(() => !document.querySelector('#ruleDialog').open);
     await sleep(600);
     r = await fetchJson(`${base}/ui-blocked`);
     check('rule saved from the editor applies', !r.ok);
@@ -205,6 +214,7 @@ function check(name, ok, detail = '') {
     await ed.click('text=Import pasted JSON');
     await ed.waitForSelector('#importDialog[open]');
     await ed.click('#importAdd');
+    await ed.waitForFunction(() => !document.querySelector('#importDialog').open);
     await sleep(600);
     body = JSON.parse((await fetchJson(`${base}/echo`)).body);
     check('ModHeader import applies headers', body.headers['x-mh'] === '1');

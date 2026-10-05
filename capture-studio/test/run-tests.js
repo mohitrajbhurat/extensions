@@ -279,14 +279,20 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   buf = fs.readFileSync(p);
   check('editor: JPEG download', file.suggestedFilename().endsWith('.jpg') && buf[0] === 0xff && buf[1] === 0xd8, file.suggestedFilename());
 
-  // Clipboard
-  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: `chrome-extension://${id}` }).catch(() => {});
-  await ed.click('#copy');
-  await sleep(800);
-  const clip = await ed.evaluate(async () => {
-    try { const items = await navigator.clipboard.read(); return items.flatMap(i => i.types); } catch (e) { return 'error: ' + e.message; }
+  // Clipboard: headless Linux has no system clipboard (reading it can hang), so record
+  // what the editor hands to navigator.clipboard.write instead.
+  await ed.evaluate(() => {
+    window.__clip = null;
+    navigator.clipboard.write = async items => {
+      const out = [];
+      for (const item of items) for (const type of item.types) { const b = await item.getType(type); out.push({ type, size: b.size }); }
+      window.__clip = out;
+    };
   });
-  check('editor: copy puts a PNG on the clipboard', Array.isArray(clip) && clip.includes('image/png'), JSON.stringify(clip));
+  await ed.click('#copy');
+  await ed.waitForFunction(() => window.__clip, null, { timeout: 5000 }).catch(() => {});
+  const clip = await ed.evaluate(() => window.__clip);
+  check('editor: copy writes a PNG to the clipboard', Array.isArray(clip) && clip.some(c => c.type === 'image/png' && c.size > 1000), JSON.stringify(clip));
 
   // Annotations persist across reloads.
   await ed.reload();

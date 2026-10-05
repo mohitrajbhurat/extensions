@@ -418,15 +418,10 @@
         else if (alt.length > 150) why = `Alt text is ${alt.length} characters long; consider a shorter alt plus a longer description nearby.`;
         else {
           const link = el.closest('a, button');
-          const scope = link || el.parentElement;
-          if (scope) {
-            const other = D.trimText(scope.textContent).toLowerCase();
-            if (other && other === a) why = '';
-            const fig = el.closest('figure');
-            const cap = fig && fig.querySelector('figcaption');
-            if (cap && D.trimText(cap.textContent).toLowerCase() === a) why = 'Alt text repeats the figure caption, so it is read twice.';
-            else if (link && D.trimText(link.textContent).toLowerCase() === a) why = 'Alt text repeats the link text, so it is read twice.';
-          }
+          const fig = el.closest('figure');
+          const cap = fig && fig.querySelector('figcaption');
+          if (cap && D.trimText(cap.textContent).toLowerCase() === a) why = 'Alt text repeats the figure caption, so it is read twice.';
+          else if (link && D.trimText(link.textContent).toLowerCase() === a) why = 'Alt text repeats the adjacent link text, so it is read twice.';
         }
         if (why) ctx.review('image-alt-suspicious', el, why);
       }
