@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Design Inspector fixture</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f60'/%3E%3C/svg%3E">
+<style>
+  :root { --brand: #ff6600; --ink: #1f2937; --space-2: 16px; }
+  body { margin: 0; padding: 40px 60px; font: 16px/24px Georgia, serif; color: var(--ink); background: #ffffff; }
+  h1#title { font: 700 32px/40px Arial, sans-serif; margin: 0 0 24px; }
+  .row { display: flex; gap: 24px; margin-bottom: 24px; }
+  .card { width: 200px; height: 100px; box-sizing: border-box; padding: 16px; margin: 0; border: 2px solid #e5e7eb; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,.15); background: #f8fafc; }
+  #swatch { width: 120px; height: 80px; background: var(--brand); }
+  .bg { width: 80px; height: 80px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='3' fill='%2300f'/%3E%3C/svg%3E"); }
+  .low { color: #777777; }
+  a { color: #2563eb; }
+</style>
+</head>
+<body>
+  <h1 id="title">Design fixture</h1>
+  <div class="row">
+    <div class="card" id="card">Card one</div>
+    <div class="card" id="card2">Card two</div>
+    <div id="swatch"></div>
+  </div>
+  <p class="low">Low contrast paragraph text with a <a id="link" href="#navigated">link</a>.</p>
+  <div class="row">
+    <img id="img" alt="dot" width="40" height="40" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3E%3Crect width='4' height='4' fill='%2310b981'/%3E%3C/svg%3E">
+    <svg id="logo" width="48" height="48" viewBox="0 0 24 24" aria-label="logo"><circle cx="12" cy="12" r="10" fill="#6d28d9"/></svg>
+    <div class="bg"></div>
+  </div>
+</body>
+</html>

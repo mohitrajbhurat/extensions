@@ -261,7 +261,8 @@ async function captureFullPage(tab) {
     let scale = 1; // device px per CSS px in the captured image
     let k = 1;     // extra downscale to respect canvas limits
     const total = info.total;
-    const step = Math.max(50, info.rect.height);
+    let viewH = info.rect.height; // CSS px of the scroller visible per frame
+    let step = Math.max(50, viewH);
     try {
       let y = 0;
       let lastY = -1;
@@ -273,6 +274,9 @@ async function captureFullPage(tab) {
         const bmp = await bitmapFromDataUrl(await captureTab(tab.windowId));
         if (!canvas) {
           scale = bmp.width / info.viewW;
+          // Trust the captured surface over innerHeight if they ever disagree (zoom, emulation).
+          viewH = Math.max(1, Math.min(info.rect.height, bmp.height / scale - info.rect.top));
+          step = Math.max(50, Math.floor(viewH));
           const outW = Math.round(info.rect.width * scale);
           const outH = Math.round(total * scale);
           k = Math.min(1, MAX_CANVAS_SIDE / outH, MAX_CANVAS_SIDE / outW, Math.sqrt(MAX_CANVAS_AREA / (outW * outH)));
@@ -280,7 +284,7 @@ async function captureFullPage(tab) {
           ctx = canvas.getContext('2d');
           ctx.imageSmoothingQuality = 'high';
         }
-        const visibleH = Math.min(info.rect.height, total - pos.y);
+        const visibleH = Math.min(viewH, total - pos.y);
         if (visibleH > 0) {
           ctx.drawImage(bmp,
             info.rect.left * scale, info.rect.top * scale, info.rect.width * scale, visibleH * scale,
@@ -289,7 +293,7 @@ async function captureFullPage(tab) {
         bmp.close();
         lastY = pos.y;
         progress(`${Math.min(99, Math.round(((pos.y + step) / total) * 100))}%`);
-        if (pos.y + info.rect.height >= total - 1) break;
+        if (pos.y + viewH >= total - 1) break;
         if (frame === 0) { await exec(fpHideFixed); }
         y = pos.y + step;
       }

@@ -43,12 +43,13 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   const ctx = await chromium.launchPersistentContext(userDataDir, {
     headless: true,
     channel: 'chromium',
-    viewport: { width: 1280, height: 800 },
+    viewport: null, // no emulation: captureVisibleTab sees the real window surface
     acceptDownloads: true,
     downloadsPath: downloadsDir,
     args: [
       `--disable-extensions-except=${ext}`,
       `--load-extension=${ext}`,
+      '--window-size=1280,800',
       `--force-device-scale-factor=${DPR}`,
       '--use-fake-ui-for-media-stream',
       '--use-fake-device-for-media-stream',
@@ -71,6 +72,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
 
   const page = await ctx.newPage();
   await page.goto(base);
+  const [VW, VH] = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
   const ctrl = await ctx.newPage();
   await ctrl.goto(extUrl('library/library.html'));
   const send = msg => ctrl.evaluate(m => chrome.runtime.sendMessage(m), msg);
@@ -106,7 +108,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   let ed = await editorP;
   await ed.waitForLoadState();
   let s = await sampleShot(ed, shotIdOf(ed), [[10 * D, 10 * D], [640 * D, 300 * D]]);
-  check('visible: size matches viewport x DPR', s.width === 1280 * D && s.height === 800 * D, `${s.width}x${s.height}`);
+  check('visible: size matches viewport x DPR', s.width === VW * D && s.height === VH * D, `${s.width}x${s.height}`);
   check('visible: fixed header captured', colorNear(s.px[0], NAVY), JSON.stringify(s.px[0]));
   check('visible: content captured', colorNear(s.px[1], BAND[0]), JSON.stringify(s.px[1]));
   check('visible: thumbnail stored', s.meta.thumb && s.meta.kind === 'visible');
@@ -123,7 +125,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   BAND.forEach((_, i) => fullPoints.push([200 * D, (i * 500 + 250) * D]));
   s = await sampleShot(ed, shotIdOf(ed), fullPoints);
   check('full page: height is whole document', near(s.height, 5000 * D, 2 * D), `${s.width}x${s.height}`);
-  check('full page: width is viewport', near(s.width, 1280 * D, 20 * D), `${s.width}`);
+  check('full page: width is viewport', near(s.width, VW * D, 20 * D), `${s.width}`);
   check('full page: header at top', colorNear(s.px[0], NAVY), JSON.stringify(s.px[0]));
   check('full page: fixed header hidden after first frame', colorNear(s.px[1], BAND[1]) && colorNear(s.px[2], BAND[3]) && colorNear(s.px[3], BAND[4]),
     JSON.stringify(s.px.slice(1, 4)));
@@ -166,7 +168,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   ed = await editorP;
   await ed.waitForLoadState();
   s = await sampleShot(ed, shotIdOf(ed), []);
-  check('region: Enter captures the visible area instead', s.width === 1280 * D && s.meta.kind === 'visible', `${s.width}x${s.height}`);
+  check('region: Enter captures the visible area instead', s.width === VW * D && s.meta.kind === 'visible', `${s.width}x${s.height}`);
   await ed.close();
 
   /* ---------------- 4. editor ---------------- */
@@ -258,7 +260,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   await sleep(1000);
   doc = await docAfter();
   const cw = await ed.evaluate(() => [document.getElementById('canvas').width, document.getElementById('canvas').height]);
-  check('editor: crop applied', doc.crop && near(cw[0], 640 * D, 4 * D) && near(cw[1], 400 * D, 4 * D), `${cw} ${JSON.stringify(doc.crop)}`);
+  check('editor: crop applied', doc.crop && near(cw[0], VW * D / 2, 4 * D) && near(cw[1], VH * D / 2, 4 * D), `${cw} ${JSON.stringify(doc.crop)}`);
 
   // Download PNG and JPEG
   let dl = ed.waitForEvent('download');

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Shield</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" width="20" height="20" alt="">
+    <h1>Privacy Shield</h1>
+    <span class="spacer"></span>
+    <button class="ghost small" id="open-dashboard" title="Dashboard">Dashboard</button>
+    <button class="ghost small" id="open-options" title="Settings">Settings</button>
+  </header>
+
+  <main id="main" aria-live="polite">
+    <p class="empty muted" id="loading">Loading…</p>
+  </main>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

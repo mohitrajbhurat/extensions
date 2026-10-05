@@ -117,4 +117,7 @@ tr.miss td { color: var(--text-dim); }
   .grid.c2, .grid.c3, .grid.c4 { grid-template-columns: 1fr; }
   .kv-row, .kv-row.q { grid-template-columns: 1fr 1fr; }
   main { padding: 16px; }
+  .rule-row { grid-template-columns: auto minmax(0, 1fr); }
+  .rule-row .r-title { flex-wrap: wrap; }
+  .rule-row .r-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }

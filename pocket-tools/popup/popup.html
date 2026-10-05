@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pocket Tools</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <div class="tabs" role="tablist" aria-label="Tools">
+      <button role="tab" id="tab-password" aria-controls="panel-password" aria-selected="true">Password</button>
+      <button role="tab" id="tab-qr" aria-controls="panel-qr" aria-selected="false" tabindex="-1">QR code</button>
+      <button role="tab" id="tab-text" aria-controls="panel-text" aria-selected="false" tabindex="-1">Text</button>
+      <button role="tab" id="tab-convert" aria-controls="panel-convert" aria-selected="false" tabindex="-1">Convert</button>
+    </div>
+    <button class="btn icon settings-btn" id="open-options" type="button" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-1.7-1L15 3.5h-4l-.4 2.5a7 7 0 0 0-1.7 1l-2.4-1-2 3.4L6.6 11a7.5 7.5 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 1.7 1l.4 2.5h4l.4-2.5a7 7 0 0 0 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
+    </button>
+  </header>
+
+  <!-- ===================================================== Password -->
+  <main>
+  <section role="tabpanel" id="panel-password" aria-labelledby="tab-password" class="panel">
+    <div class="segmented" role="group" aria-label="Generator type" id="gen-type">
+      <button type="button" data-type="password" aria-pressed="true">Password</button>
+      <button type="button" data-type="pronounceable" aria-pressed="false">Pronounceable</button>
+      <button type="button" data-type="passphrase" aria-pressed="false">Passphrase</button>
+    </div>
+
+    <div class="output card">
+      <output id="gen-output" class="mono gen-value" aria-live="polite" aria-label="Generated value"></output>
+      <div class="row out-actions">
+        <button class="btn icon" type="button" id="gen-refresh" title="Generate another (R)" aria-label="Generate another">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6a5.9 5.9 0 0 1 4.22 1.78L13 11h7V4z"/></svg>
+        </button>
+        <button class="btn primary" type="button" id="gen-copy">Copy</button>
+      </div>
+    </div>
+
+    <div class="strength" aria-live="polite">
+      <div class="meter" id="gen-meter" role="meter" aria-label="Strength" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="row strength-text">
+        <strong id="gen-strength">—</strong>
+        <span class="muted" id="gen-entropy"></span>
+      </div>
+      <div class="muted small" id="gen-crack"></div>
+    </div>
+
+    <div id="opts-password" class="opts">
+      <div class="field">
+        <span>Length</span>
+        <div class="row">
+          <input type="range" id="gen-length" min="4" max="128" class="grow" aria-label="Length">
+          <input type="number" id="gen-length-num" min="4" max="128" class="num" aria-label="Length value">
+        </div>
+      </div>
+      <div class="checks" id="gen-classes">
+        <label class="check"><input type="checkbox" id="gen-upper"> A–Z</label>
+        <label class="check"><input type="checkbox" id="gen-lower"> a–z</label>
+        <label class="check"><input type="checkbox" id="gen-digits"> 0–9</label>
+        <label class="check"><input type="checkbox" id="gen-symbols"> !@#$</label>
+      </div>
+      <label class="check" id="ambiguous-wrap"><input type="checkbox" id="gen-ambiguous"> Exclude look-alikes (I l 1 O 0 o and similar)</label>
+    </div>
+
+    <div id="opts-passphrase" class="opts hidden">
+      <div class="field">
+        <span>Words</span>
+        <div class="row">
+          <input type="range" id="gen-words" min="3" max="20" class="grow" aria-label="Number of words">
+          <input type="number" id="gen-words-num" min="3" max="20" class="num" aria-label="Number of words value">
+        </div>
+      </div>
+      <div class="row">
+        <label class="field sep-field"><span>Separator</span><input type="text" id="gen-separator" maxlength="3"></label>
+        <div class="grow checks-col">
+          <label class="check"><input type="checkbox" id="gen-capitalize"> Capitalize</label>
+          <label class="check"><input type="checkbox" id="gen-number"> Include a number</label>
+        </div>
+      </div>
+    </div>
+    <p class="muted small note" id="gen-note">Nothing you generate is saved. Copied values are cleared from the clipboard after <span id="clear-secs">30</span> s.</p>
+  </section>
+
+  <!-- ===================================================== QR -->
+  <section role="tabpanel" id="panel-qr" aria-labelledby="tab-qr" class="panel" hidden>
+    <div class="segmented" role="group" aria-label="QR content" id="qr-mode">
+      <button type="button" data-mode="page" aria-pressed="true">Page</button>
+      <button type="button" data-mode="text" aria-pressed="false">Text</button>
+      <button type="button" data-mode="wifi" aria-pressed="false">Wi-Fi</button>
+      <button type="button" data-mode="vcard" aria-pressed="false">Contact</button>
+      <button type="button" data-mode="scan" aria-pressed="false">Scan</button>
+    </div>
+
+    <div class="qr-inputs" id="qr-in-page">
+      <label class="field"><span>Page URL</span><input type="url" id="qr-url" spellcheck="false"></label>
+    </div>
+    <div class="qr-inputs hidden" id="qr-in-text">
+      <label class="field"><span>Text or link</span><textarea id="qr-text" rows="3" spellcheck="false"></textarea></label>
+    </div>
+    <div class="qr-inputs hidden" id="qr-in-wifi">
+      <label class="field"><span>Network name (SSID)</span><input type="text" id="wifi-ssid" spellcheck="false" autocomplete="off"></label>
+      <div class="row">
+        <label class="field grow"><span>Password</span><input type="password" id="wifi-pass" autocomplete="off"></label>
+        <label class="field"><span>Security</span>
+          <select id="wifi-sec"><option value="WPA">WPA/WPA2/WPA3</option><option value="WEP">WEP</option><option value="none">None</option></select>
+        </label>
+      </div>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="wifi-show"> Show password</label>
+        <label class="check"><input type="checkbox" id="wifi-hidden"> Hidden network</label>
+      </div>
+    </div>
+    <div class="qr-inputs hidden" id="qr-in-vcard">
+      <div class="grid2">
+        <label class="field"><span>First name</span><input type="text" id="vc-first" autocomplete="off"></label>
+        <label class="field"><span>Last name</span><input type="text" id="vc-last" autocomplete="off"></label>
+        <label class="field"><span>Phone</span><input type="tel" id="vc-phone" autocomplete="off"></label>
+        <label class="field"><span>Email</span><input type="email" id="vc-email" autocomplete="off"></label>
+        <label class="field"><span>Organization</span><input type="text" id="vc-org" autocomplete="off"></label>
+        <label class="field"><span>Job title</span><input type="text" id="vc-title" autocomplete="off"></label>
+      </div>
+      <label class="field"><span>Website</span><input type="url" id="vc-url" autocomplete="off"></label>
+    </div>
+
+    <div id="qr-output">
+      <div class="qr-preview">
+        <canvas id="qr-canvas" role="img" aria-label="QR code preview"></canvas>
+        <p class="muted small" id="qr-empty">Enter something to encode.</p>
+      </div>
+      <p class="muted small center" id="qr-meta" aria-live="polite"></p>
+      <p class="small center warn hidden" id="qr-warning"></p>
+      <div class="row center-row">
+        <button class="btn" type="button" id="qr-png">Download PNG</button>
+        <button class="btn" type="button" id="qr-svg">Download SVG</button>
+        <button class="btn" type="button" id="qr-copy">Copy image</button>
+      </div>
+      <details id="qr-appearance">
+        <summary>Appearance and error correction</summary>
+        <div class="grid2">
+          <label class="field"><span>Error correction</span>
+            <select id="qr-level">
+              <option value="L">L · 7% recovery</option>
+              <option value="M">M · 15% recovery</option>
+              <option value="Q">Q · 25% recovery</option>
+              <option value="H">H · 30% recovery</option>
+            </select>
+          </label>
+          <label class="field"><span>Module size: <output id="qr-scale-out"></output> px</span>
+            <input type="range" id="qr-scale" min="2" max="24">
+          </label>
+          <label class="field"><span>Quiet zone: <output id="qr-quiet-out"></output> modules</span>
+            <input type="range" id="qr-quiet" min="0" max="8">
+          </label>
+          <div class="row color-row">
+            <label class="field"><span>Dark</span><input type="color" id="qr-dark"></label>
+            <label class="field"><span>Light</span><input type="color" id="qr-light"></label>
+            <button class="btn small" type="button" id="qr-reset-colors">Reset</button>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div id="qr-scan" class="hidden">
+      <div class="dropzone" id="scan-drop" tabindex="0" role="button" aria-describedby="scan-help">
+        <p><strong>Drop an image</strong>, paste one (Ctrl+V), or <label class="link" for="scan-file">choose a file</label>.</p>
+        <input type="file" id="scan-file" accept="image/*" class="visually-hidden">
+        <p class="muted small" id="scan-help">Images are read on this device only.</p>
+      </div>
+      <div id="scan-result" class="hidden card">
+        <div class="field-label">Decoded</div>
+        <div id="scan-text" class="mono scan-text"></div>
+        <div class="row">
+          <button class="btn small" type="button" id="scan-copy">Copy</button>
+          <button class="btn small hidden" type="button" id="scan-open">Open link</button>
+          <button class="btn small" type="button" id="scan-reencode">Make QR from this</button>
+        </div>
+      </div>
+      <p class="small warn hidden" id="scan-status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- ===================================================== Text -->
+  <section role="tabpanel" id="panel-text" aria-labelledby="tab-text" class="panel" hidden>
+    <label class="visually-hidden" for="text-input">Text to analyze</label>
+    <textarea id="text-input" rows="6" placeholder="Type or paste text, or grab the page selection."></textarea>
+    <div class="row">
+      <button class="btn small" type="button" id="text-grab">Use page selection</button>
+      <button class="btn small" type="button" id="text-copy">Copy text</button>
+      <button class="btn small" type="button" id="text-clear">Clear</button>
+      <span class="grow"></span>
+      <button class="btn small" type="button" id="text-undo" disabled>Undo</button>
+    </div>
+    <div class="stats" id="text-stats"></div>
+    <div class="readability card" id="text-readability"></div>
+    <div>
+      <div class="field-label">Change case</div>
+      <div class="case-buttons" id="case-buttons"></div>
+    </div>
+    <div>
+      <div class="field-label">Top keywords</div>
+      <ol class="keywords" id="text-keywords"></ol>
+    </div>
+  </section>
+
+  <!-- ===================================================== Convert -->
+  <section role="tabpanel" id="panel-convert" aria-labelledby="tab-convert" class="panel" hidden>
+    <label class="field">
+      <span>Quick convert</span>
+      <input type="search" id="quick-input" placeholder="5 miles · 72°F · 3pm PST · 0xFF · 1700000000" spellcheck="false" autocomplete="off">
+    </label>
+    <div id="quick-result" class="quick card hidden" aria-live="polite"></div>
+
+    <div class="segmented" role="tablist" aria-label="Converters" id="conv-tabs">
+      <button type="button" role="tab" data-conv="units" aria-selected="true">Units</button>
+      <button type="button" role="tab" data-conv="zones" aria-selected="false" tabindex="-1">Time zones</button>
+      <button type="button" role="tab" data-conv="bases" aria-selected="false" tabindex="-1">Bases</button>
+      <button type="button" role="tab" data-conv="stamp" aria-selected="false" tabindex="-1">Timestamp</button>
+    </div>
+
+    <div class="conv" id="conv-units">
+      <div class="row">
+        <label class="field grow"><span>Category</span><select id="unit-cat"></select></label>
+      </div>
+      <div class="row">
+        <label class="field grow"><span>Value</span><input type="text" inputmode="decimal" id="unit-value" value="1"></label>
+        <label class="field grow"><span>From</span><select id="unit-from"></select></label>
+      </div>
+      <ul class="results" id="unit-results"></ul>
+    </div>
+
+    <div class="conv hidden" id="conv-zones">
+      <ul class="clocks" id="zone-clocks"></ul>
+      <div class="row">
+        <label class="visually-hidden" for="zone-add">Add a city or time zone</label>
+        <input type="text" id="zone-add" class="grow" list="zone-list" placeholder="Add city or zone (e.g. Paris, Asia/Kolkata)" autocomplete="off">
+        <datalist id="zone-list"></datalist>
+        <button class="btn" type="button" id="zone-add-btn">Add</button>
+      </div>
+      <p class="small warn hidden" id="zone-error"></p>
+      <div class="planner-head row">
+        <strong class="grow">Meeting planner</strong>
+        <label class="visually-hidden" for="planner-date">Date</label>
+        <input type="date" id="planner-date">
+      </div>
+      <div class="planner-wrap"><table class="planner" id="planner"></table></div>
+      <p class="muted small"><span class="legend work"></span> working hours in every city <span class="legend awake"></span> everyone awake (7:00–22:00)</p>
+    </div>
+
+    <div class="conv hidden" id="conv-bases">
+      <div class="row">
+        <label class="field grow"><span>Number</span><input type="text" id="base-input" class="mono" spellcheck="false" value="255"></label>
+        <label class="field"><span>Input base</span>
+          <select id="base-from">
+            <option value="2">Binary (2)</option>
+            <option value="8">Octal (8)</option>
+            <option value="10" selected>Decimal (10)</option>
+            <option value="16">Hex (16)</option>
+            <option value="custom">Other…</option>
+          </select>
+        </label>
+        <label class="field hidden" id="base-custom-wrap"><span>Base</span><input type="number" id="base-custom" min="2" max="36" value="36" class="num"></label>
+      </div>
+      <ul class="results" id="base-results"></ul>
+      <p class="small warn hidden" id="base-error"></p>
+    </div>
+
+    <div class="conv hidden" id="conv-stamp">
+      <div class="card now-card">
+        <div class="field-label">Now</div>
+        <ul class="results" id="stamp-now"></ul>
+      </div>
+      <label class="field"><span>Unix timestamp (seconds, ms, µs or ns)</span><input type="text" id="stamp-input" class="mono" inputmode="numeric" spellcheck="false"></label>
+      <ul class="results" id="stamp-results"></ul>
+      <label class="field"><span>Date and time (your time zone)</span><input type="datetime-local" id="stamp-date" step="1"></label>
+      <ul class="results" id="stamp-date-results"></ul>
+    </div>
+
+    <div class="tooltip-toggle card">
+      <label class="check"><input type="checkbox" id="tooltip-toggle"> Show a conversion tooltip when I select values on web pages</label>
+      <p class="muted small">Needs access to the sites you visit; Chrome will ask once. Without it, right-click a selection and choose <em>Convert</em>.</p>
+    </div>
+  </section>
+  </main>
+
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
