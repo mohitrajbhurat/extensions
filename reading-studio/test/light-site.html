@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Bright Shop</title>
+<style>
+  :root{--brand:#0b57d0;--card-bg:#ffffff;--page:#f7f9fc;--ink:#1a1d21;--line:#dde3ea}
+  body{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+  header{background:#fff;border-bottom:1px solid var(--line);padding:16px 24px;display:flex;gap:16px;align-items:center}
+  h1{font-size:20px;margin:0;color:var(--brand)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:24px}
+  .card{background:var(--card-bg);border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .price{color:#0a7f44;font-weight:700}
+  .btn{display:inline-block;margin-top:10px;background:var(--brand);color:#fff;padding:8px 12px;border-radius:6px;text-decoration:none}
+  .hero{background:linear-gradient(135deg,#ffffff,#e8f0fe);padding:40px 24px}
+  footer{background:#eef2f7;padding:24px;color:#50596b}
+  img.logo{width:32px;height:32px}
+</style></head>
+<body>
+<header><img class="logo" alt="logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTQiIGZpbGw9IiNmNDAiLz48L3N2Zz4="><h1>Bright Shop</h1></header>
+<div class="hero"><h2>Everything is very white today</h2><p>And the text is very dark.</p></div>
+<div class="grid">
+  <div class="card"><h2>Lamp</h2><p class="price">$39</p><a class="btn" href="#">Buy</a></div>
+  <div class="card"><h2>Desk</h2><p class="price">$199</p><a class="btn" href="#">Buy</a></div>
+  <div class="card"><h2>Chair</h2><p class="price">$149</p><a class="btn" href="#">Buy</a></div>
+</div>
+<footer>© Bright Shop</footer>
+</body></html>

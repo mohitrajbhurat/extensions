@@ -57,7 +57,9 @@ function el(tag, props = {}, ...children) {
     if (k === 'class') e.className = v;
     else if (k === 'html') e.innerHTML = v;
     else if (k === 'text') e.textContent = v;
-    else if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
+    else if (k === 'style' && typeof v === 'object') {
+      for (const [sk, sv] of Object.entries(v)) (sk.startsWith('--') ? e.style.setProperty(sk, sv) : (e.style[sk] = sv));
+    }
     else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.slice(2).toLowerCase(), v);
     else if (k === 'dataset') Object.assign(e.dataset, v);
     else e.setAttribute(k, v === true ? '' : v);
@@ -525,7 +527,7 @@ function renderClips(main) {
   main.append(toolbar);
 
   // Quick composer
-  const ta = el('textarea', { class: 'input', placeholder: 'Quick clip… Markdown supported (Ctrl+Enter)', 'aria-label': 'Quick clip text' });
+  const ta = el('textarea', { class: 'input', placeholder: 'Quick clip… (Ctrl+Enter)', 'aria-label': 'Quick clip text' });
   const save = async () => {
     const v = ta.value.trim();
     if (!v) return;

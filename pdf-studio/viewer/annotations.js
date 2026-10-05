@@ -558,9 +558,10 @@ export class AnnotationManager {
     ta.addEventListener('pointerdown', (e) => e.stopPropagation());
     autosize();
     this._editStartText = a.text;
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
     requestAnimationFrame(() => {
-      ta.focus();
-      ta.setSelectionRange(ta.value.length, ta.value.length);
+      if (document.activeElement !== ta) ta.focus();
     });
     this._emitSelection();
   }

@@ -22,8 +22,14 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   if (!sw) sw = await ctx.waitForEvent('serviceworker', { timeout: 15000 });
   const id = sw.url().split('/')[2];
 
-  // Seed a library with duplicates, an empty folder and tags via the service worker.
-  const seeded = await sw.evaluate(async () => {
+  // Extension APIs are only reachable from an extension page, not from the worker's
+  // isolated world, so a helper page acts as our API surface.
+  const api = await ctx.newPage();
+  await api.goto(`chrome-extension://${id}/popup/popup.html`);
+  const ev = (fn, arg) => api.evaluate(fn, arg);
+
+  // Seed a library with duplicates, an empty folder and tags.
+  const seeded = await ev(async () => {
     const bar = '1';
     const work = await chrome.bookmarks.create({ parentId: bar, title: 'Work' });
     const empty = await chrome.bookmarks.create({ parentId: work.id, title: 'Empty folder' });
@@ -124,13 +130,13 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   // Clean up duplicates
   await page.click('.dup-group [data-d="group"]');
   await page.waitForTimeout(800);
-  const afterDup = await sw.evaluate(() => chrome.bookmarks.search({ query: 'example.com' }).then(r => r.filter(b => b.url).length));
+  const afterDup = await ev(() => chrome.bookmarks.search({ query: 'example.com' }).then(r => r.filter(b => b.url).length));
   ok('duplicate cleanup removed one', afterDup === 1, `${afterDup} left`);
 
   // Undo restores it
   await page.click('.toast .btn');
   await page.waitForTimeout(1000);
-  const afterUndo = await sw.evaluate(() => chrome.bookmarks.search({ query: 'example.com' }).then(r => r.filter(b => b.url).length));
+  const afterUndo = await ev(() => chrome.bookmarks.search({ query: 'example.com' }).then(r => r.filter(b => b.url).length));
   ok('undo restores deleted bookmark', afterUndo === 2, `${afterUndo} present`);
 
   // Empty folders
@@ -139,7 +145,7 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   ok('empty folder detected', (await page.locator('.empty-row:not(.head)').count()) === 1);
   await page.click('[data-e="delete"]');
   await page.waitForTimeout(800);
-  const emptyGone = await sw.evaluate(id => chrome.bookmarks.get(id).then(() => false, () => true), seeded.empty);
+  const emptyGone = await ev(id => chrome.bookmarks.get(id).then(() => false, () => true), seeded.empty);
   ok('empty folder deleted', emptyGone);
 
   // Tag suggestions review
@@ -156,13 +162,13 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   ok('accept suggested tags', accepted);
 
   // Read later: save a bookmark into it and check badge
-  const rlSaved = await sw.evaluate(async () => {
+  const rlSaved = await ev(async () => {
     const { saveForLater } = await import('/lib/readlater.js');
     const r = await saveForLater({ url: 'https://example.net/article', title: 'An article', tags: ['later'], text: 'word '.repeat(500), saveText: true });
     return r.node.id;
   });
   await page.waitForTimeout(500);
-  const badge = await sw.evaluate(() => chrome.action.getBadgeText({}));
+  const badge = await ev(() => chrome.action.getBadgeText({}));
   ok('badge shows unread count', badge === '1', `badge="${badge}"`);
   await page.click('a[href="#readlater"]');
   await page.waitForSelector('.items .item.link');
@@ -177,7 +183,7 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   ok('mark as read moves to Read tab', (await page.locator('.items .item.link').count()) === 1);
   await page.click('[data-act="archive-read"]');
   await page.waitForTimeout(700);
-  const archived = await sw.evaluate(async id => {
+  const archived = await ev(async id => {
     const { rlFolders } = await chrome.storage.local.get('rlFolders');
     const [n] = await chrome.bookmarks.get(id);
     return n.parentId === rlFolders.archiveId;
@@ -227,7 +233,7 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   await page.waitForSelector('[data-b="import"]');
   await page.click('[data-b="import"]');
   await page.waitForTimeout(1500);
-  const imported = await sw.evaluate(() => chrome.bookmarks.search({ query: 'import-one.example' }).then(r => r.length));
+  const imported = await ev(() => chrome.bookmarks.search({ query: 'import-one.example' }).then(r => r.length));
   ok('import from HTML file', imported === 1);
   const importedTags = await page.evaluate(async () => {
     const all = await chrome.storage.local.get(null);
@@ -246,7 +252,7 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const port = server.address().port;
   const base = `http://127.0.0.1:${port}`;
-  const checkIds = await sw.evaluate(async b => {
+  const checkIds = await ev(async b => {
     const good = await chrome.bookmarks.create({ parentId: '1', title: 'Good', url: b + '/good' });
     const moved = await chrome.bookmarks.create({ parentId: '1', title: 'Moved', url: b + '/moved' });
     const dead = await chrome.bookmarks.create({ parentId: '1', title: 'Dead', url: b + '/missing' });
@@ -277,7 +283,7 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   ok('HEAD probe reaches live server', realProbe.good && realProbe.good.code === 200, JSON.stringify(realProbe.good));
   ok('redirect observed', realProbe.moved && realProbe.moved.redirected === true, JSON.stringify(realProbe.moved));
   ok('404 observed', realProbe.dead && realProbe.dead.code === 404, JSON.stringify(realProbe.dead));
-  await sw.evaluate(ids => Promise.all(ids.map(i => chrome.bookmarks.remove(i))), checkIds);
+  await ev(ids => Promise.all(ids.map(i => chrome.bookmarks.remove(i))), checkIds);
   server.close();
 
   // Drag and drop: move a bookmark into a folder by dispatching DnD events.

@@ -41,7 +41,6 @@ function assert(cond, msg) {
   };
   console.log('extraction');
   let r = await extract(`${BASE}/article.html`);
-  if (process.env.DEBUG) console.log(r);
   assert(r.item.type === 'article-journal', 'Highwire fixture is a journal article');
   assert(r.item.authors.length === 3 && r.item.authors[2].family === 'Parmar', 'three authors parsed');
   assert(r.item.doi === '10.5555/3295222.3295349', 'DOI from citation_doi');
