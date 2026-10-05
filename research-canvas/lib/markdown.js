@@ -194,7 +194,9 @@ export function clipToMarkdown(clip, { headingLevel = 3 } = {}) {
   const src = clip.url ? `[${(clip.pageTitle || clip.url).replace(/[\[\]]/g, '')}](${clip.url})` : '';
   const meta = [];
   if (src) meta.push(`Source: ${src}`);
-  meta.push(`Clipped: ${new Date(clip.createdAt).toLocaleString()}`);
+  meta.push(clip.type === 'note'
+    ? `Edited: ${new Date(clip.updatedAt).toLocaleString()}`
+    : `Clipped: ${new Date(clip.createdAt).toLocaleString()}`);
   if (clip.tags && clip.tags.length) meta.push('Tags: ' + clip.tags.map(t => '#' + t).join(' '));
   let body = '';
   switch (clip.type) {
