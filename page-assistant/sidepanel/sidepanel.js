@@ -120,13 +120,24 @@ async function saveSettings() {
 // ---------------- AI availability ----------------
 function wantAI(api) {
   if (state.settings.engine === 'extractive') return false;
+  // Only use a model that is ready. A model that still has to download (often gigabytes,
+  // or never on ineligible hardware) must not block the action: the offline engine answers
+  // now and the status bar offers the one-time download.
+  return state.ai[api] === 'available';
+}
+
+function aiPendingNote(api) {
+  if (state.settings.engine === 'extractive') return '';
   const s = state.ai[api];
-  return s === 'available' || s === 'downloadable' || s === 'downloading';
+  if (s === 'downloadable') return 'Offline result. Download the on-device model from the status bar for AI answers.';
+  if (s === 'downloading') return 'Offline result while the on-device model downloads.';
+  return state.settings.engine === 'ai' ? 'On-device AI is not available here, so the offline engine was used.' : '';
 }
 
 async function refreshAI() {
   state.ai = await AI.allAvailability(outLang());
   renderAIStatus();
+  renderChatMode();
   if (Object.values(state.ai).includes('downloading')) {
     clearTimeout(refreshAI._t);
     refreshAI._t = setTimeout(refreshAI, 4000);
@@ -543,7 +554,7 @@ async function runSummary(opts = {}) {
       }
     }
     if (!markdown) {
-      if (state.settings.engine === 'ai' && !note) note = 'On-device AI is not available here, so the offline summarizer was used.';
+      if (!note) note = aiPendingNote('Summarizer');
       setStatus(status, 'Ranking sentences…', true);
       await new Promise((r) => setTimeout(r, 0));
       const r = NLP.summarizeExtractive(useSel && selText ? selText : doc.blocks, { type, length, title: doc.title });

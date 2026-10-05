@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type Kit</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><img src="../icons/icon32.png" alt="" width="20" height="20"><span>Type Kit</span></div>
+    <label class="switch" title="Expand snippet shortcuts while you type">
+      <input type="checkbox" id="expander" role="switch"><span>Expand</span>
+    </label>
+    <button class="btn ghost icon" id="manage" title="Open the snippet manager" aria-label="Open the snippet manager">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    </button>
+  </header>
+  <div class="searchbar">
+    <input class="input" id="q" type="search" placeholder="Search snippets and clipboard" autocomplete="off" spellcheck="false" aria-label="Search snippets and clipboard" aria-controls="list">
+  </div>
+  <div class="tabs">
+    <div class="seg" role="tablist" aria-label="Show">
+      <button role="tab" id="tab-clips" aria-selected="true" aria-controls="list" data-tab="clips">Clipboard</button>
+      <button role="tab" id="tab-snippets" aria-selected="false" aria-controls="list" data-tab="snippets">Snippets</button>
+    </div>
+    <span class="count muted" id="count"></span>
+  </div>
+  <main id="list" role="listbox" aria-label="Results" tabindex="-1"></main>
+  <section id="fill" class="fill" hidden aria-labelledby="fill-title">
+    <h2 id="fill-title">Fill in</h2>
+    <form id="fill-form"></form>
+    <pre id="fill-preview" class="fill-preview"></pre>
+    <div class="fill-actions">
+      <button type="button" class="btn" id="fill-cancel">Cancel</button>
+      <button type="button" class="btn primary" id="fill-ok">Copy</button>
+    </div>
+  </section>
+  <footer class="foot">
+    <span><span class="kbd">Enter</span> paste</span>
+    <span><span class="kbd">Shift+Enter</span> copy</span>
+    <span><span class="kbd">Alt+Shift+V</span> picker on page</span>
+  </footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="../shared/store.js"></script>
+  <script src="../shared/engine.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

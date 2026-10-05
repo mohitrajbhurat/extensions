@@ -12,7 +12,7 @@ const { chromium } = require('playwright');
 const EXT = path.resolve(__dirname, '..');
 const FIX = path.join(EXT, 'test', 'fixtures');
 
-let server, origin, ctx, extId;
+let server, origin, ctx, extId, extCopy;
 
 function serve() {
   return new Promise((resolve) => {
@@ -32,7 +32,7 @@ test.before(async () => {
   // Headless tests cannot click the toolbar icon (activeTab) or answer the optional
   // permission prompt, so load a copy whose manifest already holds the host access a
   // user grants with "Allow on all sites".
-  const copy = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-ext-'));
+  const copy = extCopy = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-ext-'));
   fs.cpSync(EXT, copy, { recursive: true, filter: (src) => !src.includes(`${path.sep}test${path.sep}`) && !src.endsWith(`${path.sep}test`) });
   const mf = JSON.parse(fs.readFileSync(path.join(copy, 'manifest.json'), 'utf8'));
   mf.host_permissions = ['<all_urls>'];
@@ -50,6 +50,7 @@ test.before(async () => {
 test.after(async () => {
   if (ctx) await ctx.close();
   if (server) server.close();
+  if (extCopy) fs.rmSync(extCopy, { recursive: true, force: true });
 });
 
 async function extracted(file) {
@@ -232,6 +233,21 @@ test('selection tools explain a passage offline', async () => {
   await panel.waitForSelector('#tool-output p, #tool-output ul', { timeout: 30000 });
   const out = await panel.textContent('#tool-output');
   assert.match(out, /Reading level|varroa|mite/i);
+  await panel.close();
+  await target.close();
+});
+
+test('context menu actions reach the panel (explain selection)', async () => {
+  const { target, panel } = await openPanel('article.html');
+  const [sw] = ctx.serviceWorkers();
+  const tabId = await sw.evaluate(async (u) => (await chrome.tabs.query({ url: u }))[0].id, target.url());
+  // Same hand-off the service worker performs for "Explain" in the selection menu.
+  await sw.evaluate(async (id) => chrome.storage.session.set({ 'pa:pending': { action: 'explain', text: 'Colonies with heavy infestations often fail during winter, when bees cannot forage and must survive on stored honey.', tabId: id, ts: Date.now() } }), tabId);
+  await panel.waitForFunction(() => document.querySelector('#sel-text').value.includes('heavy infestations'), { timeout: 10000 });
+  await panel.waitForSelector('#tool-output p, #tool-output ul', { timeout: 30000 });
+  assert.ok(await panel.isVisible('#panel-tools'));
+  const left = await sw.evaluate(async () => (await chrome.storage.session.get('pa:pending'))['pa:pending']);
+  assert.strictEqual(left, undefined, 'pending action should be consumed once');
   await panel.close();
   await target.close();
 });
