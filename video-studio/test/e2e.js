@@ -281,7 +281,7 @@ setTimeout(() => {
     await panel.click('#btn-faster');
     await sleep(400);
     const after = await rate();
-    check('panel speed button changes speed', Math.abs(after - (before + 0.1)) < 0.001, [before, after]);
+    check('panel speed button steps to the next 0.1 grid point', Math.abs(after - (Math.floor(before * 10 + 1e-6) + 1) / 10) < 0.001, [before, after]);
     await panel.click('#tab-chapters');
     await panel.fill('#bm-label', 'Introduction');
     await panel.click('#bm-add');

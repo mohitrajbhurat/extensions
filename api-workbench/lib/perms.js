@@ -18,6 +18,8 @@ export async function initPerms() {
   chrome.permissions.onRemoved.addListener(reload);
 }
 
+export async function refreshPerms() { if (chrome.permissions) update(await chrome.permissions.getAll()); }
+
 export function onPermsChange(fn) { listeners.add(fn); }
 export function hasAllUrls() { return granted.all; }
 

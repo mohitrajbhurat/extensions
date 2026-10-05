@@ -504,6 +504,9 @@ async function importData(file) {
 // ---------- events ----------
 document.addEventListener('keydown', (e) => {
   if (e.target.matches('input, select, textarea')) return;
+  // Let focused controls outside the card (tabs, filters, header) handle their own keys.
+  if (e.target.closest('button, a, [role="radiogroup"]') && !e.target.closest('#deck, #quizRun')) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (state.tab === 'review' && state.deck.length) {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); deckAction(state.revealed ? 'good' : 'reveal'); }
     else if (state.revealed && e.key === '1') deckAction('again');
@@ -551,3 +554,20 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
   if (typeof speechSynthesis !== 'undefined') speechSynthesis.getVoices();
   setTab(location.hash.slice(1) || 'review');
 })();
+
+// Arrow-key navigation for the segmented radio groups (roving tabindex).
+for (const [id, key, rerender] of [['quizMode', 'quizMode', () => renderQuiz()], ['quizPool', 'quizPool', () => renderQuiz()], ['wordFilter', 'wordFilter', () => renderWords()]]) {
+  const seg = $(id);
+  seg.addEventListener('keydown', (e) => {
+    const vals = [...seg.querySelectorAll('button')].map((b) => b.dataset.v);
+    let i = vals.indexOf(state[key]);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') i = (i + 1) % vals.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') i = (i + vals.length - 1) % vals.length;
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
+    state[key] = vals[i];
+    rerender();
+    seg.querySelector(`[data-v="${vals[i]}"]`).focus();
+  });
+}

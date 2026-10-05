@@ -199,7 +199,12 @@ async function getTargetTab() {
   if (!hasChrome || !chrome.tabs) return null;
   if (MODE === 'window') {
     if (boundTabId) { try { return await chrome.tabs.get(boundTabId); } catch (e) { boundTabId = null; } }
-    const tabs = await chrome.tabs.query({ active: true, windowType: 'normal' });
+    // Never target this assistant window/tab itself (it may be open as a tab too).
+    let selfId = null;
+    try { const me = await chrome.tabs.getCurrent(); selfId = me ? me.id : null; } catch (e) { /* not in a tab */ }
+    const own = chrome.runtime.getURL('');
+    const tabs = (await chrome.tabs.query({ active: true, windowType: 'normal' }))
+      .filter((t) => t.id !== selfId && !(t.url || '').startsWith(own));
     return tabs.sort((a, b) => (b.lastAccessed || 0) - (a.lastAccessed || 0))[0] || null;
   }
   const [t] = await chrome.tabs.query({ active: true, currentWindow: true });

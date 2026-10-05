@@ -238,14 +238,14 @@ export function parseDateText(text, now = new Date()) {
     (m) => ({ date: monthDay(MONTHS[m[2]], +m[1], today, m[3] ? +m[3] : null) }), found);
 
   // --- relative dates
-  scan(lower, /\b(today|tod|tonight|tomorrow|tomorrowo|tmr|tmrw|tom|yesterday)\b/gi, (m) => {
+  scan(lower, /\bday\s+after\s+tomorrow\b/gi, () => ({ date: addDays(today, 2) }), found);
+  scan(lower, /\b(today|tod|tonight|tomorrow|tmr|tmrw|tom|yesterday)\b/gi, (m) => {
     const k = m[1].toLowerCase();
     if (k === 'yesterday') return { date: addDays(today, -1) };
     if (k === 'tonight') return { date: today, time: '20:00' };
     if (k === 'today' || k === 'tod') return { date: today };
     return { date: addDays(today, 1) };
   }, found);
-  scan(lower, /\bday\s+after\s+tomorrow\b/gi, () => ({ date: addDays(today, 2) }), found);
   scan(lower, new RegExp(`\\bin\\s+(${NUM_RE})\\s+(day|days|week|weeks|month|months|year|years)\\b`, 'gi'), (m) => {
     const n = num(m[1]);
     const u = m[2].toLowerCase();

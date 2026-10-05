@@ -12,9 +12,10 @@ const steps = [];
 const fail = [];
 const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} ${name}${extra ? ' — ' + extra : ''}`); if (!cond) fail.push(name); };
 
+let ctxRef = null;
 (async () => {
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sb-func-'));
-  const ctx = await chromium.launchPersistentContext(userDataDir, {
+  const ctx = ctxRef = await chromium.launchPersistentContext(userDataDir, {
     headless: true, channel: 'chromium',
     args: [`--disable-extensions-except=${dir}`, `--load-extension=${dir}`]
   });
@@ -134,7 +135,7 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   ok('duplicate cleanup removed one', afterDup === 1, `${afterDup} left`);
 
   // Undo restores it
-  await page.click('.toast .btn');
+  await page.click('.toast:has-text("Removed") .btn:not(.ghost)');
   await page.waitForTimeout(1000);
   const afterUndo = await ev(() => chrome.bookmarks.search({ query: 'example.com' }).then(r => r.filter(b => b.url).length));
   ok('undo restores deleted bookmark', afterUndo === 2, `${afterUndo} present`);
@@ -344,4 +345,4 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   console.log(steps.join('\n'));
   if (fail.length) { console.error(`\nFUNCTIONAL FAIL (${fail.length}): ${fail.join(', ')}`); process.exit(1); }
   console.log(`\nFUNCTIONAL PASS (${steps.length} checks)`);
-})().catch(e => { console.log(steps.join('\n')); console.error('FUNCTIONAL ERROR', e); process.exit(1); });
+})().catch(async e => { console.log(steps.join('\n')); console.error('FUNCTIONAL ERROR', e); if (ctxRef) await ctxRef.close().catch(() => {}); process.exit(1); });

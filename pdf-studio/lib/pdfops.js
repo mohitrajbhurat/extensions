@@ -202,11 +202,16 @@ export async function imagesToPdf(images, { pageSize = 'fit', orientation = 'aut
   return saveDoc(doc);
 }
 
-/** Lossless-ish compression: re-save with object streams, dropping unused objects. */
+/**
+ * Lossless compression: re-save with object streams. Documents without forms or bookmarks are rebuilt
+ * page by page, which also drops orphaned objects (old revisions, unused resources). Documents with
+ * an AcroForm or outline are re-saved in place so fields and bookmarks survive.
+ */
 export async function compressResave(bytes) {
-  const { PDFDocument } = lib();
+  const { PDFDocument, PDFName } = lib();
   const src = await loadPdf(bytes);
-  // Copying pages into a fresh document drops orphaned objects (old revisions, unused resources).
+  const keepStructure = src.catalog.has(PDFName.of('AcroForm')) || src.catalog.has(PDFName.of('Outlines'));
+  if (keepStructure) return saveDoc(src, { objectStreams: true });
   const out = await PDFDocument.create();
   const pages = await out.copyPages(src, src.getPageIndices());
   pages.forEach((p) => out.addPage(p));
@@ -215,6 +220,12 @@ export async function compressResave(bytes) {
   const author = src.getAuthor();
   if (author) out.setAuthor(author);
   return saveDoc(out, { objectStreams: true });
+}
+
+/** Basic facts about a PDF without rendering it. */
+export async function inspect(bytes) {
+  const doc = await loadPdf(bytes);
+  return { pages: doc.getPageCount(), encrypted: doc.isEncrypted };
 }
 
 /**

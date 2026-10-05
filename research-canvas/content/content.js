@@ -28,9 +28,8 @@
       const u = new URL(href);
       u.hash = '';
       for (const k of [...u.searchParams.keys()]) if (TRACKING.test(k)) u.searchParams.delete(k);
-      let s = u.toString();
-      if (s.endsWith('/') && u.pathname !== '/') s = s.slice(0, -1);
-      return s;
+      if (u.pathname.length > 1 && u.pathname.endsWith('/')) u.pathname = u.pathname.replace(/\/+$/, '') || '/';
+      return u.toString();
     } catch {
       return String(href).split('#')[0];
     }
@@ -41,6 +40,7 @@
   let page = { highlights: [], stickies: [] };
   const anchored = new Map(); // highlight id -> [elements]
   const orphans = new Set(); // highlight ids that could not be anchored (yet)
+  const pendingHl = new Map(); // highlight id -> highlight painted locally but not yet confirmed by storage
   let lastContextPoint = null;
   let alive = true;
 
@@ -490,11 +490,13 @@
     const hl = { id: 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), color: color || settings.defaultColor, ...sel, comment: '' };
     // Paint optimistically, then persist.
     page.highlights.push(hl);
+    pendingHl.set(hl.id, hl);
     observerPaused = true;
     anchorHighlight(hl);
     observerPaused = false;
     window.getSelection().removeAllRanges();
     const r = await send({ type: 'hl:add', url: pageUrl, title: document.title, highlight: hl });
+    pendingHl.delete(hl.id);
     if (!r.ok) {
       unwrap(hl.id);
       page.highlights = page.highlights.filter(x => x.id !== hl.id);
@@ -658,12 +660,13 @@
   // ---------- sticky notes ----------
   const stickyEls = new Map();
   const saveTimers = new Map();
+  const unsavedStickies = new Set(); // created locally, first save not confirmed yet
 
   function persistSticky(s, delay = 400) {
     clearTimeout(saveTimers.get(s.id));
     saveTimers.set(s.id, setTimeout(() => {
       saveTimers.delete(s.id);
-      send({ type: 'sticky:upsert', url: pageUrl, title: document.title, sticky: s });
+      send({ type: 'sticky:upsert', url: pageUrl, title: document.title, sticky: s }).then(() => unsavedStickies.delete(s.id));
     }, delay));
   }
 
@@ -680,6 +683,7 @@
       collapsed: false,
     };
     page.stickies.push(s);
+    unsavedStickies.add(s.id);
     renderSticky(s, true);
     updateBadge();
     persistSticky(s, 0);
@@ -729,6 +733,8 @@
         stickyEls.delete(s.id);
         page.stickies = page.stickies.filter(x => x.id !== s.id);
         clearTimeout(saveTimers.get(s.id));
+        saveTimers.delete(s.id);
+        unsavedStickies.delete(s.id);
         updateBadge();
         await send({ type: 'sticky:delete', url: pageUrl, id: s.id });
       });
@@ -903,7 +909,14 @@
     if (ch) {
       const next = ch.newValue || { highlights: [], stickies: [] };
       // Keep optimistic local highlights that have not been persisted yet.
-      page = { ...next, highlights: next.highlights || [], stickies: next.stickies || [] };
+      const highlights = [...(next.highlights || [])];
+      for (const [id, hl] of pendingHl) if (!highlights.some(x => x.id === id)) highlights.push(hl);
+      const stickies = [...(next.stickies || [])];
+      for (const id of unsavedStickies) {
+        const local = page.stickies.find(x => x.id === id);
+        if (local && !stickies.some(x => x.id === id)) stickies.push(local);
+      }
+      page = { ...next, highlights, stickies };
       syncHighlights();
       syncStickies();
       if (popoverId && !page.highlights.some(x => x.id === popoverId)) closePopover();

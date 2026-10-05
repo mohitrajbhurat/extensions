@@ -109,7 +109,7 @@ export function parseCurl(cmd) {
   }
   if (!url) throw new Error('No URL found in the cURL command');
   const req = newRequest({ url });
-  req.settings.followRedirects = follow || true;
+  req.settings.followRedirects = true; void follow; // browsers follow redirects by default, like curl -L
   let body = data.join('&');
   if (get && data.length) {
     const { base, query, hash } = splitUrl(url);

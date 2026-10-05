@@ -299,11 +299,10 @@
   function step(c, dir) {
     const cur = c.v.playbackRate;
     const s = settings.speedStep;
-    let next = dir > 0 ? cur + s : cur - s;
-    // Snap to the step grid so 1.0 -> 1.1 -> 1.2 stays tidy even after odd rates.
-    next = Math.round(next / s) * s;
-    if (dir < 0 && next >= cur) next = cur - s;
-    if (dir > 0 && next <= cur) next = cur + s;
+    // Move to the next point on the step grid (at most one step), so 1.0 -> 1.1 -> 1.2
+    // stays tidy and an odd rate like 1.25 goes to 1.3 / 1.2 rather than 1.35 / 1.15.
+    const pos = cur / s;
+    const next = dir > 0 ? (Math.floor(pos + 1e-6) + 1) * s : (Math.ceil(pos - 1e-6) - 1) * s;
     setRate(c, next);
   }
 

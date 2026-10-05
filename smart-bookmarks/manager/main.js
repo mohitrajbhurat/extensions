@@ -79,9 +79,18 @@ async function reload({ metaOnly = false } = {}) {
   render();
 }
 hooks.reload = opts => { reloading = reload(opts); return reloading; };
+// A pending full (tree) reload must never be downgraded by a later meta-only change,
+// and reloads are serialized so a slow one cannot overwrite a newer result.
+let pendingFull = false;
 function scheduleReload(metaOnly = false) {
+  if (!metaOnly) pendingFull = true;
   clearTimeout(reloadTimer);
-  reloadTimer = setTimeout(() => reload({ metaOnly }), metaOnly ? 120 : 200);
+  reloadTimer = setTimeout(() => {
+    const opts = { metaOnly: !pendingFull };
+    pendingFull = false;
+    const prev = reloading || Promise.resolve();
+    reloading = prev.catch(() => {}).then(() => reload(opts)).catch(e => console.warn('Reload failed', e));
+  }, pendingFull ? 200 : 120);
 }
 
 // ---------- Search ----------

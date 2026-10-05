@@ -6,31 +6,49 @@ import {
 import { getState, getSettings, update, mutations, onStateChanged, onSettingsChanged } from './lib/store.js';
 
 const STATUS_KEY = 'syncStatus';
-const MATCH_KEY = 'matchLog';
+const MATCH_KEY = 'tabMatches';       // chrome.storage.session: survives worker restarts
+const dnr = chrome.declarativeNetRequest;
 
-// dnr rule id -> { groupId, ruleId, name, type }
+// dnr rule id -> { groupId, groupName, color, ruleId, name, type }
 let dynamicMap = {};
 let sessionMap = {};
-// tabId -> { url, counts: {ruleId: n}, entries: [...] }
-let tabMatches = new Map();
-let feedback = null;      // null = unknown, true/false after probing
+// tabId -> { url, freshAt, counts: {ruleId: n}, entries: [...] }
+const tabMatches = new Map();
+const badgedTabs = new Set();          // tabs that carry a tab-specific badge override
+let feedback = null;                   // null = unknown, true/false after probing
 let settings = null;
 
 const isSet = v => v !== undefined && v !== null;
+const errText = e => String((e && e.message) || e);
 
 async function hasFeedback() {
   if (feedback !== null) return feedback;
   try {
     const perms = await chrome.permissions.getAll();
-    feedback = !!(perms.permissions || []).includes('declarativeNetRequestFeedback')
-      && typeof chrome.declarativeNetRequest.getMatchedRules === 'function';
+    feedback = (perms.permissions || []).includes('declarativeNetRequestFeedback')
+      && typeof dnr.getMatchedRules === 'function';
   } catch { feedback = false; }
   return feedback;
 }
 
-// ---------- rule sync ----------
+async function getSettingsCached() {
+  if (!settings) settings = await getSettings();
+  return settings;
+}
 
-async function syncRules() {
+// ---------- rule sync (serialized: overlapping updates would fight over rule ids) ----------
+
+let syncChain = Promise.resolve();
+let syncQueued = null;
+
+function syncRules() {
+  if (syncQueued) return syncQueued;
+  syncQueued = syncChain.then(() => { syncQueued = null; return doSync(); });
+  syncChain = syncQueued.catch(() => {});
+  return syncQueued;
+}
+
+async function doSync() {
   const state = await getState();
   const dynamic = [];
   const session = [];
@@ -45,165 +63,213 @@ async function syncRules() {
       const tabIds = isSet(g.tabScope) ? [g.tabScope] : null;
       for (const r of g.rules) {
         if (!r.enabled) continue;
-        const useSession = !!tabIds;
-        const ruleId = useSession ? sid : id;
+        const ruleId = tabIds ? sid : id;
         const res = compileRule(r, { id: ruleId, tabIds });
         if (!res.dnr) {
           errors.push({ groupId: g.id, ruleId: r.id, name: ruleDisplayName(r), messages: res.errors.map(e => e.message) });
           continue;
         }
         const meta = { groupId: g.id, groupName: g.name, color: g.color, ruleId: r.id, name: ruleDisplayName(r), type: r.type };
-        if (useSession) { session.push(res.dnr); nextSession[ruleId] = meta; sid++; }
+        if (tabIds) { session.push(res.dnr); nextSession[ruleId] = meta; sid++; }
         else { dynamic.push(res.dnr); nextDynamic[ruleId] = meta; id++; }
       }
     }
   }
 
   let installError = '';
+  const existing = await dnr.getDynamicRules();
   try {
-    const existing = await chrome.declarativeNetRequest.getDynamicRules();
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: existing.map(r => r.id),
-      addRules: dynamic,
-    });
+    await dnr.updateDynamicRules({ removeRuleIds: existing.map(r => r.id), addRules: dynamic });
   } catch (e) {
-    installError = String(e && e.message || e);
-    // Install what we can: find and drop the offending rules one by one.
-    const ok = [];
+    // The batch is atomic, so nothing changed. Clear everything, then add rule by rule so one
+    // bad rule (for example an RE2-incompatible regex) does not take the rest down with it.
+    installError = errText(e);
+    try { await dnr.updateDynamicRules({ removeRuleIds: existing.map(r => r.id) }); } catch { /* ignore */ }
+    let ok = 0;
     for (const r of dynamic) {
-      try {
-        await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: [r.id], addRules: [r] });
-        ok.push(r.id);
-      } catch (err) {
-        const meta = nextDynamic[r.id];
-        errors.push({ groupId: meta && meta.groupId, ruleId: meta && meta.ruleId, name: meta && meta.name, messages: [String(err && err.message || err)] });
+      try { await dnr.updateDynamicRules({ addRules: [r] }); ok++; }
+      catch (err) {
+        const meta = nextDynamic[r.id] || {};
+        errors.push({ groupId: meta.groupId, ruleId: meta.ruleId, name: meta.name, messages: [errText(err)] });
         delete nextDynamic[r.id];
       }
     }
-    if (ok.length) installError = '';
+    if (ok || !dynamic.length) installError = '';
   }
+
   try {
-    const existingS = (await chrome.declarativeNetRequest.getSessionRules()).filter(r => r.id >= SESSION_ID_BASE);
-    await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: existingS.map(r => r.id), addRules: session });
+    const existingS = (await dnr.getSessionRules()).filter(r => r.id >= SESSION_ID_BASE);
+    await dnr.updateSessionRules({ removeRuleIds: existingS.map(r => r.id), addRules: session });
   } catch (e) {
-    errors.push({ name: 'Tab-scoped rules', messages: [String(e && e.message || e)] });
+    try {
+      const existingS = (await dnr.getSessionRules()).filter(r => r.id >= SESSION_ID_BASE);
+      await dnr.updateSessionRules({ removeRuleIds: existingS.map(r => r.id) });
+    } catch { /* ignore */ }
+    for (const r of session) {
+      try { await dnr.updateSessionRules({ addRules: [r] }); }
+      catch (err) {
+        const meta = nextSession[r.id] || {};
+        errors.push({ groupId: meta.groupId, ruleId: meta.ruleId, name: meta.name, messages: [errText(err)] });
+        delete nextSession[r.id];
+      }
+    }
   }
 
   dynamicMap = nextDynamic;
   sessionMap = nextSession;
-  await chrome.storage.local.set({
-    [STATUS_KEY]: {
-      at: Date.now(),
-      installed: Object.keys(nextDynamic).length + Object.keys(nextSession).length,
-      active: countActiveRules(state),
-      errors,
-      installError,
-    },
-  });
-  await updateBadge();
-  return { installed: dynamic.length + session.length, errors };
+  const result = {
+    at: Date.now(),
+    installed: Object.keys(nextDynamic).length + Object.keys(nextSession).length,
+    active: countActiveRules(state),
+    errors,
+    installError,
+  };
+  await chrome.storage.local.set({ [STATUS_KEY]: result });
+  await refreshAllBadges();
+  return result;
 }
 
 function metaFor(id) { return dynamicMap[id] || sessionMap[id] || null; }
 
 // ---------- badge ----------
+// Global badge: active rule count (or "off"). Per tab, in "matches" mode: number of matches.
 
 function tabEntry(tabId) {
   let e = tabMatches.get(tabId);
-  if (!e) { e = { url: '', counts: {}, entries: [] }; tabMatches.set(tabId, e); }
+  if (!e) { e = { url: '', freshAt: 0, counts: {}, entries: [] }; tabMatches.set(tabId, e); }
   return e;
 }
 
-async function updateBadge(tabId) {
-  settings = settings || await getSettings();
-  const state = await getState();
-  const active = countActiveRules(state);
-  const mode = settings.badgeMode;
-  if (mode === 'off') {
-    await chrome.action.setBadgeText({ text: '' });
-    await setTitle(state, active, 0);
-    return;
-  }
-  let id = tabId;
-  if (id === undefined) {
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-      id = tab && tab.id;
-    } catch { /* no tabs permission yet */ }
-  }
-  const hits = id !== undefined && tabMatches.has(id) ? Object.values(tabMatches.get(id).counts).reduce((a, b) => a + b, 0) : 0;
-  let text = '';
-  let color = '#64748b';
-  if (state.paused) { text = 'off'; color = '#94a3b8'; }
-  else if (mode === 'matches' && hits > 0) { text = String(Math.min(hits, 999)); color = '#15803d'; }
-  else if (active > 0) { text = String(Math.min(active, 999)); color = mode === 'matches' ? '#475569' : '#0369a1'; }
-  await chrome.action.setBadgeText({ text });
-  await chrome.action.setBadgeBackgroundColor({ color });
-  await setTitle(state, active, hits);
+function hitsFor(tabId) {
+  const e = tabMatches.get(tabId);
+  return e ? Object.values(e.counts).reduce((a, b) => a + b, 0) : 0;
 }
 
-async function setTitle(state, active, hits) {
+async function globalBadge() {
+  const s = await getSettingsCached();
+  const state = await getState();
+  const active = countActiveRules(state);
+  if (s.badgeMode === 'off') return { text: '', color: '#64748b', active, state };
+  if (state.paused) return { text: 'off', color: '#94a3b8', active, state };
+  return { text: active > 0 ? String(Math.min(active, 999)) : '', color: '#2743b8', active, state };
+}
+
+async function refreshAllBadges() {
+  const g = await globalBadge();
+  try {
+    await chrome.action.setBadgeText({ text: g.text });
+    await chrome.action.setBadgeBackgroundColor({ color: g.color });
+    await chrome.action.setTitle({ title: titleText(g.state, g.active, 0) });
+  } catch { /* ignore */ }
+  const tabs = new Set([...badgedTabs, ...tabMatches.keys()]);
+  for (const tabId of tabs) await updateTabBadge(tabId, g);
+}
+
+async function updateTabBadge(tabId, g) {
+  if (!isSet(tabId) || tabId < 0) return;
+  g = g || await globalBadge();
+  const s = await getSettingsCached();
+  const hits = hitsFor(tabId);
+  try {
+    if (s.badgeMode === 'matches' && !g.state.paused && hits > 0) {
+      await chrome.action.setBadgeText({ tabId, text: String(Math.min(hits, 999)) });
+      await chrome.action.setBadgeBackgroundColor({ tabId, color: '#15803d' });
+      badgedTabs.add(tabId);
+    } else if (badgedTabs.has(tabId)) {
+      await chrome.action.setBadgeText({ tabId, text: null });   // falls back to the global text
+      await chrome.action.setBadgeBackgroundColor({ tabId, color: g.color });
+      badgedTabs.delete(tabId);
+    }
+    await chrome.action.setTitle({ tabId, title: titleText(g.state, g.active, hits) });
+  } catch {
+    badgedTabs.delete(tabId);   // tab is gone
+  }
+}
+
+function titleText(state, active, hits) {
   const parts = ['Request Rewriter'];
   if (state.paused) parts.push('paused');
   else {
     parts.push(`${active} active rule${active === 1 ? '' : 's'}`);
     if (hits > 0) parts.push(`${hits} match${hits === 1 ? '' : 'es'} on this tab`);
   }
-  await chrome.action.setTitle({ title: parts.join(' — ') });
+  return parts.join(' — ');
 }
 
 // ---------- match tracking ----------
 
-function recordMatch(info) {
-  const tabId = info.request && info.request.tabId;
-  const ruleId = info.rule && info.rule.ruleId;
-  const meta = metaFor(ruleId);
-  if (!meta || tabId === undefined || tabId < 0) return;
+let saveTimer = null;
+function persistMatches() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const obj = {};
+    for (const [k, v] of tabMatches) obj[k] = v;
+    chrome.storage.session.set({ [MATCH_KEY]: obj }).catch(() => {});
+  }, 400);
+}
+
+async function restoreMatches() {
+  try {
+    const got = await chrome.storage.session.get(MATCH_KEY);
+    for (const [k, v] of Object.entries(got[MATCH_KEY] || {})) if (!tabMatches.has(+k)) tabMatches.set(+k, v);
+  } catch { /* storage.session unavailable */ }
+}
+
+function resetTab(tabId, url) {
   const e = tabEntry(tabId);
+  e.counts = {};
+  e.entries = [];
+  if (url !== undefined) e.url = url;
+  return e;
+}
+
+const badgeTimers = new Map();
+function scheduleTabBadge(tabId) {
+  if (badgeTimers.has(tabId)) return;
+  badgeTimers.set(tabId, setTimeout(() => { badgeTimers.delete(tabId); updateTabBadge(tabId).catch(() => {}); }, 150));
+}
+
+function recordMatch(info) {
+  const req = info.request || {};
+  const tabId = req.tabId;
+  const meta = metaFor(info.rule && info.rule.ruleId);
+  if (!meta || !isSet(tabId) || tabId < 0) return;
+  let e = tabEntry(tabId);
+  if (req.type === 'main_frame') { e = resetTab(tabId, req.url); e.freshAt = Date.now(); }
   e.counts[meta.ruleId] = (e.counts[meta.ruleId] || 0) + 1;
-  const limit = (settings && settings.logLimit) || 300;
-  e.entries.unshift({
-    at: Date.now(),
-    url: info.request.url,
-    method: info.request.method,
-    type: info.request.type,
-    ruleId: meta.ruleId,
-    groupId: meta.groupId,
-    name: meta.name,
-    ruleType: meta.type,
-  });
-  if (e.entries.length > limit) e.entries.length = limit;
+  if (!settings || settings.logMatches !== false) {
+    const limit = (settings && settings.logLimit) || 300;
+    e.entries.unshift({
+      at: Date.now(), url: req.url, method: req.method, type: req.type,
+      ruleId: meta.ruleId, groupId: meta.groupId, name: meta.name, ruleType: meta.type,
+    });
+    if (e.entries.length > limit) e.entries.length = limit;
+  }
+  persistMatches();
+  scheduleTabBadge(tabId);
 }
 
 function attachFeedbackListener() {
-  const api = chrome.declarativeNetRequest;
-  if (!api.onRuleMatchedDebug) return false;
-  try {
-    api.onRuleMatchedDebug.addListener(info => {
-      recordMatch(info);
-      updateBadge(info.request && info.request.tabId).catch(() => {});
-    });
-    return true;
-  } catch { return false; }
+  if (!dnr.onRuleMatchedDebug) return false;   // only for unpacked installs
+  try { dnr.onRuleMatchedDebug.addListener(recordMatch); return true; } catch { return false; }
 }
 
-// Fallback when onRuleMatchedDebug is unavailable: poll getMatchedRules for the active tab.
+// Fallback when onRuleMatchedDebug is unavailable (packed installs): ask getMatchedRules.
 async function pollMatchedRules(tabId) {
+  if (!isSet(tabId) || tabId < 0 || dnr.onRuleMatchedDebug) return;
   if (!(await hasFeedback())) return;
-  if (chrome.declarativeNetRequest.onRuleMatchedDebug) return;
   try {
-    const { rulesMatchedInfo } = await chrome.declarativeNetRequest.getMatchedRules({ tabId });
-    const e = tabEntry(tabId);
-    e.counts = {};
-    e.entries = [];
+    const { rulesMatchedInfo } = await dnr.getMatchedRules({ tabId });
+    const e = resetTab(tabId);
     for (const m of rulesMatchedInfo || []) {
       const meta = metaFor(m.rule.ruleId);
       if (!meta) continue;
       e.counts[meta.ruleId] = (e.counts[meta.ruleId] || 0) + 1;
       e.entries.push({ at: m.timeStamp, url: '', method: '', type: '', ruleId: meta.ruleId, groupId: meta.groupId, name: meta.name, ruleType: meta.type });
     }
-    await updateBadge(tabId);
-  } catch { /* no feedback permission */ }
+    persistMatches();
+    await updateTabBadge(tabId);
+  } catch { /* quota exceeded or no permission */ }
 }
 
 // ---------- events ----------
@@ -212,97 +278,102 @@ chrome.runtime.onInstalled.addListener(async details => {
   await syncRules();
   if (details.reason === 'install') chrome.tabs.create({ url: chrome.runtime.getURL('editor/editor.html?welcome=1') });
 });
-chrome.runtime.onStartup.addListener(() => { syncRules(); });
+
+// Tab ids do not survive a browser restart, so tab-scoped groups are turned off on startup.
+chrome.runtime.onStartup.addListener(async () => {
+  const state = await getState();
+  if (state.groups.some(g => isSet(g.tabScope))) await update(s => detachTabScopes(s, () => true));
+  else syncRules();
+});
+
+function detachTabScopes(s, pred) {
+  for (const g of s.groups) {
+    if (isSet(g.tabScope) && pred(g.tabScope)) {
+      delete g.tabScope;
+      g.enabled = false;
+      if (!/tab closed/.test(g.description || '')) g.description = `${g.description ? g.description + ' ' : ''}(Its tab closed; turn it on to apply it everywhere.)`;
+    }
+  }
+}
 
 onStateChanged(() => { syncRules(); });
-onSettingsChanged(s => { settings = s; updateBadge(); });
+onSettingsChanged(s => { settings = s; refreshAllBadges(); });
 
-chrome.tabs.onActivated.addListener(({ tabId }) => { updateBadge(tabId); pollMatchedRules(tabId); });
+chrome.tabs.onActivated.addListener(({ tabId }) => { pollMatchedRules(tabId); });
 chrome.tabs.onRemoved.addListener(async tabId => {
   tabMatches.delete(tabId);
+  badgedTabs.delete(tabId);
+  persistMatches();
   const state = await getState();
-  if (state.groups.some(g => g.tabScope === tabId)) {
-    await update(s => { for (const g of s.groups) if (g.tabScope === tabId) delete g.tabScope; });
-  }
+  if (state.groups.some(g => g.tabScope === tabId)) await update(s => detachTabScopes(s, t => t === tabId));
 });
 chrome.tabs.onUpdated.addListener((tabId, change) => {
   if (change.status === 'loading' && change.url) {
     const e = tabEntry(tabId);
-    if (e.url && e.url !== change.url) { e.counts = {}; e.entries = []; }
+    // A main_frame match already reset the list for this navigation a moment ago.
+    if (e.url !== change.url && Date.now() - (e.freshAt || 0) > 3000) { resetTab(tabId, change.url); persistMatches(); }
     e.url = change.url;
-    updateBadge(tabId);
+    updateTabBadge(tabId);
   }
   if (change.status === 'complete') pollMatchedRules(tabId);
 });
 
-chrome.commands && chrome.commands.onCommand.addListener(async cmd => {
-  if (cmd === 'toggle-pause') {
-    await update(s => mutations.setPaused(s, !s.paused));
-  } else if (cmd === 'open-editor') {
-    chrome.tabs.create({ url: chrome.runtime.getURL('editor/editor.html') });
-  }
+chrome.commands.onCommand.addListener(async cmd => {
+  if (cmd === 'toggle-pause') await update(s => mutations.setPaused(s, !s.paused));
+  else if (cmd === 'open-editor') chrome.tabs.create({ url: chrome.runtime.getURL('editor/editor.html') });
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, respond) => {
-  (async () => {
-    switch (msg && msg.cmd) {
-      case 'sync': respond(await syncRules()); break;
-      case 'status': {
-        const state = await getState();
-        const got = await chrome.storage.local.get(STATUS_KEY);
-        let tabId = msg.tabId;
-        if (tabId === undefined) {
-          const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-          tabId = tab && tab.id;
-        }
-        const e = tabId !== undefined ? tabMatches.get(tabId) : null;
-        respond({
-          paused: state.paused,
-          active: countActiveRules(state),
-          status: got[STATUS_KEY] || null,
-          feedback: await hasFeedback(),
-          liveMatching: !!chrome.declarativeNetRequest.onRuleMatchedDebug,
-          tabId,
-          matches: e ? { counts: e.counts, entries: e.entries.slice(0, msg.limit || 50) } : { counts: {}, entries: [] },
-        });
-        break;
-      }
-      case 'clearMatches': {
-        if (msg.tabId !== undefined) tabMatches.delete(msg.tabId); else tabMatches.clear();
-        await updateBadge(msg.tabId);
-        respond({ ok: true });
-        break;
-      }
-      case 'installed': {
-        const [dyn, ses] = await Promise.all([
-          chrome.declarativeNetRequest.getDynamicRules(),
-          chrome.declarativeNetRequest.getSessionRules(),
-        ]);
-        respond({ dynamic: dyn, session: ses, map: { ...dynamicMap, ...sessionMap } });
-        break;
-      }
-      case 'test': {
-        const state = await getState();
-        respond(summarizeTest(testRequest(state, msg.request)));
-        break;
-      }
-      case 'checkRegex': {
-        try {
-          const r = await chrome.declarativeNetRequest.isRegexSupported({
-            regex: msg.regex, isCaseSensitive: false, requireCapturing: !!msg.requireCapturing,
-          });
-          respond(r);
-        } catch (e) { respond({ isSupported: false, reason: String(e && e.message || e) }); }
-        break;
-      }
-      case 'ruleTypes': respond(RULE_TYPES); break;
-      default: respond({ error: 'unknown command' });
-    }
-  })().catch(e => respond({ error: String(e && e.message || e) }));
+  if (sender.id !== chrome.runtime.id) return false;
+  handle(msg).then(respond, e => respond({ error: errText(e) }));
   return true;
 });
 
-// Strips DOM-unfriendly cycles: messages must be structured-cloneable plain data.
+async function handle(msg) {
+  switch (msg && msg.cmd) {
+    case 'sync': return syncRules();
+    case 'status': {
+      const state = await getState();
+      const got = await chrome.storage.local.get(STATUS_KEY);
+      let tabId = msg.tabId;
+      if (!isSet(tabId)) {
+        const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        tabId = tab && tab.id;
+      }
+      if (msg.poll) await pollMatchedRules(tabId);
+      const e = isSet(tabId) ? tabMatches.get(tabId) : null;
+      return {
+        paused: state.paused,
+        active: countActiveRules(state),
+        status: got[STATUS_KEY] || null,
+        feedback: await hasFeedback(),
+        liveMatching: !!dnr.onRuleMatchedDebug,
+        tabId,
+        matches: e ? { counts: e.counts, entries: e.entries.slice(0, msg.limit || 50) } : { counts: {}, entries: [] },
+      };
+    }
+    case 'clearMatches': {
+      if (isSet(msg.tabId)) resetTab(msg.tabId); else tabMatches.clear();
+      persistMatches();
+      await refreshAllBadges();
+      return { ok: true };
+    }
+    case 'installed': {
+      const [dyn, ses] = await Promise.all([dnr.getDynamicRules(), dnr.getSessionRules()]);
+      return { dynamic: dyn, session: ses.filter(r => r.id >= SESSION_ID_BASE), map: { ...dynamicMap, ...sessionMap } };
+    }
+    case 'test': return summarizeTest(testRequest(await getState(), msg.request));
+    case 'checkRegex': {
+      try {
+        return await dnr.isRegexSupported({ regex: msg.regex, isCaseSensitive: false, requireCapturing: !!msg.requireCapturing });
+      } catch (e) { return { isSupported: false, reason: errText(e) }; }
+    }
+    case 'ruleTypes': return RULE_TYPES;
+    default: return { error: 'unknown command' };
+  }
+}
+
+// Messages must be structured-cloneable plain data, so drop the group/rule object graph.
 function summarizeTest(result) {
   const lite = c => ({
     ruleId: c.rule.id, groupId: c.group.id, groupName: c.group.name, color: c.group.color,
@@ -310,22 +381,23 @@ function summarizeTest(result) {
     active: c.active, matched: c.matched, reason: c.reason, dnr: c.dnr || null,
   });
   const o = result.outcome;
+  const hdr = h => ({ header: h.header, operation: h.operation, value: h.value, rule: ruleDisplayName(h.rule) });
   return {
     checks: result.checks.map(lite),
     outcome: {
       verdict: o.verdict, redirectTo: o.redirectTo, loopWarning: o.loopWarning || '',
       winner: o.winner ? lite(o.winner) : null,
       applied: o.applied.map(lite),
-      requestHeaders: o.requestHeaders.map(h => ({ header: h.header, operation: h.operation, value: h.value, rule: ruleDisplayName(h.rule) })),
-      responseHeaders: o.responseHeaders.map(h => ({ header: h.header, operation: h.operation, value: h.value, rule: ruleDisplayName(h.rule) })),
+      requestHeaders: o.requestHeaders.map(hdr),
+      responseHeaders: o.responseHeaders.map(hdr),
     },
   };
 }
 
-// The worker can be restarted at any time; re-sync and re-attach on every boot.
+// The worker can be restarted at any time; re-attach listeners and re-sync on every boot.
 attachFeedbackListener();
 hasFeedback();
-syncRules();
+restoreMatches().then(() => syncRules());
 
 // Exposed for the end-to-end test harness.
-self.requestRewriter = { syncRules, updateBadge, tabMatches, maps: () => ({ dynamicMap, sessionMap }) };
+self.requestRewriter = { syncRules, refreshAllBadges, tabMatches, maps: () => ({ dynamicMap, sessionMap }) };

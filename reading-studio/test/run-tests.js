@@ -34,10 +34,41 @@ function serve(dir) {
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve({ server, port: server.address().port })));
 }
 
+// The content scripts run here in the page's main world (so tests can reach RS directly). That world
+// has no chrome.storage / chrome.runtime, so install a faithful in-memory stand-in seeded from the
+// test's settings store; updates fire chrome.storage.onChanged exactly like the real API.
+const store = { settings: null };
+const livePages = new Set();
+function installChromeMock(seed) {
+  const listeners = [];
+  const areas = { sync: { settings: seed }, local: {} };
+  const copy = (v) => (v === undefined ? v : JSON.parse(JSON.stringify(v)));
+  const area = (name) => ({
+    async get(keys) {
+      const out = {};
+      const list = keys == null ? Object.keys(areas[name]) : [].concat(typeof keys === 'object' && !Array.isArray(keys) ? Object.keys(keys) : keys);
+      for (const k of list) if (areas[name][k] !== undefined) out[k] = copy(areas[name][k]);
+      return out;
+    },
+    async set(obj) {
+      const changes = {};
+      for (const [k, v] of Object.entries(obj)) { changes[k] = { oldValue: copy(areas[name][k]), newValue: copy(v) }; areas[name][k] = copy(v); }
+      setTimeout(() => listeners.forEach((fn) => fn(changes, name)), 0);
+    },
+    async remove(k) { delete areas[name][k]; }
+  });
+  const c = window.chrome || (window.chrome = {});
+  c.storage = { sync: area('sync'), local: area('local'), onChanged: { addListener: (fn) => listeners.push(fn) } };
+  c.runtime = { onMessage: { addListener() {} }, sendMessage: async () => ({}) };
+}
+
 async function inject(page) {
+  await page.evaluate(`(${installChromeMock})(${JSON.stringify(store.settings)})`);
   for (const f of FILES) await page.addScriptTag({ path: path.join(EXT, f) });
   await page.waitForFunction(() => globalThis.RS && globalThis.RS.fullLoaded);
   await page.evaluate(() => globalThis.RS.ready);
+  livePages.add(page);
+  page.on('close', () => livePages.delete(page));
 }
 
 (async () => {
@@ -61,14 +92,15 @@ async function inject(page) {
     return page;
   };
 
-  // Settings are read from chrome.storage via a content-script context; tests drive them through
-  // a page that has extension APIs (the popup) so the stored values are shared with the test pages.
+  // Settings live in the test's store; every page with the content scripts gets the patch through
+  // its own storage stand-in (which fires onChanged, like a real sync from the popup would).
   const settingsPage = await ctx.newPage();
   await settingsPage.goto(`chrome-extension://${extId}/popup/popup.html`);
-  const setSettings = (patch) => settingsPage.evaluate(async (p) => {
-    const S = globalThis.RS_SETTINGS;
-    await S.update(p);
-  }, patch);
+  store.settings = await settingsPage.evaluate(() => globalThis.RS_SETTINGS.clone(globalThis.RS_SETTINGS.DEFAULTS));
+  const setSettings = async (patch) => {
+    for (const sec of Object.keys(patch)) store.settings[sec] = Object.assign({}, store.settings[sec], patch[sec]);
+    for (const p of livePages) await p.evaluate((x) => globalThis.RS_SETTINGS.update(x), patch).catch(() => {});
+  };
 
   // ================================================================ 1. extraction
   console.log('\nReader extraction');
@@ -122,7 +154,8 @@ async function inject(page) {
     });
     ok('sepia theme applied', /t-sepia/.test(ui.theme) && ui.bg === 'rgb(246, 239, 224)', ui.bg);
     ok('dyslexia-friendly class applied', /\bdys\b/.test(ui.theme));
-    ok('typography settings applied', ui.size === '22px' && ui.lh === '41.8px' && ui.width === '640px', `${ui.size}/${ui.lh}/${ui.width}`);
+    // The dyslexia-friendly font adds 0.1 to the line height for extra spacing: 22px x (1.9 + 0.1).
+    ok('typography settings applied', ui.size === '22px' && ui.lh === '44px' && ui.width === '640px', `${ui.size}/${ui.lh}/${ui.width}`);
     ok('headline and byline rendered', ui.h1 === 'The Quiet Art of Reading' && /Ada Lovelace/.test(ui.byline) && /min read/.test(ui.byline));
     ok('article paragraphs rendered', ui.paras >= 5, String(ui.paras));
     ok('page scrolling locked behind overlay', ui.bodyOverflow === 'hidden');
@@ -153,7 +186,7 @@ async function inject(page) {
       return { n: bs.length, first: bs[0] && bs[0].textContent, weight: bs[0] && getComputedStyle(bs[0]).fontWeight, text: root.querySelector('.content').textContent.slice(0, 30) };
     });
     ok('bionic bolds word starts in reader', bionic.n > 50 && bionic.weight === '700', `${bionic.n} spans, weight ${bionic.weight}`);
-    ok('bionic preserves text', /Good typography disappears/.test(bionic.text));
+    ok('bionic preserves text', /Good typography disappears/.test(bionic.text), bionic.text);
     await page.evaluate(() => RS.reader.setBionic(false));
     const unbionic = await page.evaluate(() => document.getElementById('rs-reader').shadowRoot.querySelectorAll('rs-b').length);
     ok('bionic can be removed', unbionic === 0);
@@ -272,7 +305,7 @@ async function inject(page) {
 
     // speed
     await page.evaluate(() => RS.tts.setRate(2.5));
-    const rate = await settingsPage.evaluate(async () => (await globalThis.RS_SETTINGS.load()).tts.rate);
+    const rate = await page.evaluate(async () => (await globalThis.RS_SETTINGS.load()).tts.rate);
     ok('speed change persists (0.5x–3x)', rate === 2.5, String(rate));
 
     // auto-scroll
@@ -394,13 +427,17 @@ async function inject(page) {
     ok('overriding stylesheets injected', dyn.styleCount >= 2, String(dyn.styleCount));
 
     // sliders
-    await setSettings({ dark: { brightness: 130, sepia: 40 } });
-    await page.waitForTimeout(500);
-    const tuned = await page.evaluate(() => {
+    const rgbOf = () => page.evaluate(() => {
       const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(getComputedStyle(document.body).backgroundColor);
       return { r: +m[1], g: +m[2], b: +m[3] };
     });
-    ok('brightness and sepia sliders change the palette', tuned.r > tuned.b && tuned.r > 20, JSON.stringify(tuned));
+    const untuned = await rgbOf();
+    await setSettings({ dark: { brightness: 130, sepia: 40 } });
+    await page.waitForTimeout(500);
+    const tuned = await rgbOf();
+    const L = (c) => 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+    ok('brightness slider lifts the palette', L(tuned) > L(untuned) + 3, `${JSON.stringify(untuned)} -> ${JSON.stringify(tuned)}`);
+    ok('sepia slider warms the palette', (tuned.r - tuned.b) > (untuned.r - untuned.b), `${JSON.stringify(untuned)} -> ${JSON.stringify(tuned)}`);
 
     // dynamically added content gets themed
     await setSettings({ dark: { brightness: 100, sepia: 0 } });

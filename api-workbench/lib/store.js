@@ -20,7 +20,7 @@ export function save(...keys) {
   timer = setTimeout(async () => {
     const keys2 = Object.keys(queue); queue = Object.create(null); timer = null;
     const patch = {};
-    for (const k of keys2) patch[k] = state[k];
+    for (const k of keys2) patch[k] = serialize(k);
     try { await chrome.storage.local.set(patch); } catch (e) { console.error('save failed', e); }
   }, 180);
 }
@@ -28,8 +28,14 @@ export async function flush() {
   if (timer) { clearTimeout(timer); timer = null; }
   const keys2 = Object.keys(queue); queue = Object.create(null);
   if (!keys2.length) return;
-  const patch = {}; for (const k of keys2) patch[k] = state[k];
+  const patch = {}; for (const k of keys2) patch[k] = serialize(k);
   await chrome.storage.local.set(patch);
+}
+
+// Responses (with raw bytes) and in-flight state live in memory only.
+function serialize(k) {
+  if (k !== 'tabs') return state[k];
+  return state.tabs.map(({ result, sending, abort, ...t }) => t); // eslint-disable-line no-unused-vars
 }
 
 export function touch(what, ...keys) { save(...keys); emit(what); }

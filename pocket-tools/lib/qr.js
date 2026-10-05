@@ -321,7 +321,9 @@ function drawFunctionPatterns(m, version, level) {
     }
   }
   // Reserve format information areas and set the dark module.
+  // (6,8) and (8,6) belong to the timing patterns and must keep their colour.
   for (let i = 0; i < 9; i++) {
+    if (i === 6) continue;
     m.set(i, 8, false);
     m.set(8, i, false);
   }

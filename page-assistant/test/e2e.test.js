@@ -29,10 +29,18 @@ function serve() {
 test.before(async () => {
   origin = await serve();
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-e2e-'));
+  // Headless tests cannot click the toolbar icon (activeTab) or answer the optional
+  // permission prompt, so load a copy whose manifest already holds the host access a
+  // user grants with "Allow on all sites".
+  const copy = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-ext-'));
+  fs.cpSync(EXT, copy, { recursive: true, filter: (src) => !src.includes(`${path.sep}test${path.sep}`) && !src.endsWith(`${path.sep}test`) });
+  const mf = JSON.parse(fs.readFileSync(path.join(copy, 'manifest.json'), 'utf8'));
+  mf.host_permissions = ['<all_urls>'];
+  fs.writeFileSync(path.join(copy, 'manifest.json'), JSON.stringify(mf, null, 2));
   ctx = await chromium.launchPersistentContext(userDataDir, {
     headless: true,
     channel: 'chromium',
-    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`],
+    args: [`--disable-extensions-except=${copy}`, `--load-extension=${copy}`],
   });
   let [sw] = ctx.serviceWorkers();
   if (!sw) sw = await ctx.waitForEvent('serviceworker', { timeout: 20000 });
