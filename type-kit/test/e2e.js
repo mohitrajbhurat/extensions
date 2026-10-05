@@ -41,8 +41,9 @@ const today = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.g
       await self.TKStore.upsertSnippet({ name: 'Bye bye', shortcut: '/byebye', body: 'Bye for now!' });
       await self.TKStore.upsertSnippet({ name: 'Rich', shortcut: '/rich', format: 'rich', body: '<b>Bold</b> and {cursor}<i>end</i>' });
     });
-    await new Promise((r) => setTimeout(r, 300));
-    for (const p of ctx.pages()) if (p.url() !== 'about:blank') await p.close().catch(() => {});
+    // The first-run welcome tab opens on install; wait for it and close it so it does not steal focus.
+    for (let i = 0; i < 30 && !ctx.pages().some((p) => p.url().includes('#welcome')); i++) await new Promise((r) => setTimeout(r, 100));
+    for (const p of ctx.pages()) if (p.url().includes('#welcome')) await p.close().catch(() => {});
 
     const page = await ctx.newPage();
     page.on('pageerror', (e) => errors.push(e.message));

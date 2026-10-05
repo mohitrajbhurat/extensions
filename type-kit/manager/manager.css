@@ -131,3 +131,10 @@ code { font-family: var(--mono); font-size: .92em; background: var(--bg-3); padd
   .appbar { padding: 8px 16px; }
   .page { padding: 16px; }
 }
+.folders, .snip-list-pane, .editor { min-width: 0; }
+.pane-head .input { min-width: 0; }
+.settings fieldset > .btn, .settings fieldset > .switch { align-self: flex-start; }
+@media (max-width: 640px) {
+  .snip-layout { grid-template-columns: minmax(0, 1fr); }
+  .snip-list-pane { border-right: 0; }
+}

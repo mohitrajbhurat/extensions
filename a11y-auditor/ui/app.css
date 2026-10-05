@@ -44,6 +44,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   background: var(--bg);
@@ -73,8 +75,10 @@ body.popup .app { min-height: 480px; max-height: 600px; }
   padding: 8px 16px; border-bottom: 1px solid var(--line); background: var(--bg);
 }
 .brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.brand h1 { font-size: 15px; margin: 0; white-space: nowrap; }
-.top .actions { display: flex; gap: 8px; }
+.brand h1 { font-size: 15px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand img { flex: none; }
+.top .actions { display: flex; gap: 8px; flex: none; }
+.top .btn { white-space: nowrap; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 4px;

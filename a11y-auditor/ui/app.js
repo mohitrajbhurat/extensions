@@ -368,7 +368,7 @@ function renderStructure() {
     box.append(ul2);
   }
   const tabH = h('h2', { class: 'section-h' }, 'Tab order',
-    h('button', { type: 'button', class: 'btn small', onclick: () => toggleTabOrder(!state.overlays.tab) }, state.overlays.tab ? 'Hide on page' : 'Show on page'));
+    h('button', { type: 'button', class: 'btn small', 'aria-pressed': String(state.overlays.tab), onclick: () => toggleTabOrder(!state.overlays.tab) }, 'Show on page'));
   box.append(tabH);
   if (!state.tabOrder) {
     box.append(h('p', { class: 'hint' }, 'Shows every keyboard stop in order, numbered on the page and connected by a line. Red numbers have a positive tabindex.'));

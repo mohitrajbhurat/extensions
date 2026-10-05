@@ -111,7 +111,11 @@ function renderPlanner() {
     return new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: m ? '2-digit' : undefined, timeZone: 'UTC' }).format(d);
   };
   const head = el('tr', {}, zones.map(z => el('th', { scope: 'col', title: z, text: cityLabel(z) })));
-  const body = rows.map(r => el('tr', { class: [r.allWorking ? 'all-work' : '', r.allAwake ? 'all-awake' : ''].join(' ').trim() },
+  const now = Date.now();
+  const body = rows.map(r => el('tr', {
+    class: [r.allWorking ? 'all-work' : '', r.allAwake ? 'all-awake' : '', now >= r.ms && now < r.ms + 3600000 ? 'now' : ''].join(' ').trim(),
+    title: now >= r.ms && now < r.ms + 3600000 ? 'Current hour' : null,
+  },
     r.cells.map(c => el('td', { class: c.working ? 'work' : (!c.awake ? 'night' : '') },
       fmt(c.hour, c.minute),
       c.dayShift ? el('sup', { text: c.dayShift > 0 ? ` +${c.dayShift}d` : ` ${c.dayShift}d` }) : null))));

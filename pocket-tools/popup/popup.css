@@ -148,6 +148,7 @@ body.windowed { width: auto; max-width: 480px; margin: 0 auto; }
 .planner tr.all-work td { background: color-mix(in srgb, var(--accent) 35%, transparent); font-weight: 600; }
 .planner tr.all-awake:not(.all-work) td { background: color-mix(in srgb, var(--accent) 12%, transparent); }
 .planner td.night { color: var(--muted); }
+.planner tr.now td { box-shadow: inset 0 2px 0 var(--accent), inset 0 -2px 0 var(--accent); font-weight: 600; }
 .planner sup { color: var(--muted); font-size: 9px; }
 .legend { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin: 0 2px 0 6px; }
 .legend.work { background: color-mix(in srgb, var(--accent) 35%, transparent); }

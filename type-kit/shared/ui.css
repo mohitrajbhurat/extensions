@@ -80,3 +80,4 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 mark { background: transparent; color: var(--accent); font-weight: 700; }
+[hidden] { display: none !important; }
