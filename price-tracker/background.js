@@ -12,6 +12,7 @@ const OFFSCREEN_URL = 'offscreen/offscreen.html';
 const CONTENT_SCRIPT_ID = 'pt-visit';
 const HOUR = 3600000;
 const MAX_EVENTS = 60;
+const VIA_CODE = { background: 'b', visit: 'v', popup: 'p', picked: 'k' };
 
 export const DEFAULT_SETTINGS = {
   intervalHours: 6,
@@ -252,7 +253,7 @@ async function recordObservation(id, product, via) {
     const history = it.history || (it.history = []);
     const last = history[history.length - 1];
     if (!last || last.p !== obs.p || last.a !== obs.a || now - last.t > 20 * HOUR) {
-      history.push({ ...obs, v: via[0] });
+      history.push({ ...obs, v: VIA_CODE[via] || 'b' });
       if (history.length > settings.maxHistory) history.splice(0, history.length - settings.maxHistory);
     }
     if (!it.title && product.title) it.title = product.title;

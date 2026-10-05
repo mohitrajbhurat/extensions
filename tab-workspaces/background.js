@@ -201,8 +201,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
 chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
   refreshBadge();
   memory.forget(tabId);
+  // Window/browser closing: keep the live backup as it was, so the "before browser closed"
+  // session still has every window instead of whatever was left mid-shutdown.
   if (!removeInfo.isWindowClosing) changed(removeInfo.windowId);
-  else sessions.scheduleLive();
   await archive.onRemoved(tabId, removeInfo);
 });
 

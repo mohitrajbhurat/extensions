@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // End-to-end check with Playwright (same setup as tools/smoke-test.js).
-//   python3 -m http.server 8765 --directory citation-builder/test/fixtures &
+//   python3 -m http.server 8843 --directory citation-builder/test/fixtures &
 //   node citation-builder/test/e2e-check.cjs
 // 1) runs the page extractor inside real fixture pages and normalizes the result,
 // 2) drives the popup (via the pending hand-off used by the context menu) and saves a citation,
@@ -11,7 +11,7 @@ const os = require('os');
 const { chromium } = require('playwright');
 
 const dir = path.resolve(__dirname, '..');
-const BASE = process.env.FIXTURE_BASE || 'http://127.0.0.1:8765';
+const BASE = process.env.FIXTURE_BASE || 'http://127.0.0.1:8843';
 
 function assert(cond, msg) {
   if (!cond) throw new Error('Assertion failed: ' + msg);

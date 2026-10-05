@@ -225,7 +225,7 @@ function renderHistTable(item) {
       el('td', {}, new Date(h.t).toLocaleString()),
       el('td', { class: 'num' }, h.p != null ? fmt(h.p, item.currency) : '—'),
       el('td', {}, h.a === 'out_of_stock' ? 'Out of stock' : h.a === 'in_stock' ? 'In stock' : 'Unknown'),
-      el('td', {}, { b: 'Background', v: 'Your visit', p: 'Popup', i: 'Picked' }[h.v] || '')))));
+      el('td', {}, { b: 'Background check', v: 'Your visit', p: 'Popup', k: 'Picked by you' }[h.v] || '')))));
   $('hist-table').replaceChildren(table);
 }
 

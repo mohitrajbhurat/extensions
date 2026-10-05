@@ -932,16 +932,19 @@ function setMode(mode) {
 
 function updateToolButtons(tool) {
   for (const b of document.querySelectorAll('[data-tool]')) {
-    b.setAttribute('aria-pressed', String(b.dataset.tool === tool || (tool === 'place' && false)));
+    b.setAttribute('aria-pressed', String(b.dataset.tool === tool));
   }
   updateProps();
 }
 
+const SIGN_ONLY = new Set(['date', 'mark-check', 'mark-cross', 'mark-dot']);
+const ANNOTATE_ONLY = new Set(['highlight', 'underline', 'strike', 'ink', 'rect', 'ellipse', 'line', 'arrow', 'note']);
+
 function setTool(tool) {
   if (!state.pdf) return;
-  const signTools = ['date', 'mark-check', 'mark-cross', 'mark-dot'];
-  if (state.mode === 'view') setMode(signTools.includes(tool) ? 'sign' : 'annotate');
-  if (signTools.includes(tool) && state.mode !== 'sign') setMode('sign');
+  if (SIGN_ONLY.has(tool) && state.mode !== 'sign') setMode('sign');
+  else if (ANNOTATE_ONLY.has(tool) && state.mode !== 'annotate') setMode('annotate');
+  else if (state.mode === 'view') setMode('annotate');
   if (annots.tool === tool && tool !== 'select') tool = 'select';
   annots.setTool(tool);
 }

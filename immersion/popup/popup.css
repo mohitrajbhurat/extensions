@@ -1,0 +1,29 @@
+body { width: 380px; background: var(--bg); }
+.top { display: flex; align-items: center; gap: 12px; padding: 16px 16px 8px; }
+.top .title { flex: 1; min-width: 0; }
+.top h1 { font-size: 16px; font-weight: 700; }
+main { padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 16px; }
+
+.site { padding: 12px; }
+.site-row { display: flex; align-items: center; gap: 12px; }
+.site-info { flex: 1; min-width: 0; }
+.site-host { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.engine { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.engine #engineText { flex: 1; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+.dot.ai { background: var(--accent); }
+.dot.dict { background: var(--amber); }
+.dot.off { background: var(--red); }
+.progress { height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 8px; }
+.progress > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+
+.settings { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label, .field .label, .label-row label { font-weight: 600; font-size: 13px; }
+.label-row { display: flex; justify-content: space-between; align-items: baseline; }
+.label-row output { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+select { width: 100%; }
+
+.actions { display: flex; flex-direction: column; gap: 8px; }
+.actions .row { display: flex; justify-content: space-between; }
+#review .badge { background: var(--accent-fg); color: var(--accent); border-radius: 999px; padding: 0 8px; font-size: 12px; font-weight: 700; }

@@ -9,7 +9,6 @@ import {
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const MARKUP = new Set(['highlight', 'underline', 'strike']);
 const DRAWING_TOOLS = new Set(['ink', 'rect', 'ellipse', 'line', 'arrow', 'text', 'date', 'note', 'place', 'mark-check', 'mark-cross', 'mark-dot']);
-const STICKY_TOOLS = new Set(['ink', 'rect', 'ellipse', 'line', 'arrow', 'mark-check', 'mark-cross', 'mark-dot', 'highlight', 'underline', 'strike']);
 const HISTORY_LIMIT = 150;
 const NOTE_SIZE = 22;
 

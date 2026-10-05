@@ -103,10 +103,6 @@ body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
   --scale-factor: 1;
 }
 .page canvas.page-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.page .page-label {
-  position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%);
-  font-size: 11px; color: var(--text-3); pointer-events: none;
-}
 .page.loading::after {
   content: ""; position: absolute; left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px;
   border: 3px solid #ddd; border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite;
@@ -175,6 +171,7 @@ body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 .tool-select .anno-layer svg .hl { pointer-events: fill; }
 .tool-select .anno-layer svg image { pointer-events: all; }
 .anno-layer svg [data-id] { pointer-events: none; }
+.tool-view .anno-layer .anno-note { pointer-events: auto; cursor: pointer; }
 .tool-select .anno-layer svg .shape-vis { pointer-events: none; }
 
 .anno-text {
@@ -202,10 +199,12 @@ textarea.anno-editing {
 .anno-note-pop header button:hover { background: #f3e7a6; }
 .anno-note-pop textarea { border: 0; background: transparent; color: #222; font: inherit; padding: 6px; resize: vertical; min-height: 80px; outline: none; border-radius: 0; }
 
-.sel-box { position: absolute; border: 1px solid #2563eb; pointer-events: none; z-index: 20; }
+.sel-box { position: absolute; border: calc(1px / var(--scale-factor)) solid #2563eb; pointer-events: none; z-index: 20; }
 .sel-box .handle {
-  position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px;
-  background: #fff; border: 1.5px solid #2563eb; border-radius: 2px; pointer-events: auto;
+  position: absolute;
+  width: calc(10px / var(--scale-factor)); height: calc(10px / var(--scale-factor));
+  margin: calc(-5px / var(--scale-factor)) 0 0 calc(-5px / var(--scale-factor));
+  background: #fff; border: calc(1.5px / var(--scale-factor)) solid #2563eb; border-radius: calc(2px / var(--scale-factor)); pointer-events: auto;
 }
 .sel-box .handle[data-h="nw"], .sel-box .handle[data-h="se"] { cursor: nwse-resize; }
 .sel-box .handle[data-h="ne"], .sel-box .handle[data-h="sw"] { cursor: nesw-resize; }
