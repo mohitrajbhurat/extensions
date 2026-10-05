@@ -344,4 +344,4 @@ const ok = (name, cond, extra = '') => { steps.push(`${cond ? 'ok  ' : 'FAIL'} $
   console.log(steps.join('\n'));
   if (fail.length) { console.error(`\nFUNCTIONAL FAIL (${fail.length}): ${fail.join(', ')}`); process.exit(1); }
   console.log(`\nFUNCTIONAL PASS (${steps.length} checks)`);
-})().catch(e => { console.error('FUNCTIONAL ERROR', e); process.exit(1); });
+})().catch(e => { console.log(steps.join('\n')); console.error('FUNCTIONAL ERROR', e); process.exit(1); });

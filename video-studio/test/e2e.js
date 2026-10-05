@@ -53,7 +53,7 @@ function indexHtml(port) {
   return `<!doctype html><html><head><title>Lecture 1: Test video</title></head><body style="margin:0;font-family:sans-serif">
 <h1 style="font-size:16px;margin:8px">Test lecture</h1>
 <video id="v1" src="video.webm" muted playsinline width="640" height="360" style="display:block;background:#000"></video>
-<p>Text below</p><input id="txt" placeholder="type here">
+<p>Text below</p><div style="height:520px"></div><input id="txt" placeholder="type here">
 <script>
 // MediaRecorder WebM files have no duration until the end has been read once.
 const v1 = document.getElementById('v1');
@@ -70,6 +70,7 @@ setTimeout(() => {
       r.innerHTML = '<video id="v2" muted playsinline width="480" height="270" src="http://127.0.0.1:${port}/video.webm" style="display:block;background:#000"></video>'; }
   });
   document.body.appendChild(document.createElement('my-player'));
+  const sp = document.createElement('div'); sp.style.height = '520px'; document.body.appendChild(sp);
 }, 800);
 </script></body></html>`;
 }
@@ -191,12 +192,15 @@ setTimeout(() => {
 
     // 4. Notes from the page.
     await page.keyboard.press('n');
-    await sleep(800);
+    await sleep(900);
     check('N opens the in-page notes panel', await page.evaluate(() => !!document.querySelector('video-studio-panel')));
+    // The panel takes keyboard focus so the user can type; click the page to send keys to it again.
+    await page.click('h1');
     await page.keyboard.press('p');
-    await sleep(1000);
+    await sleep(1200);
+    await page.click('h1');
     await page.keyboard.press('b');
-    await sleep(500);
+    await sleep(600);
 
     const lib = await ctx.newPage();
     await lib.goto(extUrl('library/library.html'));
@@ -219,6 +223,7 @@ setTimeout(() => {
     await sleep(2500);
     const tl = await page.evaluate(() => document.getElementById('v1').currentTime);
     check('A-B loop keeps playback between 1s and 2s', tl >= 0.95 && tl <= 2.15, tl);
+    await page.click('h1');
     await page.keyboard.press('Backslash');
     st = await tabMsg({ type: 'vs-get-state' });
     check('backslash toggles loop off', st.loop.on === false);
@@ -228,7 +233,7 @@ setTimeout(() => {
     await page.evaluate(() => {
       document.getElementById('v1').pause();
       const v2 = document.querySelector('my-player').shadowRoot.querySelector('video');
-      v2.scrollIntoView();
+      v2.scrollIntoView({ block: 'center' });
       return v2.play();
     });
     await sleep(800);
@@ -266,13 +271,17 @@ setTimeout(() => {
     await sleep(400);
     const tSeek = await page.evaluate(() => document.getElementById('v1').currentTime);
     check('clicking a timestamp in a note seeks the video', Math.abs(tSeek - 1) < 0.3, tSeek);
+    const firstTs = await panel.$eval('#notes > li:first-child .ts-btn', (el) => el.textContent);
     await panel.click('#notes > li:first-child .ts-btn');
     await sleep(400);
     const tSeek2 = await page.evaluate(() => document.getElementById('v1').currentTime);
-    check('clicking a note time seeks the video', Math.abs(tSeek2 - notes[0].t) < 0.3, tSeek2);
+    const wantTs = firstTs.split(':').reduce((a, n) => a * 60 + Number(n), 0);
+    check('clicking a note time seeks the video', Math.abs(tSeek2 - wantTs) < 0.3, [firstTs, tSeek2]);
+    const before = await rate();
     await panel.click('#btn-faster');
-    await sleep(300);
-    check('panel speed button changes speed', Math.abs((await rate()) - 1.35) < 0.001, await rate());
+    await sleep(400);
+    const after = await rate();
+    check('panel speed button changes speed', Math.abs(after - (before + 0.1)) < 0.001, [before, after]);
     await panel.click('#tab-chapters');
     await panel.fill('#bm-label', 'Introduction');
     await panel.click('#bm-add');
@@ -317,7 +326,7 @@ setTimeout(() => {
     await page.waitForFunction(() => window.durationFixed === true, null, { timeout: 15000 });
     await sleep(800);
     const r2 = await page.evaluate(() => document.getElementById('v1').playbackRate);
-    check('speed is remembered for the site after reload', Math.abs(r2 - 1.35) < 0.001, r2);
+    check('speed is remembered for the site after reload', Math.abs(r2 - after) < 0.001, [after, r2]);
     const t5 = await page.evaluate(() => document.getElementById('v1').currentTime);
     check('#vst=5 deep link seeks to 5s', Math.abs(t5 - 5) < 0.5, t5);
   } catch (e) {

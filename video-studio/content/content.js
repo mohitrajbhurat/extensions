@@ -281,9 +281,7 @@
   function finite(n) { return Number.isFinite(n) && n > 0 ? n : null; }
 
   function videoInfo(c) {
-    let httpVideos = 0;
-    for (const x of ctrls.keys()) if (/^https?:/.test(x.currentSrc || '')) httpVideos++;
-    const canon = VS.canonicalVideo(location.href, { src: c.v.currentSrc, multiple: httpVideos > 1 });
+    const canon = VS.canonicalVideo(location.href);
     return { key: canon.key, url: canon.url, pageUrl: location.href, site: canon.site, title: pageTitle(), duration: finite(c.v.duration) };
   }
 

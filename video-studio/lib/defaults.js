@@ -145,8 +145,7 @@
   const TRACKING_PARAMS = /^(utm_\w+|fbclid|gclid|dclid|msclkid|mc_cid|mc_eid|igshid|si|feature|vst|t|start|time_continue|ref|ref_src)$/i;
 
   // Identify a video by the page (frame) URL it plays on. Returns { key, site, url, ytId?, vimeoId? }.
-  function canonicalVideo(href, opts) {
-    opts = opts || {};
+  function canonicalVideo(href) {
     let u;
     try { u = new URL(href); } catch (_) { return { key: 'url:' + String(href), site: '', url: String(href) }; }
     const host = u.hostname.replace(/^www\.|^m\.|^music\./, '');
@@ -172,16 +171,8 @@
     const qs = params.toString();
     let hash = '';
     if (/^#[!/]/.test(u.hash)) hash = u.hash.replace(/[&?]vst=[\d.]+/, '');
-    let url = u.origin + u.pathname + (qs ? '?' + qs : '') + hash;
-    let key = 'url:' + url;
-    // Several distinct videos on one page: tell them apart by media source.
-    if (opts.src && opts.multiple && /^https?:/.test(opts.src)) {
-      try {
-        const s = new URL(opts.src);
-        key = 'src:' + s.origin + s.pathname;
-      } catch (_) { /* keep page key */ }
-    }
-    return { key, site: siteName(u.hostname), url };
+    const url = u.origin + u.pathname + (qs ? '?' + qs : '') + hash;
+    return { key: 'url:' + url, site: siteName(u.hostname), url };
   }
 
   function siteName(hostname) {

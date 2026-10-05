@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Request Rewriter</title>
+<link rel="stylesheet" href="../shared/base.css">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header class="pop-head">
+  <div class="row">
+    <svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><rect x="4" y="4" width="120" height="120" rx="28" fill="#2743b8"/><g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M28 46h50"/><path d="M64 32l16 14-16 14"/><path d="M100 82H50"/><path d="M64 96 48 82l16-14"/></g></svg>
+    <div class="col gap0">
+      <h1>Request Rewriter</h1>
+      <div class="tiny muted" id="activeLine">loading…</div>
+    </div>
+    <div class="spacer"></div>
+    <label class="check pause-label" title="Pause every rule without losing them">
+      <span id="pauseText">On</span>
+      <span class="switch"><input type="checkbox" id="pauseToggle" checked><span></span></span>
+    </label>
+  </div>
+  <div id="statusNotice" class="notice error hidden" role="alert"></div>
+</header>
+
+<section class="block" id="tabBlock">
+  <div class="row">
+    <h2>This tab</h2>
+    <div class="spacer"></div>
+    <button class="ghost sm" id="clearMatches" title="Clear the match list for this tab">Clear</button>
+  </div>
+  <div class="tiny muted ellipsis" id="tabHost">—</div>
+  <div id="matchList" class="match-list"></div>
+  <div class="tiny muted hidden" id="feedbackNote"></div>
+</section>
+
+<section class="block">
+  <div class="row">
+    <h2>Groups</h2>
+    <div class="spacer"></div>
+    <button class="ghost sm" id="openEditorTop">Manage</button>
+  </div>
+  <div id="groupList" class="group-list"></div>
+</section>
+
+<section class="block">
+  <div class="row">
+    <h2>Quick header</h2>
+    <div class="spacer"></div>
+    <span class="tiny muted" id="quickTargetHint"></span>
+  </div>
+  <form id="quickForm" class="col">
+    <div class="row">
+      <select id="quickKind" aria-label="Header direction">
+        <option value="requestHeaders">Request</option>
+        <option value="responseHeaders">Response</option>
+      </select>
+      <select id="quickOp" aria-label="Operation">
+        <option value="set">Set</option>
+        <option value="append">Append</option>
+        <option value="remove">Remove</option>
+      </select>
+    </div>
+    <div class="row">
+      <input type="text" id="quickName" placeholder="Header name" list="headerNames" autocomplete="off" required>
+      <input type="text" id="quickValue" placeholder="Value" autocomplete="off">
+    </div>
+    <datalist id="headerNames"></datalist>
+    <div class="row">
+      <select id="quickScope" aria-label="Where it applies">
+        <option value="site">This site</option>
+        <option value="all">All URLs</option>
+        <option value="tab">This tab only</option>
+      </select>
+      <button type="submit" class="primary" id="quickAdd">Add rule</button>
+    </div>
+    <div id="quickError" class="notice error hidden"></div>
+  </form>
+</section>
+
+<footer class="pop-foot">
+  <button class="ghost sm" id="openEditor">Rule editor</button>
+  <button class="ghost sm" id="openTester">Test a URL</button>
+  <div class="spacer"></div>
+  <button class="ghost sm" id="openShortcuts" title="Set keyboard shortcuts">Shortcuts</button>
+</footer>
+<script type="module" src="popup.js"></script>
+</body>
+</html>

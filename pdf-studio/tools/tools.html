@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page tools – PDF Studio</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/theme.css">
+  <link rel="stylesheet" href="tools.css">
+  <script src="../vendor/pdf-lib.min.js"></script>
+  <script type="module" src="tools.js"></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="t-merge" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="4" width="9" height="12" rx="1.5"/><rect x="7.5" y="8" width="9" height="12" rx="1.5"/><path d="M19 7l2.5 2.5L19 12" stroke-linecap="round"/></g></symbol>
+    <symbol id="t-split" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5" stroke-dasharray="3 2"/></g></symbol>
+    <symbol id="t-organize" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></g></symbol>
+    <symbol id="t-images" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></g></symbol>
+    <symbol id="t-compress" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5h4M20 9V5h-4M4 15v4h4M20 15v4h-4"/><path d="M9 12h6"/></g></symbol>
+    <symbol id="t-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="t-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></g></symbol>
+    <symbol id="t-rotl" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6H5V2"/><path d="M5 6a8 8 0 1 1-1.5 6"/></g></symbol>
+    <symbol id="t-rotr" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6h4V2"/><path d="M19 6A8 8 0 1 0 20.5 12"/></g></symbol>
+    <symbol id="t-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="t-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="t-blank" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5" stroke-dasharray="3 2"/><path d="M12 9v6M9 12h6" stroke-linecap="round"/></g></symbol>
+    <symbol id="t-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></g></symbol>
+    <symbol id="t-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></g></symbol>
+  </defs>
+</svg>
+
+<header class="app-header">
+  <a class="brand" href="../viewer/viewer.html"><img src="../icons/icon32.png" alt="">PDF Studio</a>
+  <nav class="nav-tabs">
+    <a href="../viewer/viewer.html">Viewer</a>
+    <a href="tools.html" aria-current="page">Page tools</a>
+  </nav>
+  <div class="spacer"></div>
+  <span class="privacy-note"><svg><use href="#t-lock"/></svg>Everything runs on this computer. Nothing is uploaded.</span>
+</header>
+
+<main class="tools-main">
+  <nav class="tool-nav" id="tool-nav" aria-label="Tools">
+    <button data-tool="merge" aria-current="true"><svg><use href="#t-merge"/></svg><span><strong>Merge</strong><small>Combine PDFs into one file</small></span></button>
+    <button data-tool="split"><svg><use href="#t-split"/></svg><span><strong>Split</strong><small>By page ranges or every N pages</small></span></button>
+    <button data-tool="organize"><svg><use href="#t-organize"/></svg><span><strong>Organize</strong><small>Reorder, rotate, delete, extract</small></span></button>
+    <button data-tool="images"><svg><use href="#t-images"/></svg><span><strong>Images to PDF</strong><small>JPG and PNG into one document</small></span></button>
+    <button data-tool="compress"><svg><use href="#t-compress"/></svg><span><strong>Compress</strong><small>Make the file smaller</small></span></button>
+  </nav>
+
+  <section class="tool-panel" id="panel">
+    <!-- MERGE -->
+    <div class="panel" data-panel="merge">
+      <header class="panel-head">
+        <div><h1>Merge PDFs</h1><p class="muted">Add files, drag them into the order you want, then merge.</p></div>
+        <div class="panel-actions">
+          <button class="btn" id="merge-add"><svg><use href="#t-plus"/></svg>Add PDFs</button>
+          <button class="btn primary" id="merge-go" disabled>Merge and download</button>
+        </div>
+      </header>
+      <div class="dropzone" id="merge-drop">
+        <svg class="big-icon"><use href="#t-merge"/></svg>
+        <h2>Drop PDFs here</h2>
+        <p>They are combined in the order shown below.</p>
+        <button class="btn primary" id="merge-add2">Choose files</button>
+      </div>
+      <ul class="file-list" id="merge-list" aria-label="Files to merge"></ul>
+      <p class="muted small-text" id="merge-summary"></p>
+    </div>
+
+    <!-- SPLIT -->
+    <div class="panel" data-panel="split" hidden>
+      <header class="panel-head">
+        <div><h1>Split a PDF</h1><p class="muted">Create several PDFs out of one.</p></div>
+        <div class="panel-actions">
+          <button class="btn" id="split-pick">Choose PDF</button>
+          <button class="btn primary" id="split-go" disabled>Split and download</button>
+        </div>
+      </header>
+      <div class="dropzone" id="split-drop">
+        <svg class="big-icon"><use href="#t-split"/></svg>
+        <h2>Drop a PDF here</h2>
+        <p>Then choose how it should be divided.</p>
+        <button class="btn primary" id="split-pick2">Choose file</button>
+      </div>
+      <div class="split-config" id="split-config" hidden>
+        <div class="file-chip" id="split-file"></div>
+        <div class="options">
+          <label class="opt"><input type="radio" name="split-mode" value="ranges" checked>
+            <span><strong>Custom ranges</strong><small>One PDF per range, e.g. <code>1-3, 5, 8-12</code></small></span></label>
+          <input type="text" id="split-ranges" placeholder="1-3, 5, 8-12" aria-label="Page ranges">
+          <label class="opt"><input type="radio" name="split-mode" value="every">
+            <span><strong>Every N pages</strong><small>Fixed-size chunks</small></span></label>
+          <label class="field inline">Pages per file <input type="number" id="split-every" min="1" value="1" style="width:80px"></label>
+          <label class="opt"><input type="radio" name="split-mode" value="single">
+            <span><strong>Extract selected pages</strong><small>One PDF with just these pages</small></span></label>
+          <input type="text" id="split-extract" placeholder="2, 5-7" aria-label="Pages to extract">
+        </div>
+        <p class="muted small-text" id="split-preview"></p>
+      </div>
+    </div>
+
+    <!-- ORGANIZE -->
+    <div class="panel" data-panel="organize" hidden>
+      <header class="panel-head">
+        <div><h1>Organize pages</h1><p class="muted">Drag thumbnails to reorder. Select pages to rotate, delete or extract them.</p></div>
+        <div class="panel-actions">
+          <button class="btn" id="org-add"><svg><use href="#t-plus"/></svg>Add PDF</button>
+          <button class="btn" id="org-open-viewer" disabled>Open in viewer</button>
+          <button class="btn primary" id="org-go" disabled>Save and download</button>
+        </div>
+      </header>
+      <div class="dropzone" id="org-drop">
+        <svg class="big-icon"><use href="#t-organize"/></svg>
+        <h2>Drop one or more PDFs here</h2>
+        <p>Reorder by dragging, rotate, delete, insert blank pages, extract a selection.</p>
+        <button class="btn primary" id="org-add2">Choose files</button>
+      </div>
+      <div class="org-bar" id="org-bar" hidden>
+        <span class="org-count" id="org-count"></span>
+        <div class="tb-sep"></div>
+        <button class="btn small" id="org-select-all">Select all</button>
+        <button class="btn small" id="org-select-none">Clear</button>
+        <button class="btn small" id="org-select-odd">Odd</button>
+        <button class="btn small" id="org-select-even">Even</button>
+        <div class="tb-sep"></div>
+        <button class="btn small" id="org-rot-l" title="Rotate left"><svg><use href="#t-rotl"/></svg>Rotate left</button>
+        <button class="btn small" id="org-rot-r" title="Rotate right"><svg><use href="#t-rotr"/></svg>Rotate right</button>
+        <button class="btn small" id="org-move-up" title="Move earlier"><svg><use href="#t-up"/></svg></button>
+        <button class="btn small" id="org-move-down" title="Move later"><svg><use href="#t-down"/></svg></button>
+        <button class="btn small" id="org-blank" title="Insert a blank page after the selection"><svg><use href="#t-blank"/></svg>Blank page</button>
+        <button class="btn small" id="org-extract">Extract selection</button>
+        <button class="btn small danger" id="org-del"><svg><use href="#t-trash"/></svg>Delete</button>
+        <div class="spacer"></div>
+        <button class="btn small" id="org-undo" disabled>Undo</button>
+        <button class="btn small" id="org-reset">Reset</button>
+      </div>
+      <div class="org-grid" id="org-grid"></div>
+    </div>
+
+    <!-- IMAGES -->
+    <div class="panel" data-panel="images" hidden>
+      <header class="panel-head">
+        <div><h1>Images to PDF</h1><p class="muted">JPG, PNG, WebP or GIF, one image per page.</p></div>
+        <div class="panel-actions">
+          <button class="btn" id="img-add"><svg><use href="#t-plus"/></svg>Add images</button>
+          <button class="btn primary" id="img-go" disabled>Create PDF</button>
+        </div>
+      </header>
+      <div class="dropzone" id="img-drop">
+        <svg class="big-icon"><use href="#t-images"/></svg>
+        <h2>Drop images here</h2>
+        <p>Drag to reorder once they are added.</p>
+        <button class="btn primary" id="img-add2">Choose images</button>
+      </div>
+      <div class="img-options" id="img-options" hidden>
+        <label class="field">Page size
+          <select id="img-size">
+            <option value="fit">Fit to image</option>
+            <option value="a4">A4</option>
+            <option value="letter">US Letter</option>
+            <option value="legal">US Legal</option>
+            <option value="a5">A5</option>
+          </select>
+        </label>
+        <label class="field">Orientation
+          <select id="img-orient"><option value="auto">Automatic</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select>
+        </label>
+        <label class="field">Margin
+          <select id="img-margin"><option value="0">None</option><option value="18">Small</option><option value="36" selected>Medium</option><option value="72">Large</option></select>
+        </label>
+      </div>
+      <div class="img-grid" id="img-grid"></div>
+    </div>
+
+    <!-- COMPRESS -->
+    <div class="panel" data-panel="compress" hidden>
+      <header class="panel-head">
+        <div><h1>Compress a PDF</h1><p class="muted">Rebuild the file compactly, or rasterize pages for a much smaller result.</p></div>
+        <div class="panel-actions">
+          <button class="btn" id="cmp-pick">Choose PDF</button>
+          <button class="btn primary" id="cmp-go" disabled>Compress and download</button>
+        </div>
+      </header>
+      <div class="dropzone" id="cmp-drop">
+        <svg class="big-icon"><use href="#t-compress"/></svg>
+        <h2>Drop a PDF here</h2>
+        <p>Nothing is uploaded; the file is rewritten in this tab.</p>
+        <button class="btn primary" id="cmp-pick2">Choose file</button>
+      </div>
+      <div class="cmp-config" id="cmp-config" hidden>
+        <div class="file-chip" id="cmp-file"></div>
+        <div class="options">
+          <label class="opt"><input type="radio" name="cmp-mode" value="lossless" checked>
+            <span><strong>Rebuild (lossless)</strong><small>Drops unused objects and packs the file with object streams. Text stays selectable.</small></span></label>
+          <label class="opt"><input type="radio" name="cmp-mode" value="raster">
+            <span><strong>Rasterize pages (much smaller)</strong><small>Each page becomes a JPEG image. Text is no longer selectable or searchable.</small></span></label>
+          <div class="raster-opts" id="raster-opts" hidden>
+            <label class="field">Resolution
+              <select id="cmp-dpi"><option value="72">72 DPI (screen)</option><option value="96">96 DPI</option><option value="150" selected>150 DPI (good)</option><option value="200">200 DPI</option><option value="300">300 DPI (print)</option></select>
+            </label>
+            <label class="field">JPEG quality <input type="range" id="cmp-quality" min="30" max="95" value="75"><output id="cmp-quality-out">75%</output></label>
+            <label class="check"><input type="checkbox" id="cmp-gray"> Convert to grayscale</label>
+          </div>
+        </div>
+        <div class="result" id="cmp-result" hidden></div>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

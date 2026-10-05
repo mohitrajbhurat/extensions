@@ -1192,6 +1192,8 @@ async function download() {
     downloadBlob(bytes, `${baseName(state.name)}${suffix}.pdf`);
     state.dirty = false;
     $('dirty-dot').hidden = true;
+    clearTimeout(draftTimer);
+    if (state.fingerprint) await deleteDraft(state.fingerprint);
     if (warnings.length) toast(warnings.join(' '), 'error', 8000);
     else toast('Saved. Your PDF is in your downloads.', 'success');
   } catch (err) {
