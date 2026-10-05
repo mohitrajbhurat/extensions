@@ -1,7 +1,7 @@
 // Text statistics and case conversion tab.
 
 import { analyze, easeLabel, formatDuration, CASES, convertCase } from '../lib/textstats.js';
-import { $, debounce, el, copyText, toast } from './util.js';
+import { $, debounce, el, copyText, toast, activePageTab } from './util.js';
 
 const DRAFT_KEY = 'textDraft';
 const undoStack = [];
@@ -63,7 +63,8 @@ function setText(value, { undoable = true } = {}) {
 
 async function grabSelection() {
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = await activePageTab();
+    if (!tab) throw new Error('no tab');
     const results = await chrome.scripting.executeScript({
       target: { tabId: tab.id, allFrames: true },
       func: () => {

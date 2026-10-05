@@ -1,0 +1,11 @@
+body { width: 400px; min-height: 280px; max-height: 580px; display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.head h1 { font-size: 18px; }
+.seg { display: flex; gap: 2px; padding: 2px; background: var(--surface-2); border-radius: var(--radius-sm); }
+.seg button { border: 0; background: transparent; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; color: var(--muted); }
+.seg button[aria-selected="true"] { background: var(--surface); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
+.list { flex: 1; overflow: auto; min-height: 120px; max-height: 400px; }
+.foot { display: flex; justify-content: space-between; gap: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+.toast-host { bottom: 48px; }
+.toast { font-size: 12px; }
+dialog { max-height: calc(100vh - 16px); overflow: auto; }

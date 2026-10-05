@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Home Base</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="../shared/tasks.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="head">
+    <div>
+      <h1 id="title">Today</h1>
+      <div class="small muted" id="sub"></div>
+    </div>
+    <div class="seg" role="tablist" aria-label="Task list" id="tabs">
+      <button type="button" role="tab" data-view="today" aria-selected="true">Today</button>
+      <button type="button" role="tab" data-view="upcoming" aria-selected="false">Upcoming</button>
+      <button type="button" role="tab" data-view="inbox" aria-selected="false">Inbox</button>
+    </div>
+  </header>
+  <div class="quick-add">
+    <input class="input" id="quick-add" type="text" autocomplete="off" placeholder="Add a task… “call mum sun 6pm”" aria-label="Add a task" aria-describedby="qa-hint">
+    <div class="hint" id="qa-hint" hidden></div>
+  </div>
+  <div id="list" class="list"></div>
+  <footer class="foot">
+    <button class="btn small" id="open-tasks" type="button">All tasks</button>
+    <button class="btn small" id="open-settings" type="button">Settings</button>
+  </footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -114,3 +114,11 @@ export function tablistKeys(list, onSelect) {
     }
   });
 }
+
+// The page the user is working with. In the fallback popup window the
+// "current window" is the popup itself, so look at normal windows instead.
+export async function activePageTab() {
+  const windowed = new URLSearchParams(location.search).has('window');
+  const [tab] = await chrome.tabs.query(windowed ? { active: true, windowType: 'normal' } : { active: true, currentWindow: true });
+  return tab || null;
+}

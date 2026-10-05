@@ -51,7 +51,7 @@ export function syllables(word) {
   let w = word.toLowerCase().replace(/[^a-z]/g, '');
   if (!w) return 0;
   if (w.length <= 3) return 1;
-  w = w.replace(/(?:[^laeiouy]es|[^laeiouy]ed|[^laeiouy]e)$/, '');
+  w = w.replace(/(?:[^laeiouy]es|[^laeiouydt]ed|[^laeiouy]e)$/, '');
   w = w.replace(/^y/, '');
   const groups = w.match(/[aeiouy]{1,2}/g);
   return Math.max(1, groups ? groups.length : 1);

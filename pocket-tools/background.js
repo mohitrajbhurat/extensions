@@ -86,7 +86,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await openPopupWith({ tab: 'qr', qr: { mode: 'text', text: info.linkUrl } });
       break;
     case 'qr-page':
-      await openPopupWith({ tab: 'qr', qr: { mode: 'text', text: info.frameUrl || info.pageUrl || (tab && tab.url) || '' } });
+      await openPopupWith({ tab: 'qr', qr: { mode: 'page', text: info.frameUrl || info.pageUrl || (tab && tab.url) || '' } });
       break;
   }
 });
