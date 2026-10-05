@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Pocket Tools",
+  "short_name": "Pocket Tools",
+  "description": "Everyday utility belt: password and passphrase generator, QR codes, word counter and unit, time zone and number converters. Offline.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Pocket Tools",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["storage", "contextMenus", "activeTab", "scripting", "offscreen", "clipboardWrite"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "commands": {
+    "_execute_action": {
+      "description": "Open Pocket Tools"
+    },
+    "copy-password": {
+      "description": "Generate a password with your saved options and copy it"
+    },
+    "convert-selection": {
+      "description": "Show conversions for the selected text"
+    },
+    "qr-page": {
+      "description": "Show a QR code for the current page"
+    }
+  }
+}

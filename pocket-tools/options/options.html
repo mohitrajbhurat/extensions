@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pocket Tools settings</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="page-head">
+      <img src="../icons/icon48.png" width="40" height="40" alt="">
+      <div>
+        <h1>Pocket Tools</h1>
+        <p class="muted">Passwords, QR codes, text stats and converters. Everything runs on this device.</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Clipboard</h2>
+      <label class="field">
+        <span>Clear copied passwords from the clipboard after</span>
+        <select id="clear-seconds">
+          <option value="0">Never</option>
+          <option value="10">10 seconds</option>
+          <option value="20">20 seconds</option>
+          <option value="30">30 seconds</option>
+          <option value="60">1 minute</option>
+          <option value="120">2 minutes</option>
+          <option value="300">5 minutes</option>
+        </select>
+      </label>
+      <p class="muted small">Only applies to values copied from the password generator. The clipboard is overwritten with an empty value when the timer ends.</p>
+    </section>
+
+    <section class="card">
+      <h2>Conversion tooltip</h2>
+      <label class="check"><input type="checkbox" id="tooltip"> Show conversions when I select values such as “5 miles”, “72°F” or “3pm PST” on web pages</label>
+      <p class="muted small" id="tooltip-status"></p>
+      <p class="muted small">This needs permission to run on the sites you visit. Without it you can still right-click a selection and choose <em>Convert</em>, which only touches the current page when you ask.</p>
+    </section>
+
+    <section class="card">
+      <h2>Time zones</h2>
+      <div class="grid">
+        <label class="field"><span>Your time zone</span>
+          <input type="text" id="home-zone" list="zones" placeholder="Automatic" autocomplete="off">
+          <datalist id="zones"></datalist>
+        </label>
+        <label class="field"><span>Working day starts</span><input type="number" id="work-start" min="0" max="23"></label>
+        <label class="field"><span>Working day ends</span><input type="number" id="work-end" min="1" max="24"></label>
+      </div>
+      <p class="muted small">Detected: <span id="detected-zone"></span>. Add other cities from the Convert tab in the popup.</p>
+      <p class="small warn hidden" id="zone-error"></p>
+    </section>
+
+    <section class="card">
+      <h2>Keyboard shortcuts</h2>
+      <ul class="shortcuts" id="shortcuts"></ul>
+      <p class="muted small">Pocket Tools does not claim any keys by default to avoid clashes. Assign them on the browser's shortcuts page.</p>
+      <button class="btn" type="button" id="open-shortcuts">Open shortcuts page</button>
+      <p class="muted small">In the popup: <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>4</kbd> switch tools, <kbd>R</kbd> regenerates and <kbd>C</kbd> copies on the password tab, arrow keys move between tabs.</p>
+    </section>
+
+    <section class="card">
+      <h2>Reset</h2>
+      <p class="muted small">Restore every setting (generator options, QR look, cities) to its default.</p>
+      <button class="btn" type="button" id="reset">Reset settings</button>
+    </section>
+    <p class="saved muted small" id="saved" aria-live="polite"></p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

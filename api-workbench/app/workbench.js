@@ -19,7 +19,7 @@ const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v == nu
 
 /* ---------------- accessors ---------------- */
 app.activeTab = () => state.tabs.find(t => t.id === state.activeTab) || state.tabs[0];
-app.tabLabel = t => t.name || autoName(t.request);
+app.tabLabel = t => t.name || autoName(t.request).replace(/^[A-Z]+ (?=\S)/, ''); // the tab shows the method already
 app.plainRequest = req => normalizeRequest(JSON.parse(JSON.stringify(req)));
 app.saveTabsSoon = () => save('tabs', 'activeTab');
 app.saveSettings = () => touch('settings', 'settings');

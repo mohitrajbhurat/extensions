@@ -11,6 +11,7 @@ export const CSS = String.raw`
   --di-line: #d8d8e3;
   --di-accent: #6d28d9;
   --di-accent-soft: #ede9fe;
+  --di-on-accent: #ffffff;
   --di-ok: #047857;
   --di-warn: #b45309;
   --di-bad: #b91c1c;
@@ -32,6 +33,7 @@ export const CSS = String.raw`
     --di-line: #33333f;
     --di-accent: #a78bfa;
     --di-accent-soft: #2b2140;
+    --di-on-accent: #1a1033;
     --di-ok: #34d399;
     --di-warn: #fbbf24;
     --di-bad: #f87171;
@@ -46,6 +48,8 @@ export const CSS = String.raw`
   font-family: var(--di-font);
   font-size: 12px;
   line-height: 1.45;
+  color: var(--di-fg);
+  text-align: left;
   z-index: 2147483647;
 }
 .root > * { pointer-events: auto; }
@@ -124,13 +128,13 @@ button.tool, button.btn, button.icon {
   display: inline-flex; align-items: center; gap: 5px;
 }
 button.tool:hover, button.btn:hover, button.icon:hover { background: var(--di-bg-sunken); }
-button.tool[aria-pressed="true"] { background: var(--di-accent); color: #fff; }
+button.tool[aria-pressed="true"] { background: var(--di-accent); color: var(--di-on-accent); }
 button.tool:focus-visible, button.btn:focus-visible, button.icon:focus-visible,
 input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   outline: 2px solid var(--di-accent); outline-offset: 1px;
 }
 button.icon { padding: 5px 7px; }
-button.btn.primary { background: var(--di-accent); color: #fff; }
+button.btn.primary { background: var(--di-accent); color: var(--di-on-accent); }
 button.btn.ghost { background: transparent; border-color: var(--di-line); }
 button.tool kbd {
   font: 9px/1 var(--di-mono); background: rgba(128,128,140,.22);
@@ -152,6 +156,7 @@ button.tool[aria-pressed="true"] kbd { background: rgba(255,255,255,.25); }
 }
 .panel-head h2 { margin: 0; font-size: 12.5px; font-weight: 700; flex: 1; }
 .panel-head .sub { font-size: 10.5px; color: var(--di-fg-dim); font-weight: 500; }
+.panel-body > * { flex-shrink: 0; }
 .panel-body { overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; overscroll-behavior: contain; }
 .panel-foot { border-top: 1px solid var(--di-line); padding: 8px 10px; display: flex; gap: 6px; flex-wrap: wrap; background: var(--di-bg-soft); }
 

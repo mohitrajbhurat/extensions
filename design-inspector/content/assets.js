@@ -86,7 +86,8 @@ export function collectAssets() {
       return;
     }
     const item = { kind, url, uses: 1, ...extra };
-    item.name = extra.name || (kind === 'inline-svg' ? 'inline-svg' : shortUrl(url));
+    const dataName = () => `${extra.alt ? extra.alt.slice(0, 40) : kind}-${items.length + 1}`;
+    item.name = extra.name || (kind === 'inline-svg' ? 'inline-svg' : /^data:/i.test(url) ? dataName() : shortUrl(url));
     item.isSvg = kind === 'inline-svg' || /\.svg(\?|#|$)/i.test(url) || /^data:image\/svg/i.test(url);
     seen.set(key, item);
     items.push(item);

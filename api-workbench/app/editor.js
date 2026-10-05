@@ -300,7 +300,7 @@ export function renderRequestPane(app, tab) {
 
   renderTabsBar();
   renderPanel();
-  pane.append(bar, varLine, banner, etabs, panel);
+  pane.append(...[bar, varLine, banner, etabs, panel].filter(Boolean));
 }
 
 function inheritedAuthNote(app, tab) {

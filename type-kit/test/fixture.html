@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Type Kit fixture</title></head>
+<body style="font-family:sans-serif">
+  <h1>Type Kit fixture</h1>
+  <p id="para">The quick brown fox copies text.</p>
+  <label>Plain <input id="plain"></label>
+  <label>Plain 2 <input id="plain2"></label>
+  <label>Plain 3 <input id="plain3"></label>
+  <label>Textarea <textarea id="ta" rows="6" cols="60"></textarea></label>
+  <label>React-like <input id="react"></label>
+  <label>Password <input id="pw" type="password"></label>
+  <label>Card <input id="card" autocomplete="cc-number" value="4111111111111111"></label>
+  <div id="ce" contenteditable="true" style="border:1px solid #ccc;min-height:40px"></div>
+  <div id="fake" contenteditable="true" style="border:1px solid #ccc;min-height:40px"></div>
+  <button id="copybtn">Copy</button>
+  <script>
+    // React-style value tracking: state only updates when the input event reports a new value.
+    const r = document.getElementById('react');
+    const desc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    let tracked = '';
+    window.reactState = '';
+    Object.defineProperty(r, 'value', {
+      configurable: true,
+      get() { return desc.get.call(this); },
+      set(v) { tracked = String(v); desc.set.call(this, v); },
+    });
+    r.addEventListener('input', () => {
+      const v = desc.get.call(r);
+      if (v !== tracked) { tracked = v; window.reactState = v; }
+    });
+    // Editor that owns paste (like Slack/Notion): it handles paste itself and cancels the event.
+    window.pasted = [];
+    document.getElementById('fake').addEventListener('paste', (e) => {
+      const text = e.clipboardData.getData('text/plain');
+      window.pasted.push(text);
+      e.preventDefault();
+      document.execCommand('insertText', false, text.replace(/\n/g, ' | '));
+    });
+    document.getElementById('copybtn').addEventListener('click', () => {
+      document.addEventListener('copy', (e) => { e.clipboardData.setData('text/plain', 'BUTTON DATA 42'); e.preventDefault(); }, { once: true });
+      document.execCommand('copy');
+    });
+  </script>
+</body>
+</html>

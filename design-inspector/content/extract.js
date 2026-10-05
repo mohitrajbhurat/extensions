@@ -164,14 +164,23 @@ function uniqueNamer() {
 
 const WEIGHT_NAMES = { 100: 'thin', 200: 'extralight', 300: 'light', 400: 'normal', 500: 'medium', 600: 'semibold', 700: 'bold', 800: 'extrabold', 900: 'black' };
 
+const LIGHTNESS_STEPS = [[50, 0.97], [100, 0.93], [200, 0.88], [300, 0.81], [400, 0.71], [500, 0.62], [600, 0.55], [700, 0.49], [800, 0.42], [900, 0.38], [950, 0.28]];
+
 export function colorTokenName(hex) {
   const c = parseColor(hex);
   if (!c) return 'color';
   const fam = colorFamily(c);
   const alpha = c.a < 1 ? `-a${Math.round(c.a * 100)}` : '';
   if (fam === 'black' || fam === 'white') return fam + alpha;
+  // Nearest step on a Tailwind-like OKLCH lightness scale.
   const L = rgbToOklch(c).l;
-  const step = Math.min(950, Math.max(50, Math.round((1 - L) * 10) * 100 || 50));
+  let step = 500, best = Infinity;
+  for (const [s, l] of LIGHTNESS_STEPS) {
+    if (Math.abs(L - l) < best) {
+      best = Math.abs(L - l);
+      step = s;
+    }
+  }
   return `${fam === 'transparent' ? 'gray' : fam}-${step}${alpha}`;
 }
 

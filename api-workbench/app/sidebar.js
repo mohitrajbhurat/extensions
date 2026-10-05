@@ -7,7 +7,8 @@ import { kvTable, showMenu, prompt, confirmDialog, toast, selectEl } from './ui.
 
 const EXP_KEY = 'aw.expanded';
 let expanded;
-try { expanded = new Set(JSON.parse(localStorage.getItem(EXP_KEY) || '[]')); } catch { expanded = new Set(); }
+let firstRun = false;
+try { const v = localStorage.getItem(EXP_KEY); firstRun = v == null; expanded = new Set(JSON.parse(v || '[]')); } catch { expanded = new Set(); }
 const saveExpanded = () => { try { localStorage.setItem(EXP_KEY, JSON.stringify([...expanded])); } catch { /* private mode */ } };
 
 let filter = '';
@@ -46,6 +47,7 @@ function collectionsView(app) {
     box.append(h('div.empty-note', 'No collections yet. Save a request or import a Postman collection.'));
     return box;
   }
+  if (firstRun) { firstRun = false; expanded.add(state.collections[0].id); saveExpanded(); }
   const activeItem = app.activeTab()?.itemId;
   const q = filter.trim().toLowerCase();
   const matches = it => it.type === 'request'

@@ -31,7 +31,7 @@ export const ENTITIES = {
   },
   Pinterest: {
     properties: ['pinterest.com', 'pinterest.co.uk', 'pinterest.de', 'pinterest.fr', 'pinterest.ca'],
-    domains: ['pinterest.com', 'pinimg.com', 'ct.pinterest.com'],
+    domains: ['pinterest.com', 'pinimg.com'],
   },
   Reddit: {
     properties: ['reddit.com', 'redd.it'],

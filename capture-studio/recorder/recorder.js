@@ -7,6 +7,8 @@ const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const DEFAULTS = { mic: true, tabAudio: true, webcam: false, camSize: 'medium', countdown: 3, micId: '', camId: '' };
 const SIZE_MAP = { small: 0.1, medium: 0.15, large: 0.22 };
+const MAX_COMPOSITE_W = 1920;
+const MAX_COMPOSITE_H = 1080;
 
 let opts = { ...DEFAULTS };
 let mode = params.get('mode') === 'screen' ? 'screen' : 'window';
@@ -177,10 +179,16 @@ async function begin() {
 
 function setupCompositor(canvas, screenVideo, camVideo) {
   const g = canvas.getContext('2d');
-  const W = screenVideo.videoWidth || 1920;
-  const H = screenVideo.videoHeight || 1080;
+  // Composite at up to 1080p: compositing 4K frames on the main thread is too slow on
+  // many machines and would make the page (and the recording) stutter.
+  const srcW = screenVideo.videoWidth || 1920;
+  const srcH = screenVideo.videoHeight || 1080;
+  const fit = Math.min(1, MAX_COMPOSITE_W / srcW, MAX_COMPOSITE_H / srcH);
+  const W = Math.max(2, Math.round(srcW * fit / 2) * 2);
+  const H = Math.max(2, Math.round(srcH * fit / 2) * 2);
   canvas.width = W;
   canvas.height = H;
+  g.imageSmoothingQuality = 'high';
   const me = ctx;
 
   const draw = () => {

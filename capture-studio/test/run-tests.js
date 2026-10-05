@@ -72,7 +72,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
 
   const page = await ctx.newPage();
   await page.goto(base);
-  const [VW, VH] = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
+  let [VW, VH] = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
   const ctrl = await ctx.newPage();
   await ctrl.goto(extUrl('library/library.html'));
   const send = msg => ctrl.evaluate(m => chrome.runtime.sendMessage(m), msg);
@@ -81,6 +81,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
     await ctrl.evaluate(t => chrome.tabs.update(t, { active: true }), tabId);
     await page.bringToFront();
     await sleep(300);
+    [VW, VH] = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
   };
   const waitEditor = (timeout = 60000) => ctx.waitForEvent('page', { predicate: p => p.url().includes('editor/editor.html'), timeout });
 
@@ -113,6 +114,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   check('visible: content captured', colorNear(s.px[1], BAND[0]), JSON.stringify(s.px[1]));
   check('visible: thumbnail stored', s.meta.thumb && s.meta.kind === 'visible');
   const visibleEditor = ed;
+  const visibleSize = [s.width, s.height];
 
   /* ---------------- 2. full page ---------------- */
   await activateFixture();
@@ -260,7 +262,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
   await sleep(1000);
   doc = await docAfter();
   const cw = await ed.evaluate(() => [document.getElementById('canvas').width, document.getElementById('canvas').height]);
-  check('editor: crop applied', doc.crop && near(cw[0], VW * D / 2, 4 * D) && near(cw[1], VH * D / 2, 4 * D), `${cw} ${JSON.stringify(doc.crop)}`);
+  check('editor: crop applied', doc.crop && near(cw[0], visibleSize[0] / 2, 4 * D) && near(cw[1], visibleSize[1] / 2, 4 * D), `${cw} ${JSON.stringify(doc.crop)}`);
 
   // Download PNG and JPEG
   let dl = ed.waitForEvent('download');
@@ -435,7 +437,7 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
 
   check('no page errors in extension pages', errors.length === 0, errors.join(' | '));
 
-  await ctx.close();
+  await ctx.close().catch(() => {});
   server.close();
   fs.rmSync(ext, { recursive: true, force: true });
   const failed = results.filter(r => !r.ok);

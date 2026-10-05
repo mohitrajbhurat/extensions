@@ -16,13 +16,15 @@ export function createTicker(intervalMs, cb) {
   let fallback = null;
   try {
     worker = new Worker(new URL('./ticker-worker.js', import.meta.url));
-    worker.onmessage = () => cb();
+    worker.onmessage = () => {
+      try { cb(); } finally { if (worker) worker.postMessage({ cmd: 'ack' }); }
+    };
     worker.postMessage({ cmd: 'start', interval: intervalMs });
   } catch {
     fallback = setInterval(cb, intervalMs);
   }
   return () => {
-    if (worker) { worker.postMessage({ cmd: 'stop' }); worker.terminate(); }
+    if (worker) { const w = worker; worker = null; w.postMessage({ cmd: 'stop' }); w.terminate(); }
     if (fallback) clearInterval(fallback);
   };
 }

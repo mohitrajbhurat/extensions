@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Shield settings</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header class="page-head">
+    <img src="../icons/icon48.png" width="32" height="32" alt="">
+    <div>
+      <h1>Privacy Shield settings</h1>
+      <p class="muted small">Changes save automatically and apply to new page loads.</p>
+    </div>
+    <span class="spacer"></span>
+    <a class="btn" href="../dashboard/dashboard.html">Open dashboard</a>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="h-block">
+      <h2 id="h-block">Tracker blocking</h2>
+      <p class="muted small">Each category is a separate rule list. Trackers are only blocked when loaded by a different site (third-party), so a company's own site keeps working.</p>
+      <div id="categories" class="rows"></div>
+    </section>
+
+    <section class="card" aria-labelledby="h-signals">
+      <h2 id="h-signals">Links and signals</h2>
+      <div class="rows">
+        <div class="row">
+          <div><label for="stripParams">Strip tracking parameters</label>
+            <p class="muted small">Removes utm_*, fbclid, gclid, mc_eid and about 140 other click identifiers from page addresses before they load.</p></div>
+          <span class="switch"><input type="checkbox" role="switch" id="stripParams"><span class="track" aria-hidden="true"></span></span>
+        </div>
+        <div class="row">
+          <div><label for="gpc">Send Global Privacy Control</label>
+            <p class="muted small">Adds the <span class="mono">Sec-GPC: 1</span> header and sets <span class="mono">navigator.globalPrivacyControl</span>, a legally recognised "do not sell or share" signal in several jurisdictions.</p></div>
+          <span class="switch"><input type="checkbox" role="switch" id="gpc"><span class="track" aria-hidden="true"></span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-cookies">
+      <h2 id="h-cookies">Cookie banners</h2>
+      <p class="muted small">Handles OneTrust, Cookiebot, Quantcast and other TCF banners, Didomi, TrustArc, Usercentrics, Sourcepoint, Osano, CookieYes, Klaro, Google Funding Choices and common hand-made banners. When a banner cannot be answered, it is hidden and page scrolling is restored.</p>
+      <fieldset class="modes">
+        <legend class="sr-only">Cookie banner mode</legend>
+        <label class="mode"><input type="radio" name="cookieMode" value="reject"> <span><strong>Reject</strong><br><span class="muted small">Decline everything except strictly necessary cookies.</span></span></label>
+        <label class="mode"><input type="radio" name="cookieMode" value="accept"> <span><strong>Accept</strong><br><span class="muted small">Click accept so the site works as intended. Trackers are still blocked.</span></span></label>
+        <label class="mode"><input type="radio" name="cookieMode" value="hide"> <span><strong>Hide</strong><br><span class="muted small">Hide the banner without answering it.</span></span></label>
+        <label class="mode"><input type="radio" name="cookieMode" value="off"> <span><strong>Off</strong><br><span class="muted small">Leave cookie banners alone.</span></span></label>
+      </fieldset>
+    </section>
+
+    <section class="card" aria-labelledby="h-learn">
+      <h2 id="h-learn">Learning</h2>
+      <div class="rows">
+        <div class="row">
+          <div><label for="learning">Learn new trackers</label>
+            <p class="muted small">Notes third-party domains that use cookies or storage while embedded on unrelated sites. Only the domain names and the sites they appeared on are kept, on this device.</p></div>
+          <span class="switch"><input type="checkbox" role="switch" id="learning"><span class="track" aria-hidden="true"></span></span>
+        </div>
+        <div class="row">
+          <div><label for="learnThreshold">Flag after this many sites</label></div>
+          <input type="number" id="learnThreshold" min="2" max="10" step="1" style="width: 80px">
+        </div>
+        <div class="row">
+          <div><label for="autoBlockLearned">Block learned trackers automatically</label>
+            <p class="muted small">Otherwise flagged domains are listed in the popup and dashboard for you to block.</p></div>
+          <span class="switch"><input type="checkbox" role="switch" id="autoBlockLearned"><span class="track" aria-hidden="true"></span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-lists">
+      <h2 id="h-lists">Your lists</h2>
+      <p class="muted small">One domain per line. Subdomains are included.</p>
+      <div class="lists">
+        <div>
+          <label for="list-allowlist"><strong>Sites with protection off</strong></label>
+          <p class="muted small">No blocking, no parameter stripping, no banner handling.</p>
+          <textarea id="list-allowlist" rows="6" spellcheck="false" data-key="allowlist"></textarea>
+        </div>
+        <div>
+          <label for="list-trustedDomains"><strong>Never block</strong></label>
+          <p class="muted small">Third-party domains allowed on every site.</p>
+          <textarea id="list-trustedDomains" rows="6" spellcheck="false" data-key="trustedDomains"></textarea>
+        </div>
+        <div>
+          <label for="list-userBlocked"><strong>Always block</strong></label>
+          <p class="muted small">Third-party domains blocked on every site.</p>
+          <textarea id="list-userBlocked" rows="6" spellcheck="false" data-key="userBlocked"></textarea>
+        </div>
+      </div>
+      <div class="actions"><button class="primary" id="save-lists">Save lists</button></div>
+    </section>
+
+    <section class="card" aria-labelledby="h-misc">
+      <h2 id="h-misc">Other</h2>
+      <div class="rows">
+        <div class="row">
+          <div><label for="showBadge">Show blocked count on the toolbar icon</label></div>
+          <span class="switch"><input type="checkbox" role="switch" id="showBadge"><span class="track" aria-hidden="true"></span></span>
+        </div>
+        <div class="row">
+          <div><strong>Keyboard shortcuts</strong>
+            <p class="muted small">"Toggle protection on this site" and "Open dashboard" have no default keys. Assign them in the browser's extension shortcuts page.</p></div>
+          <button id="shortcuts">Set shortcuts</button>
+        </div>
+        <div class="row">
+          <div><strong>Reset data</strong>
+            <p class="muted small">Clears statistics and site history, or everything learned about trackers.</p></div>
+          <div class="btn-row">
+            <button class="danger" id="reset-stats">Reset statistics</button>
+            <button class="danger" id="reset-learned">Reset learning</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Cookiebot mock</title>
+<style>
+  #CybotCookiebotDialog { position: fixed; top: 20%; left: 10%; right: 10%; padding: 24px; background: #fff; border: 1px solid #999; z-index: 9999; }
+  #CybotCookiebotDialogBodyUnderlay { position: fixed; inset: 0; background: rgb(0 0 0 / 40%); z-index: 9998; }
+</style></head>
+<body class="CybotCookiebotDialogActive">
+<h1>Shop</h1>
+<div id="CybotCookiebotDialogBodyUnderlay"></div>
+<div id="CybotCookiebotDialog" role="dialog">
+  <h2>This website uses cookies</h2>
+  <button id="CybotCookiebotDialogBodyButtonDecline">Deny</button>
+  <button id="CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll">Allow all</button>
+</div>
+<script>
+  const close = (choice) => {
+    document.documentElement.dataset.consent = choice;
+    document.getElementById('CybotCookiebotDialog').remove();
+    document.getElementById('CybotCookiebotDialogBodyUnderlay').remove();
+    document.body.classList.remove('CybotCookiebotDialogActive');
+  };
+  document.getElementById('CybotCookiebotDialogBodyButtonDecline').onclick = () => close('rejected');
+  document.getElementById('CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll').onclick = () => close('accepted');
+</script>
+</body></html>

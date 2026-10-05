@@ -143,7 +143,7 @@ export function kvTable(list, opts = {}) {
       return h('td', h('div.kv-file', pick, name));
     }
     const isSecret = secret && row.secret;
-    const inp = h('input', { type: isSecret ? 'password' : 'text', value: row.value ?? '', placeholder: valPh, 'aria-label': 'Value', spellcheck: false, list: opts.datalist || null });
+    const inp = h('input', { type: isSecret ? 'password' : 'text', value: row.value ?? '', placeholder: valPh, 'aria-label': 'Value', spellcheck: 'false', list: opts.datalist || null });
     inp.addEventListener('input', () => { row.value = inp.value; onChange(false); });
     void tr;
     return h('td', inp);
@@ -153,7 +153,7 @@ export function kvTable(list, opts = {}) {
     const tr = h('tr', { class: (isNew ? 'row-new' : '') + (row.enabled === false ? ' off' : '') });
     const chk = h('input', { type: 'checkbox', checked: row.enabled !== false, 'aria-label': 'Enabled', disabled: isNew });
     chk.addEventListener('change', () => { row.enabled = chk.checked; tr.classList.toggle('off', !chk.checked); onChange(false); });
-    const key = h('input', { type: 'text', value: row.key ?? '', placeholder: isNew ? `Add ${keyPh.toLowerCase()}` : keyPh, 'aria-label': 'Key', spellcheck: false, list: opts.keyList || null });
+    const key = h('input', { type: 'text', value: row.key ?? '', placeholder: isNew ? `Add ${keyPh.toLowerCase()}` : keyPh, 'aria-label': 'Key', spellcheck: 'false', list: opts.keyList || null });
     const promote = () => {
       if (!isNew) return;
       isNew = false; list.push(row); tr.classList.remove('row-new'); chk.disabled = false;
@@ -245,7 +245,7 @@ export function selectEl(options, value, onChange, attrs = {}) {
 
 /** Textarea that inserts two spaces on Tab (Esc then Tab leaves the field). */
 export function codeArea(attrs = {}) {
-  const ta = h('textarea.code', { spellcheck: false, ...attrs });
+  const ta = h('textarea.code', { spellcheck: 'false', ...attrs });
   let escaped = false;
   ta.addEventListener('keydown', e => {
     if (e.key === 'Escape') { escaped = true; return; }

@@ -180,7 +180,7 @@ export function createLiveEdit(app) {
       const c = parseColor(getComputedStyle(selected).getPropertyValue(prop));
       if (c) {
         picker.value = toHex(c);
-        if (app.shadow.activeElement !== text) text.value = toHex(c, true);
+        if (app.shadow.activeElement !== text) text.value = c.a === 0 ? 'transparent' : toHex(c, true);
       }
     };
     picker.addEventListener('input', () => {

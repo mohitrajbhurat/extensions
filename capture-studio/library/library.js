@@ -81,7 +81,7 @@ function render() {
 function recordingCard(r) {
   const thumb = el('button', { class: 'thumb', 'aria-label': `Play ${r.name}`, onclick: () => openPlayer(r.id) }, [
     r.thumb ? el('img', { src: objUrl(r.thumb), alt: '', loading: 'lazy' }) : null,
-    el('span', { class: 'kind', text: r.mode === 'tab' ? 'Tab' : r.mode === 'window' ? 'Window' : 'Screen' }),
+    el('span', { class: 'kind', text: { tab: 'Tab', window: 'Window', screen: 'Screen', trim: 'Trimmed' }[r.mode] || 'Video' }),
     el('span', { class: 'badge', text: formatDuration(r.durationMs) }),
     el('span', { class: 'play', html: ICONS.play }),
   ]);
@@ -338,13 +338,14 @@ $('trim-go').addEventListener('click', async () => {
     await putRecording(meta, blob);
     toast(replace ? 'Recording trimmed' : 'Trimmed copy saved');
     await load();
+    trimAbort = null; // finished: reopening the player must not abort anything
     await openPlayer(id);
   } catch (e) {
     if (e.name !== 'AbortError') toast('Trim failed: ' + e.message, { error: true });
-    setTrimBusy(false);
-    bar.hidden = true;
   } finally {
     trimAbort = null;
+    setTrimBusy(false);
+    bar.hidden = true;
   }
 });
 

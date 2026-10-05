@@ -56,7 +56,7 @@ async function notifyTask(id) {
     type: 'basic',
     iconUrl: ICON,
     title: t.title,
-    message: when ? `Due ${when.toLowerCase().replace(/^today/, 'today')}` : 'Reminder',
+    message: when ? `Due: ${when}` : 'Reminder',
     contextMessage: 'Home Base',
     buttons: [{ title: 'Complete' }, { title: `Snooze ${SNOOZE_MIN} min` }],
     priority: t.priority === 1 ? 2 : 1,

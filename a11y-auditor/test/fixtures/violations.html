@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en_US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta http-equiv="refresh" content="300">
+<title></title>
+<style>
+  body { font: 16px/1.5 sans-serif; margin: 16px; }
+  .low { color: #aaaaaa; background: #ffffff; }
+  .fade { opacity: .4; color: #333; }
+  .tiny-btns button { width: 16px; height: 16px; padding: 0; margin: 0; border: 0; font-size: 8px; }
+  .scroller { height: 40px; overflow: auto; border: 1px solid; }
+  .clicky { cursor: pointer; }
+  a.nofocus:focus { outline: none; }
+  .aaa { color: #6e6e6e; background: #fff; }
+</style>
+</head>
+<body>
+<a href="#nowhere">Skip to content</a>
+<h1>Fixture with violations</h1>
+<h3 id="dup">Skipped level</h3>
+<h2></h2>
+<p class="low" id="dup">Low contrast text</p>
+<div class="fade">Faded text via opacity</div>
+<p class="aaa">AAA-only contrast text</p>
+<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="10" height="10">
+<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="IMG_1234.jpg" width="10" height="10">
+<input type="image" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">
+<map name="m"><area href="/x" shape="rect" coords="0,0,5,5"></map>
+<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" usemap="#m" alt="map" width="10" height="10">
+<svg role="img" width="10" height="10"><rect width="10" height="10"/></svg>
+<object data="data:text/plain,hi" width="10" height="10"></object>
+<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" ismap alt="server map" width="10" height="10">
+<a href="/a"></a>
+<a href="/b">click here</a>
+<a href="/c">Docs</a> <a href="/d">Docs</a>
+<button></button>
+<input type="button">
+<a href="/e"><button>Nested</button></a>
+<button aria-label="Close dialog">Submit</button>
+<input type="text">
+<input type="text" placeholder="Email">
+<input type="text" title="Phone">
+<label for="ml">One</label><label for="ml">Two</label><input id="ml" type="text">
+<input type="text" aria-label="x" autocomplete="emale">
+<div role="buton">Bad role</div>
+<div role="widget">Abstract</div>
+<div aria-labeledby="x">Typo attr</div>
+<div role="checkbox" aria-checked="maybe" tabindex="0" aria-label="cb">x</div>
+<div aria-describedby="does-not-exist">Missing ref</div>
+<a href="/f" aria-sort="ascending">Sort link</a>
+<div aria-label="labelled div">Generic</div>
+<button role="none">Ignored none</button>
+<div role="slider" tabindex="0" aria-label="vol"></div>
+<div role="tablist"><span>no tabs</span></div>
+<div role="option" aria-selected="false">Orphan option</div>
+<div aria-hidden="true"><a href="/g">Hidden focusable</a></div>
+<div role="dialog"></div>
+<div tabindex="3">Positive tabindex</div>
+<div onclick="void 0">Click me</div>
+<span class="clicky">Pointer span</span>
+<div class="scroller"><p>Line 1</p><p>Line 2</p><p>Line 3</p><p>Line 4</p></div>
+<a class="nofocus" href="/h">No focus ring</a>
+<p lang="english">Bad lang</p>
+<marquee>Moving</marquee>
+<video src="data:video/mp4;base64," autoplay width="20" height="20"></video>
+<ul><div>Not li</div></ul>
+<li>Orphan li</li>
+<dl><p>bad</p></dl>
+<dt>Orphan dt</dt>
+<table><tr><td>a</td><td>b</td></tr><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></table>
+<table><tr><th></th><th id="hh">H</th></tr><tr><td headers="nope">1</td><td headers="hh">2</td></tr></table>
+<iframe srcdoc="<p>hi</p>" width="20" height="20"></iframe>
+<iframe srcdoc="<p>a</p>" title="Same" width="20" height="20"></iframe>
+<iframe srcdoc="<p>b</p>" title="Same" width="20" height="20"></iframe>
+<div class="tiny-btns"><button aria-label="a">a</button><button aria-label="b">b</button></div>
+<a href="/i" accesskey="k">K1</a><a href="/j" accesskey="k">K2</a>
+<p>Text outside landmarks.</p>
+<main><p>Main one</p></main>
+<main><p>Main two</p></main>
+<header>Banner 1</header><header>Banner 2</header>
+<footer>Foot 1</footer><footer>Foot 2</footer>
+<nav>Nav A</nav><nav>Nav B</nav>
+</body>
+</html>

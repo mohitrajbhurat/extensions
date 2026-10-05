@@ -801,7 +801,7 @@
       panel.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') { e.preventDefault(); finish(false); return; }
         if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); finish(true); return; }
-        if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); finish(true); return; }
+        if (e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) { e.preventDefault(); finish(true); return; }
         trapFocus(panel, e);
       });
       wrap.append(backdrop, panel);

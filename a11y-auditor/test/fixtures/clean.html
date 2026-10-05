@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clean fixture</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0; color: #1b1b1b; background: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  button, a.btn { min-height: 32px; min-width: 32px; padding: 4px 12px; }
+  .dark { background: #1d2733; color: #f2f2f2; padding: 16px; }
+  .dark a { color: #9fd0ff; }
+  a:focus:not(:focus-visible) { outline: none; }
+  a:focus-visible { outline: 2px solid #1a73e8; }
+  .scroll { max-height: 60px; overflow: auto; }
+</style>
+</head>
+<body>
+<a class="sr-only" href="#main">Skip to main content</a>
+<header>
+  <nav aria-label="Primary"><ul><li><a href="/home">Home</a></li><li><a href="/about">About us</a></li></ul></nav>
+</header>
+<main id="main">
+  <h1>Clean page</h1>
+  <p>This paragraph has <a href="/terms">inline terms of service link</a> inside running text that is long enough.</p>
+  <h2>Images</h2>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Company logo" width="40" height="40">
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="" width="40" height="40">
+  <svg aria-hidden="true" width="10" height="10"><rect width="10" height="10"/></svg>
+  <svg role="img" aria-label="Chart" width="40" height="40"><rect width="10" height="10"/></svg>
+  <h2>Form</h2>
+  <form aria-label="Contact">
+    <label for="n">Name</label> <input id="n" type="text" autocomplete="name">
+    <label>Email <input type="email" autocomplete="work email"></label>
+    <fieldset><legend>Plan</legend>
+      <label><input type="radio" name="p" checked> Basic</label>
+      <label><input type="radio" name="p"> Pro</label>
+    </fieldset>
+    <label for="s">Country</label> <select id="s"><option>US</option></select>
+    <button type="submit">Send message</button>
+    <button type="button" aria-label="Close"><svg aria-hidden="true" width="12" height="12"></svg></button>
+  </form>
+  <h2>Widgets</h2>
+  <div role="tablist" aria-label="Tabs">
+    <button role="tab" aria-selected="true" aria-controls="tp1" id="t1">One</button>
+    <button role="tab" aria-selected="false" aria-controls="tp2" id="t2" tabindex="-1">Two</button>
+  </div>
+  <div role="tabpanel" id="tp1" aria-labelledby="t1"><p>Panel</p></div>
+  <div role="tabpanel" id="tp2" aria-labelledby="t2" hidden><p>Panel 2</p></div>
+  <div role="checkbox" aria-checked="false" tabindex="0" aria-labelledby="cbl"></div><span id="cbl">Accept</span>
+  <ul role="listbox" aria-label="Fruit"><li role="option" aria-selected="true">Apple</li></ul>
+  <div class="scroll" tabindex="0" role="region" aria-label="Log"><p>1</p><p>2</p><p>3</p><p>4</p></div>
+  <section class="dark" aria-labelledby="dh"><h2 id="dh">Dark section</h2><p>Light text on dark. <a href="/x">Read the dark section guide</a></p></section>
+  <h2>Data</h2>
+  <table><caption>Prices</caption><tr><th scope="col">Item</th><th scope="col">Price</th></tr><tr><td>A</td><td>1</td></tr></table>
+  <dl><dt>Term</dt><dd>Definition</dd><div><dt>T2</dt><dd>D2</dd></div></dl>
+  <p lang="fr">Bonjour</p>
+  <iframe title="Embedded note" srcdoc="<!doctype html><html lang=en><title>n</title><p>hi</p>" width="100" height="40"></iframe>
+  <video controls width="100" height="40"><track kind="captions" src="data:text/vtt,WEBVTT" srclang="en"></video>
+</main>
+<footer><p>Footer text</p></footer>
+</body>
+</html>

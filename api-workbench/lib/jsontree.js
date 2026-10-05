@@ -57,7 +57,7 @@
         if (len + s.length > SUMMARY_LIMIT) { parts.push('…'); break; }
         parts.push(s); len += s.length + 2;
       }
-      return `[ ${parts.join(', ')} ]  ${v.length} item${v.length === 1 ? '' : 's'}`;
+      return `${parts.join(', ')}  \u00B7 ${v.length} item${v.length === 1 ? '' : 's'}`;
     }
     const keys = Object.keys(v);
     if (!keys.length) return '{}';
@@ -67,7 +67,7 @@
       if (len + k.length > SUMMARY_LIMIT) { shown.push('…'); break; }
       shown.push(k); len += k.length + 2;
     }
-    return `{ ${shown.join(', ')} }  ${keys.length} key${keys.length === 1 ? '' : 's'}`;
+    return `${shown.join(', ')}  \u00B7 ${keys.length} key${keys.length === 1 ? '' : 's'}`;
   }
 
   function brief(x) {

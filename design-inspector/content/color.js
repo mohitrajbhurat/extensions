@@ -109,7 +109,7 @@ const srgbToLin = v => {
 };
 const linToSrgb = v => {
   const o = v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
-  return clamp(Math.round(o * 255), 0, 255);
+  return clamp(Math.round(o * 255), 0, 255) || 0;
 };
 
 export function rgbToOklch(c) {
@@ -196,7 +196,8 @@ export function readableOn(c) {
 export function colorFamily(c) {
   const { h, s, l } = rgbToHsl(c);
   if (c.a != null && c.a < 0.08) return 'transparent';
-  if (s < 10) return l < 12 ? 'black' : l > 92 ? 'white' : 'gray';
+  // Low OKLCH chroma reads as neutral even when HSL saturation is inflated (e.g. bluish grays).
+  if (s < 10 || rgbToOklch(c).c < 0.03) return l < 12 ? 'black' : l > 92 ? 'white' : 'gray';
   if (h < 15 || h >= 345) return 'red';
   if (h < 45) return 'orange';
   if (h < 70) return 'yellow';

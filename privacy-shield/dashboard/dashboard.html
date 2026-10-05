@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Shield dashboard</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header class="page-head">
+    <img src="../icons/icon48.png" width="32" height="32" alt="">
+    <div>
+      <h1>Privacy Shield</h1>
+      <p class="muted small" id="since"></p>
+    </div>
+    <span class="spacer"></span>
+    <label class="sr-only" for="range">Time range</label>
+    <select id="range">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+      <option value="365">Last year</option>
+    </select>
+    <button id="refresh" title="Refresh">Refresh</button>
+    <a class="btn" href="../options/options.html">Settings</a>
+  </header>
+
+  <main>
+    <section class="tiles" id="tiles" aria-label="Totals"></section>
+
+    <section class="card wide" aria-labelledby="h-chart">
+      <div class="card-head">
+        <h2 id="h-chart">Blocked requests per day</h2>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div id="chart" class="chart"></div>
+    </section>
+
+    <div class="grid2">
+      <section class="card" aria-labelledby="h-cats">
+        <h2 id="h-cats">By category</h2>
+        <div id="categories" class="bars"></div>
+      </section>
+      <section class="card" aria-labelledby="h-top">
+        <div class="card-head"><h2 id="h-top">Top trackers</h2><span class="muted small">all time</span></div>
+        <div class="table-wrap"><table id="top-trackers"></table></div>
+      </section>
+    </div>
+
+    <section class="card wide" aria-labelledby="h-sites">
+      <div class="card-head">
+        <h2 id="h-sites">Sites you visited</h2>
+        <input type="search" id="site-filter" placeholder="Filter sites" aria-label="Filter sites">
+      </div>
+      <div class="table-wrap"><table id="sites"></table></div>
+    </section>
+
+    <section class="card wide" aria-labelledby="h-learned">
+      <div class="card-head">
+        <h2 id="h-learned">Learned trackers</h2>
+        <span class="muted small" id="learned-note"></span>
+      </div>
+      <p class="muted small">Third-party domains that used cookies or storage while embedded on several unrelated sites. They are not on the built-in list.</p>
+      <div class="table-wrap"><table id="learned"></table></div>
+    </section>
+  </main>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

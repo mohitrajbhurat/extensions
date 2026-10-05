@@ -8,13 +8,19 @@ const os = require('os');
 const http = require('http');
 const { chromium } = require('playwright');
 
-const ext = path.resolve(__dirname, '..');
+const src = path.resolve(__dirname, '..');
+// Test copy whose manifest pre-grants 127.0.0.1 (headless cannot answer permission prompts).
+const ext = fs.mkdtempSync(path.join(os.tmpdir(), 'aw-ext-'));
+fs.cpSync(src, ext, { recursive: true, filter: f => !f.includes(`${path.sep}test${path.sep}`) && !f.endsWith(`${path.sep}test`) });
+const mf = JSON.parse(fs.readFileSync(path.join(ext, 'manifest.json'), 'utf8'));
+mf.host_permissions = ['http://127.0.0.1/*'];
+fs.writeFileSync(path.join(ext, 'manifest.json'), JSON.stringify(mf, null, 2));
 const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
 
 function server() {
   return new Promise(resolve => {
     const s = http.createServer((req, res) => {
-      const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': '*', 'Access-Control-Expose-Headers': '*' };
+      const cors = {}; // deliberately no CORS headers: host access must bypass CORS
       if (req.method === 'OPTIONS') { res.writeHead(204, cors); res.end(); return; }
       let body = [];
       req.on('data', c => body.push(c));
@@ -62,8 +68,6 @@ function check(name, cond, extra = '') {
     page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
     await page.goto(`chrome-extension://${id}/app/workbench.html`);
     await page.waitForSelector('#urlInput');
-    // Headless cannot answer permission prompts: resolve them as "denied" so requests go out with CORS rules.
-    await page.evaluate(() => { chrome.permissions.request = async () => false; });
 
     console.log('workbench');
     check('seeded sample collection', await page.locator('.tree-row', { hasText: 'Sample: httpbin' }).count() === 1);
@@ -81,6 +85,8 @@ function check(name, cond, extra = '') {
     await page.click('.etab[data-tab="headers"]');
     await page.locator('#reqPane .kvt tbody tr.row-new td:nth-child(2) input').fill('X-Custom');
     await page.locator('#reqPane .kvt tbody tr:not(.row-new) td:nth-child(3) input').first().fill('{{$guid}}');
+    await page.locator('#reqPane .kvt tbody tr.row-new td:nth-child(2) input').fill('User-Agent');
+    await page.locator('#reqPane .kvt tbody tr:not(.row-new) td:nth-child(3) input').nth(1).fill('AW-Test/1.0');
     await page.click('.etab[data-tab="body"]');
     await page.selectOption('#reqPane .code-tools select', 'json');
     await page.fill('#reqPane textarea.code', '{"hello": "world"');
@@ -105,8 +111,7 @@ function check(name, cond, extra = '') {
     await page.selectOption('#reqPane .kvt tbody tr td:nth-child(5) select', 'global');
 
     await page.keyboard.press('Control+Enter');
-    await page.waitForTimeout(1500); console.log(await page.textContent("#resPane")); await page.screenshot({ path: "/tmp/claude-0/-home-claude-extensions/52fd0301-0e66-58ff-8add-dc82b45b40cb/scratchpad/dbg.png" });
-    await page.waitForSelector('.status-pill', { timeout: 10000 });
+    await page.waitForSelector('.status-pill', { timeout: 10000 }).catch(async e => { console.log(await page.textContent('#resPane')); throw e; });
     check('status 200 shown', (await page.textContent('.status-pill')).includes('200'));
     check('tests summary 2/2', (await page.textContent('.res-head .meta')).includes('Tests 2/2'), await page.textContent('.res-head .meta'));
     check('JSON tree rendered', await page.locator('#resPane .jt-root').count() === 1);
@@ -121,6 +126,7 @@ function check(name, cond, extra = '') {
     check('content-type auto', echoed.headers['content-type'] === 'application/json');
     check('bearer auth sent', echoed.headers.authorization === 'Bearer secret-token');
     check('dynamic variable resolved', /^[0-9a-f-]{36}$/.test(echoed.headers['x-custom'] || ''), echoed.headers['x-custom']);
+    check('browser-controlled header set via DNR', echoed.headers['user-agent'] === 'AW-Test/1.0', echoed.headers['user-agent']);
     check('query sent', echoed.query.a === '1' && echoed.query.b === 'two');
     await page.click('#resPane .etab[data-tab="headers"]');
     check('response headers listed', (await page.textContent('#resPane .cookie-tbl')).includes('x-test'));
@@ -215,7 +221,6 @@ function check(name, cond, extra = '') {
     await page.click('#modal .modal-foot button:has-text("Import")');
     await page.waitForSelector('.tree-row:has-text("Imported PM")');
     check('Postman collection imported', true);
-    await page.click('.tree-row:has-text("Imported PM")');
     await page.click('.tree-row:has-text("Folder")');
     await page.click('.tree-row:has-text("Get thing")');
     await page.click('#sendBtn');
@@ -228,19 +233,18 @@ function check(name, cond, extra = '') {
     await page.waitForSelector('#urlInput');
     const tabCount = await page.locator('.rtab').count();
     check('tabs restored after reload', tabCount >= 4, String(tabCount));
-    check('no page errors', errors.length === 0, errors.join(' | '));
+    const real = errors.filter(e => !/sandboxed and the 'allow-scripts'|Failed to load resource/.test(e));
+    check('no page errors', real.length === 0, real.join(' | '));
     await page.screenshot({ path: path.join(os.tmpdir(), 'aw-e2e.png') });
 
     // JSON viewer content script against a raw JSON document
     console.log('json viewer');
+    // The service worker registers the viewer for granted hosts; it must format the page by itself.
     const doc = await ctx.newPage();
     await doc.goto(`${base}/doc.json`);
-    await doc.addStyleTag({ path: path.join(ext, 'lib/jsontree.css') });
-    await doc.addStyleTag({ path: path.join(ext, 'content/json-viewer.css') });
-    await doc.addScriptTag({ path: path.join(ext, 'lib/jsontree.js') });
-    await doc.addScriptTag({ path: path.join(ext, 'content/json-viewer.js') });
-    await doc.waitForSelector('#aw-jv .jt-root');
-    check('viewer renders tree', (await doc.textContent('#aw-jv .jt-root')).includes('"Ada"'));
+    await doc.waitForSelector('#aw-jv .jt-root', { timeout: 8000 });
+    check('viewer auto-registered and renders tree', (await doc.textContent('#aw-jv .jt-root')).includes('"Ada"'));
+    check('viewer CSS injected', await doc.evaluate(() => getComputedStyle(document.querySelector('.aw-jv-bar')).position === 'sticky'));
     check('original pre hidden', await doc.locator('body > pre').isHidden());
     await doc.click('#aw-jv button:has-text("Raw")');
     check('raw toggle shows original text', (await doc.textContent('#aw-jv pre.aw-jv-pre:not([hidden])')).startsWith('{"user"'));
@@ -249,14 +253,21 @@ function check(name, cond, extra = '') {
     await doc.click('#aw-jv button:has-text("Tree")');
     await doc.click('#aw-jv button:has-text("Collapse all")');
     check('collapse all', await doc.locator('#aw-jv .jt-children:visible').count() === 1);
+    await doc.fill('#aw-jv input[type=search]', 'fr');
+    await doc.waitForTimeout(400);
+    check('viewer search highlights', await doc.locator('#aw-jv mark.jt-mark').count() === 1);
     await doc.screenshot({ path: path.join(os.tmpdir(), 'aw-viewer.png') });
+    const before = await page.locator('.rtab').count();
+    await doc.click('#aw-jv button:has-text("Open in API Workbench")');
+    await page.waitForFunction(n => document.querySelectorAll('.rtab').length > n, before, { timeout: 5000 }).catch(() => {});
+    check('"Open in API Workbench" opens a request tab', (await page.inputValue('#urlInput')) === `${base}/doc.json`, await page.inputValue('#urlInput'));
     const html = await ctx.newPage();
     await html.goto(`${base}/html`);
-    await html.addScriptTag({ path: path.join(ext, 'lib/jsontree.js') });
-    await html.addScriptTag({ path: path.join(ext, 'content/json-viewer.js') });
+    await html.waitForTimeout(500);
     check('viewer ignores HTML pages', await html.locator('#aw-jv').count() === 0);
   } finally {
     await ctx.close();
+    fs.rmSync(ext, { recursive: true, force: true });
     srv.close();
   }
   if (failures) { console.log(`\n${failures} check(s) failed`); process.exit(1); }

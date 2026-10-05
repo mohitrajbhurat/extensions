@@ -141,7 +141,7 @@ function bodyView(app, tab, res, body, head) {
       onCopyPath: p => { copyText(p); toast(`Copied ${p}`); },
     });
     const q = h('input', { type: 'search', placeholder: 'Search keys and values', 'aria-label': 'Search response', id: 'resSearch' });
-    const count = h('span.faint', { style: { fontSize: '11.5px', minWidth: '48px' } });
+    const count = h('span.faint', { style: { fontSize: '11.5px' }, 'aria-live': 'polite' });
     let hits = [], cur = -1;
     const go = d => {
       if (!hits.length) return;
@@ -163,8 +163,9 @@ function bodyView(app, tab, res, body, head) {
     });
     q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(e.shiftKey ? -1 : 1); } });
     toolbar.append(h('div.search-box', q, count),
-      h('button.btn.btn-sm.btn-ghost', { type: 'button', on: { click: () => tree.expandAll() } }, 'Expand all'),
-      h('button.btn.btn-sm.btn-ghost', { type: 'button', on: { click: () => tree.collapseAll() } }, 'Collapse all'));
+      h('span.grow'),
+      h('button.btn.btn-sm.btn-ghost', { type: 'button', title: 'Expand all', on: { click: () => tree.expandAll() } }, 'Expand'),
+      h('button.btn.btn-sm.btn-ghost', { type: 'button', title: 'Collapse all', on: { click: () => tree.collapseAll() } }, 'Collapse'));
     if (tree.dataset.truncated === '1') body.append(h('div.note', { style: { marginBottom: '8px' } }, 'Very large document: the tree shows the first 20,000 nodes. Use Pretty or Raw for the rest.'));
     body.append(tree);
     return;

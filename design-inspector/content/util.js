@@ -12,7 +12,7 @@ export function h(spec, props, ...kids) {
       else el.id = token.slice(1);
     }
   }
-  if (props && (typeof props !== 'object' || props instanceof Node)) {
+  if (props && (typeof props !== 'object' || props instanceof Node || Array.isArray(props))) {
     kids.unshift(props);
     props = null;
   }

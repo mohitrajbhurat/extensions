@@ -87,9 +87,11 @@ export function el(tag, props = {}, ...children) {
 }
 
 // A clickable "label: value" row that copies its value.
-export function resultRow(label, value, { current = false } = {}) {
+export function resultRow(label, value, { current = false, copy } = {}) {
+  const text = String(copy ?? value);
+  const short = text.length > 28 ? text.slice(0, 28) + '…' : text;
   return el('li', { class: current ? 'current' : '' },
-    el('button', { type: 'button', title: 'Copy', onclick: () => copyText(String(value), { label: `Copied ${value}` }) },
+    el('button', { type: 'button', title: 'Copy', onclick: () => copyText(text, { label: `Copied ${short}` }) },
       el('span', { class: 'label', text: label }),
       el('span', { class: 'value', text: value })));
 }

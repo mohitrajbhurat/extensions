@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>OneTrust mock</title>
+<style>
+  body { overflow: hidden; }
+  #onetrust-banner-sdk { position: fixed; bottom: 0; left: 0; right: 0; padding: 24px; background: #fff; border-top: 1px solid #ccc; z-index: 9999; }
+  main { height: 3000px; }
+</style></head>
+<body>
+<main><h1>News article</h1></main>
+<div id="onetrust-consent-sdk">
+  <div id="onetrust-banner-sdk" role="dialog" aria-label="Privacy">
+    <p>We and our partners use cookies to personalise ads.</p>
+    <button id="onetrust-pc-btn-handler">Cookie settings</button>
+    <button id="onetrust-reject-all-handler">Reject All</button>
+    <button id="onetrust-accept-btn-handler">Accept All Cookies</button>
+  </div>
+</div>
+<script>
+  // Simulate the CMP loading late, like the real SDK.
+  const sdk = document.getElementById('onetrust-consent-sdk');
+  sdk.remove();
+  setTimeout(() => {
+    document.body.append(sdk);
+    const done = (choice) => {
+      document.documentElement.dataset.consent = choice;
+      document.getElementById('onetrust-banner-sdk').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    };
+    document.getElementById('onetrust-reject-all-handler').addEventListener('click', () => done('rejected'));
+    document.getElementById('onetrust-accept-btn-handler').addEventListener('click', () => done('accepted'));
+  }, 400);
+</script>
+</body></html>

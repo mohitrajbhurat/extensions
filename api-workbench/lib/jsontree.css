@@ -19,11 +19,15 @@
   display: inline-block; width: 13px; text-align: center; cursor: pointer;
   color: var(--jt-muted, #6b7280); user-select: none;
 }
-.jt-tw::before { content: "\25B8"; display: inline-block; transition: transform 0.12s ease; }
-.jt-node.open > .jt-line > .jt-tw::before { transform: rotate(90deg); }
-.jt-node.jt-empty > .jt-line > .jt-tw::before { content: "\00B7"; }
+.jt-tw::before {
+  content: ""; display: inline-block; width: 5px; height: 5px; margin-bottom: 1px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg); transition: transform 0.12s ease;
+}
+.jt-node.open > .jt-line > .jt-tw::before { transform: rotate(45deg); margin-bottom: 3px; }
+.jt-node.jt-empty > .jt-line > .jt-tw::before { border: 0; width: 3px; height: 3px; border-radius: 50%; background: currentColor; transform: none; }
 .jt-tw.jt-leaf { cursor: default; }
-.jt-tw.jt-leaf::before { content: ""; }
+.jt-tw.jt-leaf::before { display: none; }
 .jt-key { color: var(--jt-key, #8250df); }
 .jt-index { color: var(--jt-muted, #6b7280); }
 .jt-colon { color: var(--jt-muted, #6b7280); }

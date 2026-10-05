@@ -1,0 +1,17 @@
+body { background: var(--surface); min-height: 100vh; }
+.wrap { max-width: 720px; margin: 0 auto; padding: var(--s4) var(--s3) 48px; display: grid; gap: var(--s3); }
+.page-head { display: flex; align-items: center; gap: var(--s3); }
+.page-head h1 { margin: 0; font-size: 24px; }
+.page-head p { margin: 0; }
+.card { background: var(--bg); display: grid; gap: var(--s2); }
+.card h2 { margin: 0; font-size: 16px; }
+.card p { margin: 0; }
+.small { font-size: 12px; }
+.warn { color: var(--warn); }
+.grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--s2); }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+.shortcuts { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s1); }
+.shortcuts li { display: flex; justify-content: space-between; gap: var(--s3); padding: 6px 8px; border-radius: var(--radius); background: var(--surface); }
+kbd { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--surface); }
+.saved { min-height: 18px; text-align: center; }
+.btn { justify-self: start; }
