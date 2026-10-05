@@ -275,7 +275,11 @@
     if (st) {
       const before = (el.ownerDocument.defaultView || root).getComputedStyle(el, '::before').content;
       const after = (el.ownerDocument.defaultView || root).getComputedStyle(el, '::after').content;
-      const clean = (c) => (c && c !== 'none' && c !== 'normal' ? c.replace(/^["']|["']$/g, '') : '');
+      // Only literal strings count; counters, attr() and url() are ignored.
+      const clean = (c) => {
+        const m = /^"((?:[^"\\]|\\.)*)"$/.exec(c || '');
+        return m ? m[1].replace(/\\(.)/g, '$1') : '';
+      };
       out = clean(before) + out + clean(after);
     }
     return out;
@@ -301,6 +305,13 @@
     if (t === 'TEXTAREA') return trimText(el.value || '');
     if (t === 'IMG') return trimText(attr(el, 'alt') || '');
     if (t === 'BR') return ' ';
+    if (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(t)) return '';
+    if (t === 'SVG') {
+      const lbl = trimText(attr(el, 'aria-label'));
+      if (lbl) return lbl;
+      const title = el.querySelector('title');
+      return title ? trimText(title.textContent) : '';
+    }
     if (r === 'presentation' || r === 'none') return subtreeText(el, ctx);
     const own = trimText(attr(el, 'aria-label'));
     const labelled = idRefs(el, 'aria-labelledby');
@@ -500,7 +511,7 @@
   A11Y.dom = {
     tag, attr, trimText, role, implicitRole, styleOf, isRendered, isOffscreen,
     isHiddenFromAT, isDisabled, isFocusable, isInTabOrder, tabIndexValue, idRefs,
-    labelsFor, accessibleName, accessibleDescription, accessibleDescription2: accessibleDescription,
+    labelsFor, accessibleName, accessibleDescription,
     selectorFor, snippetFor, hasVisibleText, rectOf, subtreeText, FOCUSABLE_SELECTOR,
   };
 })(typeof window !== 'undefined' ? window : self);

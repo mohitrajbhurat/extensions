@@ -280,7 +280,7 @@ html[data-rs-dark-mode="filter"] :fullscreen{filter:invert(1) hue-rotate(180deg)
     const alias = [];
     for (const sheet of Array.from(document.styleSheets)) {
       const owner = sheet.ownerNode;
-      if (owner && owner.hasAttribute && owner.hasAttribute('data-rs-dark')) continue;
+      if (owner && owner.hasAttribute && (owner.hasAttribute('data-rs-dark') || owner.hasAttribute('data-rs-ui-style'))) continue;
       if (sheet.disabled) continue;
       let rules;
       try { rules = sheet.cssRules; } catch (e) { continue; } // cross-origin: the computed sweep covers it

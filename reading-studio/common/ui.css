@@ -107,3 +107,4 @@ kbd { font: 11px/1 ui-monospace, Menlo, Consolas, monospace; background: var(--s
 details > summary { cursor: pointer; list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }

@@ -527,6 +527,13 @@
     };
   }
 
-  globalThis.RSReadability = { extract, findMain, textOf, countWords };
+  // True for boilerplate inside an article root (share bars, newsletter boxes, forms, asides) that the
+  // reader copy drops; read-aloud uses it so the live page is read the same way.
+  function isBoilerplate(el) {
+    if (el.tagName === 'FORM' || el.tagName === 'ASIDE' || el.tagName === 'BUTTON') return true;
+    return isUnlikely(el, el.ownerDocument.body);
+  }
+
+  globalThis.RSReadability = { extract, findMain, textOf, countWords, isBoilerplate };
   if (globalThis.RS) globalThis.RS.extract = extract;
 })();

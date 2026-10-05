@@ -68,23 +68,33 @@ function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** Redirect rule that strips tracking parameters from documents and frames. */
+/**
+ * Redirect rules that strip tracking parameters from documents and frames.
+ * The regex limits each rule to URLs that actually carry one of the parameters, so clean
+ * URLs are never redirected. The list is split across several rules because Chrome caps the
+ * compiled size of each regexFilter.
+ */
+export const PARAM_CHUNK = 12;
+
 export function buildParamRules() {
-  // RE2 alternation is cheap; the regex limits the rule to URLs that actually carry
-  // one of the parameters so clean URLs are never redirected.
-  const alternation = TRACKING_PARAMS.map(escapeRegex).join('|');
-  return [{
-    id: 1,
-    priority: PRIORITY.paramStrip,
-    action: {
-      type: 'redirect',
-      redirect: { transform: { queryTransform: { removeParams: TRACKING_PARAMS } } },
-    },
-    condition: {
-      regexFilter: `^https?://[^?#]*\\?(?:[^#]*&)?(?:${alternation})=`,
-      resourceTypes: ['main_frame', 'sub_frame'],
-    },
-  }];
+  const rules = [];
+  for (let i = 0; i < TRACKING_PARAMS.length; i += PARAM_CHUNK) {
+    const chunk = TRACKING_PARAMS.slice(i, i + PARAM_CHUNK);
+    rules.push({
+      id: rules.length + 1,
+      priority: PRIORITY.paramStrip,
+      action: {
+        type: 'redirect',
+        redirect: { transform: { queryTransform: { removeParams: TRACKING_PARAMS } } },
+      },
+      condition: {
+        regexFilter: `^[^#]*[?&](?:${chunk.map(escapeRegex).join('|')})=`,
+        isUrlFilterCaseSensitive: true,
+        resourceTypes: ['main_frame', 'sub_frame'],
+      },
+    });
+  }
+  return rules;
 }
 
 /** Global Privacy Control request header. */

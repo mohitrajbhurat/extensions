@@ -17,7 +17,7 @@ export function extractPageInTab() {
     text = (clone.innerText || clone.textContent || '');
     if (text.trim().length < 200) text = document.body ? document.body.innerText : text;
   } catch { text = document.body ? document.body.innerText : ''; }
-  text = text.replace(/[ \t ]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim().slice(0, 60000);
+  text = text.replace(/[ \t ]+/g, ' ').replace(/\n\s*\n+/g, '\n').replace(/ *\n */g, '\n').trim().slice(0, 60000);
   return {
     url: location.href,
     title: (document.title || meta('meta[property="og:title"]')).trim(),
@@ -69,7 +69,7 @@ export function extractFromHtml(html, url = '') {
       .replace(/<\/(p|div|li|h[1-6]|tr|section|article|br|blockquote|pre)>/gi, '\n')
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<[^>]+>/g, ' ')
-  ).replace(/[ \t ]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim().slice(0, 60000);
+  ).replace(/[ \t ]+/g, ' ').replace(/\n\s*\n+/g, '\n').replace(/ *\n */g, '\n').trim().slice(0, 60000);
   return { url, title, description, keywords: decodeEntities(keywords), lang: langM ? langM[1] : '', text };
 }
 

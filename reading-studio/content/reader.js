@@ -366,7 +366,7 @@ rs-b{font-weight:700}
   document.addEventListener('rs:tts-change', () => { if (RD.open) applySettings(); });
   document.addEventListener('rs:focus-change', () => { if (RD.open) syncPanel(); });
 
-  RS.reader = { open, close, isOpen: () => RD.open, readTarget, setBionic, applySettings };
+  RS.reader = { open, close, isOpen: () => RD.open, isDarkTheme: () => /t-(dark|black)/.test(themeClass(RS.settings.reader.theme)), readTarget, setBionic, applySettings };
 
   RS.handlers['reader-toggle'] = async () => (RD.open ? (close(), false) : open());
   RS.handlers['reader-open'] = async () => open();

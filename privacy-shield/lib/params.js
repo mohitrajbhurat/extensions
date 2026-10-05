@@ -26,11 +26,8 @@ export const TRACKING_PARAMS = [
   '__s', 'ncid', 'sr_share', 'zanpid', 'ranMID', 'ranEAID', 'ranSiteID', 'awc', 'cvid', 'oicd',
 ];
 
-/**
- * Parameters that are ambiguous enough that we only strip them when another tracking
- * parameter is also present is not something DNR can express, so the list above already
- * leaves out names that are commonly functional (for example "ref", "source", "id").
- */
+// Deliberately absent: names that are often functional ("ref", "source", "id", "campaign"),
+// because stripping them can break checkout, login or search pages.
 export const TRACKING_PARAM_SET = new Set(TRACKING_PARAMS);
 
 /** Pure helper used by tests and the dashboard preview. */

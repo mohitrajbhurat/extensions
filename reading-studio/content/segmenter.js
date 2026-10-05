@@ -146,6 +146,7 @@
    * opts.range: only include text inside this Range (selection reading)
    * opts.checkVisibility: skip hidden elements (live pages)
    * opts.skipSelector: elements to ignore
+   * opts.skipFilter: fn(element) -> true to ignore that element and its subtree
    * Returns { segments: [{text, para, block, pieces, start, end}], paragraphs: n }
    */
   function buildSegments(roots, opts) {
@@ -197,6 +198,7 @@
             if (SKIP.has(n.tagName) || n.hasAttribute('data-rs-ui') || n.hasAttribute('data-rs-skip')) return NodeFilter.FILTER_REJECT;
             if (n.getAttribute('aria-hidden') === 'true') return NodeFilter.FILTER_REJECT;
             if (opts.skipSelector && n.matches(opts.skipSelector)) return NodeFilter.FILTER_REJECT;
+            if (opts.skipFilter && opts.skipFilter(n)) return NodeFilter.FILTER_REJECT;
             if (opts.checkVisibility && typeof n.checkVisibility === 'function' && !n.checkVisibility()) return NodeFilter.FILTER_REJECT;
             return NodeFilter.FILTER_SKIP;
           }

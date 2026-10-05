@@ -182,7 +182,8 @@
     if (source === 'page') roots = [document.body];
     const { segments, paragraphs } = RS.seg.buildSegments(roots, {
       lang, checkVisibility: true,
-      skipSelector: source === 'page' ? 'nav,[role="navigation"],[role="dialog"],[aria-modal="true"]' : 'nav,[role="navigation"],figure figcaption + *'
+      skipSelector: source === 'page' ? 'nav,[role="navigation"],[role="dialog"],[aria-modal="true"]' : 'nav,[role="navigation"],figure figcaption + *',
+      skipFilter: source === 'article' && globalThis.RSReadability ? (el) => !roots.includes(el) && globalThis.RSReadability.isBoilerplate(el) : null
     });
     return { source, roots, segments, paragraphs, scroller: null, styleRoot: null, lang, key: RS.pageKey() };
   }
@@ -514,6 +515,7 @@
   border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.22),0 2px 8px rgba(0,0,0,.1);
   width:min(392px,calc(100vw - 24px));padding:8px 10px 10px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);user-select:none}
 @media (prefers-color-scheme:dark){.p{--bg:rgba(32,33,40,.97);--fg:#eceef4;--muted:#a3a7b7;--line:rgba(255,255,255,.12);--btn:rgba(255,255,255,.07);--btn-h:rgba(255,255,255,.14);--acc:#8c7dff;--acc-fg:#14121f;--track:rgba(255,255,255,.16)}}
+.p.dk{--bg:rgba(32,33,40,.97);--fg:#eceef4;--muted:#a3a7b7;--line:rgba(255,255,255,.12);--btn:rgba(255,255,255,.07);--btn-h:rgba(255,255,255,.14);--acc:#8c7dff;--acc-fg:#14121f;--track:rgba(255,255,255,.16)}
 .row{display:flex;align-items:center;gap:4px}
 .grip{width:18px;height:32px;display:grid;place-items:center;color:var(--muted);cursor:grab;flex:none;border-radius:6px}
 .grip:active{cursor:grabbing}
@@ -692,6 +694,9 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     const { $ } = T.ui;
     const s = T.session;
     const playing = !!(s && s.playing);
+    // Match the page: go dark when our dark mode or a dark reader theme is showing.
+    const dk = !!((RS.dark && RS.dark.state().active) || (s && s.source === 'reader' && RS.reader && RS.reader.isDarkTheme && RS.reader.isDarkTheme()));
+    $('.p').classList.toggle('dk', dk);
     const pb = $('.play');
     pb.innerHTML = playing ? RS.icons.pause : RS.icons.play;
     pb.title = playing ? 'Pause' : 'Play'; pb.setAttribute('aria-label', pb.title);

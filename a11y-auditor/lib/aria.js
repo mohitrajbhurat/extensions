@@ -12,6 +12,9 @@
     'aria-dropeffect', 'aria-flowto', 'aria-grabbed', 'aria-hidden', 'aria-keyshortcuts',
     'aria-label', 'aria-labelledby', 'aria-live', 'aria-owns', 'aria-relevant',
     'aria-roledescription',
+    // Deprecated as global in ARIA 1.2 but still valid on every role; flagging them
+    // would only produce noise.
+    'aria-disabled', 'aria-errormessage', 'aria-haspopup', 'aria-invalid',
   ];
 
   // Roles that never take a name from their own content and must not be labelled.
@@ -202,7 +205,20 @@
     'tab', 'textbox', 'treeitem', 'scrollbar',
   ]);
 
+  // DPUB-ARIA 1.1 and Graphics-ARIA roles are valid too (they map onto core roles).
+  const EXTRA_ROLES = new Set([
+    'doc-abstract', 'doc-acknowledgments', 'doc-afterword', 'doc-appendix', 'doc-backlink',
+    'doc-biblioentry', 'doc-bibliography', 'doc-biblioref', 'doc-chapter', 'doc-colophon',
+    'doc-conclusion', 'doc-cover', 'doc-credit', 'doc-credits', 'doc-dedication', 'doc-endnote',
+    'doc-endnotes', 'doc-epigraph', 'doc-epilogue', 'doc-errata', 'doc-example', 'doc-footnote',
+    'doc-foreword', 'doc-glossary', 'doc-glossref', 'doc-index', 'doc-introduction', 'doc-noteref',
+    'doc-notice', 'doc-pagebreak', 'doc-pagefooter', 'doc-pageheader', 'doc-pagelist', 'doc-part',
+    'doc-preface', 'doc-prologue', 'doc-pullquote', 'doc-qna', 'doc-subtitle', 'doc-tip', 'doc-toc',
+    'graphics-document', 'graphics-object', 'graphics-symbol',
+  ]);
+
   function isValidRole(role) {
+    if (EXTRA_ROLES.has(role)) return true;
     const def = ROLES[role];
     return !!def && !def.abstract;
   }
@@ -254,7 +270,7 @@
 
   A11Y.aria = {
     ROLES, ATTR_TYPES, GLOBAL_ATTRS, NO_NAME_ROLES, NO_ROLE_ELEMENTS,
-    LANDMARK_ROLES, INTERACTIVE_ROLES,
+    LANDMARK_ROLES, INTERACTIVE_ROLES, EXTRA_ROLES,
     isValidRole, isAbstract, allowedAttrs, validateValue,
   };
 })(typeof window !== 'undefined' ? window : self);

@@ -140,8 +140,13 @@ async function openPanel(file) {
   const target = await ctx.newPage();
   await target.goto(`${origin}/${file}`);
   await target.bringToFront();
+  // Playwright keeps every page in one window, so bind the panel to the fixture tab the
+  // same way the service worker does for the popup-window fallback (?tab=<id>).
+  const [sw] = ctx.serviceWorkers();
+  const tabId = await sw.evaluate(async (u) => (await chrome.tabs.query({ url: u }))[0].id, target.url());
   const panel = await ctx.newPage();
-  await panel.goto(`chrome-extension://${extId}/sidepanel/sidepanel.html?mode=window`);
+  if (process.env.PA_DEBUG) { panel.on('console', (m) => console.log('PANEL', m.text())); panel.on('pageerror', (e) => console.log('PERR', e.message)); }
+  await panel.goto(`chrome-extension://${extId}/sidepanel/sidepanel.html?mode=window&tab=${tabId}`);
   // The panel resolves the active tab; make sure it found the fixture.
   await panel.waitForFunction(() => /Honeybee|Sourdough|Cache/.test(document.querySelector('#page-title').textContent), { timeout: 20000 });
   return { target, panel };
