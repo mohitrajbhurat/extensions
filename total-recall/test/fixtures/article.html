@@ -1,0 +1,12 @@
+<!doctype html><html><head><title>Understanding the JavaScript Event Loop</title>
+<meta name="description" content="A deep dive into microtasks and macrotasks."></head>
+<body>
+<header><nav><a href="#">Home</a> <a href="#">Blog</a> Navigation boilerplate zebra</nav></header>
+<main><article>
+<h1>Understanding the JavaScript Event Loop</h1>
+<p>The event loop is what allows JavaScript to perform non-blocking operations, despite the fact that JavaScript is single-threaded, by offloading operations to the system kernel whenever possible.</p>
+<p>Microtasks such as promise callbacks run before the next macrotask. This is why a resolved promise logs before a setTimeout callback with zero delay, which surprises many developers.</p>
+<p>Understanding starvation: if microtasks keep queueing more microtasks, rendering never gets a chance to happen and the page freezes.</p>
+</article></main>
+<footer class="site-footer">Copyright footer text platypus</footer>
+</body></html>

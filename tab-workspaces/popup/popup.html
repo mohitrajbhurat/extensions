@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab Workspaces</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" width="24" height="24" alt="">
+    <div class="top-text">
+      <h1>Tab Workspaces</h1>
+      <div id="current" class="small muted">No workspace in this window</div>
+    </div>
+    <button class="icon-btn" id="open-dashboard" title="Open dashboard (full view)" aria-label="Open dashboard"></button>
+  </header>
+  <div class="search-wrap">
+    <label class="search">
+      <span class="sr-only">Search</span>
+      <input class="input" id="q" type="search" placeholder="Search tabs, workspaces, stash, archive…" autocomplete="off" spellcheck="false">
+    </label>
+  </div>
+  <main id="main">
+    <section id="results" hidden></section>
+    <section id="home">
+      <div class="section-head">
+        <h2>Workspaces</h2>
+        <span class="faint small" id="ws-hint"></span>
+      </div>
+      <ul id="ws-list" class="ws-list" role="list"></ul>
+      <div class="new-ws">
+        <button class="btn sm" id="new-window">Save window as workspace</button>
+        <button class="btn sm" id="new-selected" title="Create a workspace from the highlighted tabs">From selected</button>
+        <button class="btn sm" id="new-empty" title="Create an empty workspace and switch to it">Empty</button>
+      </div>
+      <div class="section-head"><h2>Quick actions</h2></div>
+      <div class="actions-grid" id="actions"></div>
+    </section>
+  </main>
+  <footer class="foot" id="stats"></footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

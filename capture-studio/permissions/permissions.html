@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capture Studio - Camera and microphone access</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="permissions.css">
+</head>
+<body>
+  <main class="card">
+    <svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><rect width="128" height="128" rx="28" fill="#e5484d"/><circle cx="64" cy="64" r="26" fill="#fff"/><circle cx="64" cy="64" r="14" fill="#e5484d"/></svg>
+    <h1>Allow camera and microphone</h1>
+    <p class="muted">Capture Studio records in the background, where the browser cannot show a permission prompt. Grant access once here and it is remembered for the extension. Nothing leaves your device.</p>
+    <ul class="list">
+      <li id="row-mic"><span>Microphone</span><strong id="st-mic" class="state">Not requested</strong></li>
+      <li id="row-cam"><span>Camera</span><strong id="st-cam" class="state">Not requested</strong></li>
+    </ul>
+    <video id="preview" muted playsinline hidden></video>
+    <div class="actions">
+      <button id="grant" class="btn primary">Allow access</button>
+    </div>
+    <p id="result" class="result" role="status" aria-live="polite"></p>
+  </main>
+  <script type="module" src="permissions.js"></script>
+</body>
+</html>

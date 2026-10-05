@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Watch</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js" type="module"></script>
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" width="24" height="24" alt="">
+    <h1>Page Watch</h1>
+    <span class="grow"></span>
+    <button class="btn ghost small" id="open-dashboard" title="Open the dashboard">Dashboard</button>
+  </header>
+
+  <main id="view-home">
+    <section class="card current" aria-labelledby="cur-title">
+      <div class="cur-head">
+        <div class="grow">
+          <div class="label" id="cur-title">This page</div>
+          <div class="cur-host" id="cur-host">—</div>
+        </div>
+      </div>
+      <p class="hint" id="cur-unsupported" hidden>Open a regular web page (http or https) to watch it.</p>
+      <div class="actions" id="cur-actions">
+        <button class="btn primary" id="pick">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l7 17 2.5-7.5L21 11z"/></svg>
+          Pick an element
+        </button>
+        <button class="btn" id="whole">Watch whole page</button>
+      </div>
+      <p class="notice error" id="pick-error" hidden></p>
+    </section>
+
+    <section aria-labelledby="site-title" id="site-section" hidden>
+      <h2 class="section-title" id="site-title">Monitors on this site</h2>
+      <ul class="mon-list" id="site-list"></ul>
+    </section>
+
+    <section aria-labelledby="recent-title" id="recent-section" hidden>
+      <div class="row section-head">
+        <h2 class="section-title grow" id="recent-title">Unread changes</h2>
+        <button class="btn ghost small" id="mark-all">Mark all read</button>
+      </div>
+      <ul class="mon-list" id="recent-list"></ul>
+    </section>
+
+    <p class="empty hint" id="empty" hidden>No monitors yet. Pick a part of this page, such as a price, a stock label or a list of postings, and Page Watch will check it in the background.</p>
+  </main>
+
+  <main id="view-editor" hidden>
+    <div class="row editor-head">
+      <button class="btn ghost small" id="editor-back" aria-label="Back">←</button>
+      <h2 class="grow">New monitor</h2>
+    </div>
+    <div class="picked" id="picked" hidden>
+      <div class="label" id="picked-label">Selected on the page</div>
+      <pre class="preview-text" id="picked-text"></pre>
+    </div>
+    <div id="editor"></div>
+    <div class="row editor-foot">
+      <button class="btn" id="editor-cancel">Cancel</button>
+      <span class="grow"></span>
+      <button class="btn primary" id="editor-save">Start watching</button>
+    </div>
+  </main>
+
+  <main id="view-saved" hidden>
+    <div class="saved">
+      <div class="saved-icon" aria-hidden="true">✓</div>
+      <h2>Watching</h2>
+      <p class="hint" id="saved-text"></p>
+      <div class="row" style="justify-content:center">
+        <button class="btn" id="saved-done">Done</button>
+        <button class="btn primary" id="saved-dashboard">View in dashboard</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span id="stats" class="hint"></span>
+    <span class="grow"></span>
+    <button class="btn ghost small" id="check-all" title="Check every active monitor now">Check all</button>
+  </footer>
+</body>
+</html>

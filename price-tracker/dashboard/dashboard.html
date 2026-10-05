@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Price Tracker Dashboard</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script type="module" src="dashboard.js"></script>
+</head>
+<body>
+  <a class="skip" href="#list">Skip to tracked items</a>
+  <header class="app-header">
+    <div class="brand">
+      <img src="../icons/icon48.png" alt="" width="28" height="28">
+      <h1>Price Tracker</h1>
+    </div>
+    <div class="toolbar">
+      <label class="search">
+        <span class="sr-only">Search tracked items</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="search" placeholder="Search items or stores  ( / )" autocomplete="off">
+      </label>
+      <label><span class="sr-only">Filter</span>
+        <select id="filter">
+          <option value="all">All items</option>
+          <option value="deals">Good deals</option>
+          <option value="target">At target</option>
+          <option value="attention">Needs attention</option>
+          <option value="oos">Out of stock</option>
+          <option value="paused">Paused</option>
+        </select>
+      </label>
+      <label><span class="sr-only">Sort</span>
+        <select id="sort">
+          <option value="recent">Recently updated</option>
+          <option value="deal">Best deal first</option>
+          <option value="drop">Biggest drop vs avg</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="name">Name</option>
+          <option value="added">Date added</option>
+        </select>
+      </label>
+      <button class="btn" id="check-all" title="Re-check every item now">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+        Check all
+      </button>
+      <details class="menu" id="export-menu">
+        <summary class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Export
+        </summary>
+        <div class="menu-list" role="menu">
+          <button role="menuitem" data-export="summary">Summary (CSV)</button>
+          <button role="menuitem" data-export="history">Full price history (CSV)</button>
+          <button role="menuitem" data-export="json">Backup (JSON)</button>
+          <hr>
+          <button role="menuitem" id="import-btn">Import backup…</button>
+        </div>
+      </details>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+      <button class="btn icon" id="settings" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Overview">
+    <div class="kpi"><span class="kpi-v num" id="k-count">0</span><span class="kpi-l">Tracked</span></div>
+    <div class="kpi"><span class="kpi-v num" id="k-deals">0</span><span class="kpi-l">Good deals now</span></div>
+    <div class="kpi"><span class="kpi-v num" id="k-target">0</span><span class="kpi-l">At your target</span></div>
+    <div class="kpi"><span class="kpi-v num" id="k-attention">0</span><span class="kpi-l">Need a visit</span></div>
+    <div class="kpi wide"><span class="kpi-l">Last background check</span><span id="k-lastrun" class="muted"></span></div>
+  </section>
+
+  <main class="layout">
+    <section class="list-pane" aria-label="Tracked items">
+      <div class="bulk" id="bulk" hidden>
+        <span id="bulk-count"></span>
+        <button class="btn" id="bulk-check">Check selected</button>
+        <button class="btn danger" id="bulk-delete">Delete selected</button>
+        <button class="btn ghost" id="bulk-clear">Clear selection</button>
+      </div>
+      <div class="table-wrap">
+        <table class="items" id="list" aria-describedby="list-help">
+          <thead>
+            <tr>
+              <th class="c-sel"><input type="checkbox" id="select-all" aria-label="Select all"></th>
+              <th class="c-item">Item</th>
+              <th class="c-num">Current</th>
+              <th class="c-num hide-md">Lowest</th>
+              <th class="c-num hide-md">Highest</th>
+              <th class="c-num hide-sm">Average</th>
+              <th class="c-num">vs avg</th>
+              <th>Verdict</th>
+              <th class="hide-sm">Status</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p id="list-help" class="sr-only">Use up and down arrow keys to move between items, Enter to open details, Delete to remove.</p>
+      </div>
+      <div class="empty" id="empty" hidden>
+        <h2>No items tracked yet</h2>
+        <ol>
+          <li>Open any product page: Amazon, Best Buy, Walmart, Target, eBay, Etsy, a Shopify store, or most other shops.</li>
+          <li>Click the Price Tracker button in the toolbar and choose <strong>Track price</strong>.</li>
+          <li>Prices are re-checked in the background and you get notified about drops, all-time lows and restocks.</li>
+        </ol>
+      </div>
+      <p class="empty small" id="no-match" hidden>No items match your search or filter.</p>
+    </section>
+
+    <aside class="detail-pane" id="detail" aria-label="Item details" hidden>
+      <div class="detail-head">
+        <div class="thumb"><img id="d-image" alt=""></div>
+        <div class="d-info">
+          <h2 id="d-title"></h2>
+          <a id="d-link" target="_blank" rel="noopener noreferrer" class="small"></a>
+          <div class="d-price-row">
+            <span class="d-price num" id="d-price"></span>
+            <span id="d-verdict" class="pill"></span>
+            <span id="d-avail" class="pill" hidden></span>
+          </div>
+          <p id="d-verdict-detail" class="muted small"></p>
+        </div>
+        <button class="btn ghost icon" id="d-close" aria-label="Close details" title="Close (Esc)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <p id="d-sale" class="callout" hidden></p>
+      <p id="d-status" class="callout warn" hidden></p>
+
+      <div class="chart-head">
+        <h3>Price history</h3>
+        <div class="seg" role="group" aria-label="Time range" id="range">
+          <button type="button" data-days="30" aria-pressed="false">1M</button>
+          <button type="button" data-days="90" aria-pressed="false">3M</button>
+          <button type="button" data-days="365" aria-pressed="false">1Y</button>
+          <button type="button" data-days="0" aria-pressed="true">All</button>
+        </div>
+      </div>
+      <div id="d-chart"></div>
+      <div class="chart-foot">
+        <span class="legend"><i class="sw line"></i>Price</span>
+        <span class="legend"><i class="sw target"></i>Your target</span>
+        <span class="legend"><i class="sw oos"></i>Out of stock</span>
+        <button class="btn ghost small-btn" id="toggle-table" aria-expanded="false">Show as table</button>
+      </div>
+      <div class="hist-table" id="hist-table" hidden></div>
+
+      <dl class="d-stats num" id="d-stats"></dl>
+
+      <form class="d-target" id="d-target" novalidate>
+        <h3>Alert</h3>
+        <div class="row">
+          <label for="d-target-type" class="sr-only">Alert type</label>
+          <select id="d-target-type">
+            <option value="percent">Drops by %</option>
+            <option value="price">Below price</option>
+            <option value="any">Any drop</option>
+            <option value="none">Lows and restocks only</option>
+          </select>
+          <label for="d-target-value" class="sr-only">Alert value</label>
+          <input type="number" id="d-target-value" step="any" min="0">
+          <span id="d-target-hint" class="muted small"></span>
+          <button class="btn primary" type="submit">Save</button>
+        </div>
+        <label class="small" for="d-notes">Notes</label>
+        <textarea id="d-notes" rows="2" placeholder="Sizes, coupon codes, why you want it…"></textarea>
+      </form>
+
+      <div class="d-actions">
+        <button class="btn" id="d-check">Check now</button>
+        <button class="btn" id="d-open">Open page</button>
+        <button class="btn" id="d-pause"></button>
+        <button class="btn" id="d-grant" hidden>Allow background checks</button>
+        <span class="spacer"></span>
+        <button class="btn danger" id="d-delete">Delete</button>
+      </div>
+
+      <h3 class="events-title">Activity</h3>
+      <ul class="events" id="d-events"></ul>
+    </aside>
+  </main>
+
+  <dialog id="confirm">
+    <form method="dialog">
+      <h2 id="confirm-title">Delete item?</h2>
+      <p id="confirm-text" class="muted"></p>
+      <div class="dialog-actions">
+        <button class="btn" value="cancel">Cancel</button>
+        <button class="btn primary danger-fill" value="ok" id="confirm-ok">Delete</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

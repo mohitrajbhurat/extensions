@@ -1,0 +1,57 @@
+body { width: 400px; min-height: 480px; max-height: 600px; display: flex; flex-direction: column; }
+body.windowed { width: auto; max-height: none; min-height: 100vh; }
+
+.top {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 8px 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5;
+}
+.top h1 { font-size: 14px; margin: 0; font-weight: 650; flex: 1; white-space: nowrap; }
+.top select { width: auto; max-width: 150px; font-size: 12px; padding: 4px 6px; }
+
+main { padding: 12px 16px 16px; display: grid; gap: 12px; overflow-y: auto; flex: 1; }
+
+.preview-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  box-shadow: var(--shadow);
+  display: grid; gap: 8px;
+}
+.preview-head { display: flex; justify-content: space-between; align-items: baseline; }
+.eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+.muted { color: var(--text-3); font-size: 12px; }
+#preview { min-height: 3em; user-select: text; }
+.intext { font-size: 13px; color: var(--text-2); }
+.citation-inline { font-family: var(--serif); font-size: 14px; color: var(--text); }
+.preview-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.more { position: relative; margin-left: auto; }
+.menu {
+  position: absolute; right: 0; top: calc(100% + 4px); z-index: 10;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 4px; min-width: 200px; display: grid;
+}
+.menu button {
+  text-align: left; border: 0; background: none; color: var(--text); font: inherit; font-size: 13px;
+  padding: 8px; border-radius: 6px; cursor: pointer;
+}
+.menu button:hover, .menu button:focus-visible { background: var(--surface-2); }
+
+.lookup-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-2); background: var(--surface-2); padding: 8px 12px; border-radius: var(--radius); }
+
+.save-bar {
+  position: sticky; bottom: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 8px 16px;
+  display: grid; gap: 8px;
+}
+.save-row { display: flex; gap: 8px; }
+.save-row select { flex: 1; }
+.save-row .btn { min-width: 88px; }
+.new-project { display: flex; gap: 8px; align-items: center; }
+#dup-warning { display: flex; gap: 8px; align-items: center; justify-content: space-between; }

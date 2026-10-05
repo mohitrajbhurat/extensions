@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scrape results</title>
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="results.css">
+  <link rel="icon" href="../icons/icon32.png">
+</head>
+<body>
+  <header class="top">
+    <img class="logo" src="../icons/icon48.png" alt="">
+    <div class="grow titles">
+      <input id="title" class="title-input" aria-label="Result title" spellcheck="false">
+      <div class="meta muted" id="meta"></div>
+    </div>
+    <select id="sessionPick" aria-label="Open another result"></select>
+    <a href="../manager/manager.html" class="navlink">All results &amp; recipes</a>
+  </header>
+
+  <div class="toolbar" id="toolbar" hidden>
+    <input type="search" id="filter" placeholder="Filter rows…" aria-label="Filter rows">
+    <div class="spacer"></div>
+    <div class="menu-wrap">
+      <button id="colsBtn" aria-haspopup="true" aria-expanded="false">Columns</button>
+      <div class="menu" id="colsMenu" hidden role="menu"></div>
+    </div>
+    <button id="copyTsv" class="primary" title="Copy as tab-separated values for Google Sheets or Excel">Copy for Sheets / Excel</button>
+    <div class="menu-wrap">
+      <button id="exportBtn" aria-haspopup="true" aria-expanded="false">Export &#9662;</button>
+      <div class="menu" id="exportMenu" hidden role="menu">
+        <button role="menuitem" data-export="csv">CSV (.csv)</button>
+        <button role="menuitem" data-export="excel">Excel-compatible CSV (UTF-8 BOM)</button>
+        <button role="menuitem" data-export="tsv">TSV (.tsv)</button>
+        <button role="menuitem" data-export="json">JSON (.json)</button>
+        <hr>
+        <button role="menuitem" data-export="copy-csv">Copy as CSV</button>
+        <button role="menuitem" data-export="copy-json">Copy as JSON</button>
+        <hr>
+        <label class="menu-check"><input type="checkbox" id="guard" checked> Protect against spreadsheet formulas</label>
+      </div>
+    </div>
+    <button id="deleteBtn" class="danger ghost" title="Delete this result">Delete</button>
+  </div>
+
+  <main id="main">
+    <div class="empty" id="emptyState">Loading…</div>
+    <div class="table-wrap" id="tableWrap" hidden>
+      <table id="grid" aria-describedby="hintText">
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="foot">
+      <span class="muted" id="hintText">Click a header to sort. Drag headers (or focus one and press Alt+&larr;/&rarr;) to reorder columns. Exports follow the current order, sort, filter and visible columns.</span>
+      <button id="moreBtn" hidden>Show more rows</button>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="results.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Total Recall</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="head">
+    <img src="../icons/icon32.png" alt="" width="24" height="24">
+    <h1>Total Recall</h1>
+    <span class="status" id="status"></span>
+    <a class="btn ghost icon" id="settingsBtn" href="../options/options.html" target="_blank" title="Settings" aria-label="Settings"></a>
+  </header>
+
+  <form class="search" id="searchForm" role="search">
+    <span class="search-icon" id="searchIcon"></span>
+    <label for="q" class="sr-only">Search your browsing memory</label>
+    <input id="q" class="input" type="search" placeholder="What did you read?" autocomplete="off" spellcheck="false"
+           aria-controls="quick" aria-autocomplete="list">
+  </form>
+  <ul id="quick" class="quick" role="listbox" aria-label="Top matches" hidden></ul>
+  <button type="button" class="btn ghost all-results" id="allResults" hidden></button>
+
+  <section class="card current" id="current" aria-label="Current page">
+    <div class="current-row">
+      <span id="curFavicon"></span>
+      <div class="current-text">
+        <div class="current-title" id="curTitle">Current page</div>
+        <div class="current-state" id="curState"></div>
+      </div>
+    </div>
+    <div class="current-actions">
+      <button type="button" class="btn" id="indexNow">Index this page now</button>
+      <button type="button" class="btn danger" id="forgetSite">Forget this site</button>
+    </div>
+    <div class="confirm" id="forgetConfirm" hidden>
+      <p id="forgetText"></p>
+      <div class="current-actions">
+        <button type="button" class="btn danger solid" id="forgetYes">Forget and exclude</button>
+        <button type="button" class="btn" id="forgetNo">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card toggle-card">
+    <div>
+      <div class="toggle-title">Index pages as I browse</div>
+      <div class="toggle-sub" id="pauseSub">Readable text is saved a moment after a page loads.</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="enabled" aria-label="Index pages as I browse">
+      <span class="track"></span>
+    </label>
+  </section>
+
+  <section class="stats" aria-label="Statistics">
+    <div class="stat"><div class="stat-value" id="statPages">–</div><div class="stat-label">pages indexed</div></div>
+    <div class="stat"><div class="stat-value" id="statSize">–</div><div class="stat-label" id="statSizeLabel">storage used</div></div>
+    <div class="stat"><div class="stat-value" id="statToday">–</div><div class="stat-label">read today</div></div>
+  </section>
+
+  <footer class="foot">
+    <p class="privacy-note" id="privacy"></p>
+    <button type="button" class="btn primary" id="openApp">Open search <kbd>tr</kbd></button>
+  </footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

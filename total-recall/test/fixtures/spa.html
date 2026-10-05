@@ -1,0 +1,9 @@
+<!doctype html><html><head><title>SPA Home</title></head>
+<body><div id="app"><h1>Home</h1><p>This single page application starts on the home view, which talks about orchestras and violins and concert halls in great detail for testing.</p></div>
+<script>
+setTimeout(() => {
+  history.pushState({}, '', '/spa/quantum');
+  document.title = 'Quantum Entanglement Explained';
+  document.getElementById('app').innerHTML = '<h1>Quantum</h1><p>Quantum entanglement links particles so that measuring one instantly constrains the state of the other, no matter how far apart they are.</p>';
+}, 3500);
+</script></body></html>

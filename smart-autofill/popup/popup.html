@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Autofill</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" alt="" width="24" height="24">
+    <h1>Smart Autofill</h1>
+    <button id="lockBtn" class="btn ghost small" hidden title="Lock profiles now">Lock</button>
+    <button id="optionsBtn" class="btn ghost small" title="Open profiles and settings" aria-label="Open profiles and settings">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <section id="lockedView" hidden>
+      <div class="lockcard">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <h2>Profiles are locked</h2>
+        <p class="muted">Enter your passphrase to decrypt your profiles for this browser session.</p>
+        <form id="unlockForm">
+          <label class="sr-only" for="pass">Passphrase</label>
+          <input id="pass" class="input" type="password" autocomplete="current-password" placeholder="Passphrase" required>
+          <button class="btn primary" type="submit">Unlock</button>
+        </form>
+        <p id="unlockErr" class="error" role="alert"></p>
+      </div>
+    </section>
+
+    <section id="mainView" hidden>
+      <label class="field" for="profileSel"><span>Profile</span></label>
+      <div class="profile-row">
+        <select id="profileSel" class="input"></select>
+        <button id="editProfile" class="btn small" title="Edit this profile">Edit</button>
+      </div>
+
+      <div id="pageInfo" class="pageinfo" aria-live="polite">Checking this page...</div>
+
+      <div class="actions">
+        <button id="previewBtn" class="btn primary big">Preview &amp; fill</button>
+        <div class="row">
+          <button id="fillBtn" class="btn">Fill now</button>
+          <button id="undoBtn" class="btn" disabled>Undo fill</button>
+        </div>
+      </div>
+
+      <div id="result" class="result" hidden aria-live="polite"></div>
+
+      <details class="quick">
+        <summary>Quick settings</summary>
+        <label class="switch"><span>Learn from my corrections</span><input type="checkbox" id="learnMode"></label>
+        <label class="switch"><span>Fill extra work / education entries</span><input type="checkbox" id="fillRepeatables"></label>
+        <label class="switch"><span>Overwrite fields that already have a value</span><input type="checkbox" id="overwrite"></label>
+      </details>
+    </section>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+body { width: 392px; min-height: 200px; background: var(--surface); }
+.top { display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 16px; border-bottom: 1px solid var(--border); }
+.top h1 { font-size: 15px; font-weight: 650; }
+.spacer { flex: 1; }
+main { padding: 16px; }
+.state.center { display: grid; justify-items: center; gap: 8px; padding: 24px 0; }
+.spinner { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--surface-3); border-top-color: var(--accent); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+.empty { text-align: center; padding: 8px 8px 16px; display: grid; gap: 8px; justify-items: center; }
+.empty p { margin: 0; }
+.section-title { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); margin: 8px 0; }
+.recent { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.recent a { display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center; padding: 8px; border-radius: var(--radius-sm); text-decoration: none; color: var(--text); }
+.recent a:hover, .recent a:focus-visible { background: var(--surface-2); }
+.recent img, .recent .ph { width: 32px; height: 32px; border-radius: 6px; object-fit: contain; background: var(--surface-2); }
+.recent .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.recent .p { font-weight: 600; font-size: 13px; text-align: right; }
+
+.product { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start; }
+.thumb { width: 80px; height: 80px; border-radius: var(--radius-sm); background: var(--surface-2); display: grid; place-items: center; overflow: hidden; border: 1px solid var(--border); }
+.thumb img { max-width: 100%; max-height: 100%; object-fit: contain; background: #fff; }
+.info { min-width: 0; display: grid; gap: 2px; }
+.title { font-size: 14px; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.small { font-size: 12px; }
+.price-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.price { font-size: 24px; font-weight: 700; letter-spacing: -.01em; }
+.callout { margin: 12px 0 0; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--info-soft); font-size: 13px; display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.callout.warn { background: var(--warn-soft); color: var(--text); }
+.callout.bad { background: var(--warn-soft); }
+.callout.good { background: var(--good-soft); }
+
+#tracked { margin-top: 16px; display: grid; gap: 8px; }
+.verdict-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mini-chart { margin: 0 -4px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+.stats div { background: var(--surface-2); border-radius: var(--radius-sm); padding: 8px; }
+.stats dt { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+.stats dd { margin: 0; font-weight: 650; font-size: 14px; }
+
+.target-form { margin-top: 16px; display: grid; gap: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+legend { font-weight: 600; font-size: 13px; padding: 0; margin-bottom: 8px; }
+.seg { width: 100%; }
+.seg button { flex: 1; padding: 0 4px; }
+.target-input { display: flex; align-items: center; gap: 8px; }
+.target-input input { width: 112px; }
+.affix { color: var(--text-2); font-weight: 600; }
+#target-explain { margin: 0; }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; cursor: pointer; }
+.check input { margin: 2px 0 0; accent-color: var(--accent); }
+.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tracked-actions { margin-top: 12px; justify-content: space-between; }
+.error { color: var(--danger); margin: 0; }

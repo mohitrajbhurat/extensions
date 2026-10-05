@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mindful Gate</title>
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="../icons/icon32.png" width="20" height="20" alt="">
+      <strong>Mindful Gate</strong>
+    </div>
+    <nav class="nav">
+      <a class="btn ghost sm" href="../dashboard/dashboard.html" target="_blank" title="Insights dashboard">Insights</a>
+      <a class="btn ghost sm" href="../options/options.html" target="_blank" title="Settings">Settings</a>
+    </nav>
+  </header>
+
+  <section class="card focus-card" id="focusCard" aria-labelledby="phaseLabel">
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="ring-bg" cx="60" cy="60" r="52"/>
+        <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52"/>
+      </svg>
+      <div class="ring-text">
+        <span class="time" id="time" role="timer">25:00</span>
+        <span class="phase" id="phaseLabel">Ready to focus</span>
+      </div>
+    </div>
+    <div class="dots" id="dots" aria-label="Cycle progress"></div>
+    <label class="sr-only" for="task">What are you focusing on?</label>
+    <input type="text" id="task" maxlength="140" placeholder="What are you focusing on?">
+    <div class="controls" id="controls"></div>
+    <p class="small muted center" id="focusNote"></p>
+  </section>
+
+  <section class="card site-card" id="siteCard" aria-labelledby="siteTitle">
+    <div class="site-head">
+      <div>
+        <span class="small muted">This tab</span>
+        <h2 id="siteTitle">-</h2>
+      </div>
+      <span class="pill" id="siteStatus"></span>
+    </div>
+    <p class="small sub" id="siteDetail"></p>
+    <div class="site-actions" id="siteActions"></div>
+  </section>
+
+  <section class="today" aria-label="Today">
+    <div class="stat"><span class="num" id="statFocus">0m</span><span class="lbl">focused</span></div>
+    <div class="stat"><span class="num" id="statDistract">0m</span><span class="lbl">on distractions</span></div>
+    <div class="stat"><span class="num" id="statBack">0</span><span class="lbl">turned back</span></div>
+  </section>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

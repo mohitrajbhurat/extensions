@@ -10,6 +10,9 @@ export const quiet = {
 
 export function tabUrl(t) { return t.url || t.pendingUrl || ''; }
 
+/** The extension's own pages (dashboard) are never saved into workspaces or closed by a switch. */
+export function isOwnPage(t) { return tabUrl(t).startsWith(chrome.runtime.getURL('')); }
+
 export function serializeTab(t) {
   return {
     url: tabUrl(t),
@@ -21,7 +24,7 @@ export function serializeTab(t) {
 
 /** Capture tabs (optionally a subset) of a window, preserving groups. */
 export async function captureWindow(windowId, { filter, includeBlank = true } = {}) {
-  let tabs = await chrome.tabs.query({ windowId });
+  let tabs = (await chrome.tabs.query({ windowId })).filter(t => !isOwnPage(t));
   if (filter) tabs = tabs.filter(filter);
   if (!includeBlank) tabs = tabs.filter(t => isMeaningfulUrl(tabUrl(t)));
   const groupIndex = new Map();

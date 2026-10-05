@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings - Mindful Gate</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="side">
+      <div class="brand"><img src="../icons/icon48.png" width="28" height="28" alt=""><strong>Mindful Gate</strong></div>
+      <nav aria-label="Sections">
+        <a href="#groups">Sites and schedules</a>
+        <a href="#gate">Mindful gate</a>
+        <a href="#focus">Focus timer</a>
+        <a href="#reasons">Your reasons</a>
+        <a href="#tracking">Tracking</a>
+        <a href="#data">Data</a>
+      </nav>
+      <a class="btn sm" href="../dashboard/dashboard.html">Open insights</a>
+      <p class="small muted" id="saveState" aria-live="polite">All changes save automatically.</p>
+    </aside>
+
+    <main class="content">
+      <section class="card welcome hidden" id="welcome">
+        <h1>Welcome to Mindful Gate</h1>
+        <p class="sub">Plain blockers get switched off. Mindful Gate asks for a moment instead: when you open a distracting site, you name your intention, take a short breath, and get a time-boxed pass. When time is up, you decide again.</p>
+        <ol>
+          <li>Review the starter list below and add the sites that pull you in.</li>
+          <li>Set a hard-block schedule for the hours you protect (optional, with strict mode).</li>
+          <li>Start a focus session from the toolbar button. Distractions are fully blocked while it runs.</li>
+        </ol>
+        <button class="btn primary" type="button" id="welcomeDone">Got it</button>
+      </section>
+
+      <section id="groups" aria-labelledby="groupsTitle">
+        <div class="section-head">
+          <div>
+            <h2 id="groupsTitle">Sites and schedules</h2>
+            <p class="sub">Every site in a group is a distraction. Subdomains are included (youtube.com covers m.youtube.com).</p>
+          </div>
+          <button class="btn primary" type="button" id="addGroup">Add group</button>
+        </div>
+        <div id="groupList" class="group-list"></div>
+      </section>
+
+      <section id="gate" class="card" aria-labelledby="gateTitle">
+        <h2 id="gateTitle">Mindful gate</h2>
+        <p class="sub">The pause before a gated site. It grows with each visit on the same day.</p>
+        <div class="grid">
+          <label>Pass lengths (minutes)
+            <span class="inline"><input type="number" min="1" max="120" data-k="gate.passOptions.0"><input type="number" min="1" max="120" data-k="gate.passOptions.1"><input type="number" min="1" max="120" data-k="gate.passOptions.2"></span>
+          </label>
+          <label>First pause (seconds)<input type="number" min="0" max="120" data-k="gate.breathBase"></label>
+          <label>Extra pause per visit (seconds)<input type="number" min="0" max="60" data-k="gate.breathStep"></label>
+          <label>Longest pause (seconds)<input type="number" min="0" max="300" data-k="gate.breathMax"></label>
+          <label>Minimum intention length (characters)<input type="number" min="1" max="100" data-k="gate.minIntention"></label>
+          <label>Extend by (minutes) when a pass ends<input type="number" min="1" max="60" data-k="gate.extendMinutes"></label>
+        </div>
+        <label class="switch"><input type="checkbox" data-k="gate.warnBeforeEnd"> Show a heads-up one minute before a pass ends</label>
+        <p class="small muted" id="breathPreview"></p>
+      </section>
+
+      <section id="focus" class="card" aria-labelledby="focusTitle">
+        <h2 id="focusTitle">Focus timer</h2>
+        <p class="sub">Pomodoro sessions. Sites in groups with "Block during focus" are fully blocked while you work.</p>
+        <div class="grid">
+          <label>Focus (minutes)<input type="number" min="1" max="180" data-k="pomodoro.work"></label>
+          <label>Short break (minutes)<input type="number" min="1" max="60" data-k="pomodoro.short"></label>
+          <label>Long break (minutes)<input type="number" min="1" max="120" data-k="pomodoro.long"></label>
+          <label>Sessions before a long break<input type="number" min="1" max="12" data-k="pomodoro.cycles"></label>
+          <label>Daily goal (sessions)<input type="number" min="1" max="24" data-k="pomodoro.dailyGoal"></label>
+          <label>Chime volume<input type="range" min="0" max="1" step="0.05" data-k="pomodoro.volume"></label>
+        </div>
+        <div class="switches">
+          <label class="switch"><input type="checkbox" data-k="pomodoro.autoStartBreaks"> Start breaks automatically</label>
+          <label class="switch"><input type="checkbox" data-k="pomodoro.autoStartWork"> Start the next focus session automatically</label>
+          <label class="switch"><input type="checkbox" data-k="pomodoro.strict"> Strict focus: no pausing or stopping a running session</label>
+          <label class="switch"><input type="checkbox" data-k="pomodoro.notifications"> Desktop notifications</label>
+          <label class="switch"><input type="checkbox" data-k="pomodoro.sound"> Chimes</label>
+          <label class="switch"><input type="checkbox" data-k="pomodoro.badge"> Countdown on the toolbar icon</label>
+        </div>
+        <div class="row">
+          <button class="btn sm" type="button" data-sound="start">Test start chime</button>
+          <button class="btn sm" type="button" data-sound="done">Test done chime</button>
+          <button class="btn sm" type="button" data-sound="break">Test break chime</button>
+          <button class="btn sm ghost" type="button" id="shortcuts">Keyboard shortcuts</button>
+        </div>
+      </section>
+
+      <section id="reasons" class="card" aria-labelledby="reasonsTitle">
+        <h2 id="reasonsTitle">Your reasons</h2>
+        <p class="sub">Shown on the gate and block pages. Write them in your own words.</p>
+        <ul class="reason-list" id="reasonList"></ul>
+        <form class="row" id="reasonForm">
+          <label class="sr-only" for="newReason">New reason</label>
+          <input type="text" id="newReason" maxlength="200" placeholder="Add a reason, e.g. I want to finish my novel this year">
+          <button class="btn" type="submit">Add</button>
+        </form>
+      </section>
+
+      <section id="tracking" class="card" aria-labelledby="trackingTitle">
+        <h2 id="trackingTitle">Tracking</h2>
+        <p class="sub">Time is counted only for sites on your lists, only while the tab is active, the browser window is focused and you are not idle. Nothing leaves this device.</p>
+        <label class="switch"><input type="checkbox" data-k="tracking.enabled"> Track time on distraction sites</label>
+        <div class="grid">
+          <label>Count me as idle after (seconds)<input type="number" min="15" max="600" data-k="tracking.idleSeconds"></label>
+        </div>
+      </section>
+
+      <section id="data" class="card" aria-labelledby="dataTitle">
+        <h2 id="dataTitle">Data</h2>
+        <p class="sub">Your settings, stats, intentions and focus log are stored locally in this browser.</p>
+        <div class="row">
+          <button class="btn" type="button" id="exportBtn">Export backup</button>
+          <label class="btn" for="importFile">Import backup</label>
+          <input type="file" id="importFile" accept="application/json,.json" class="sr-only">
+          <button class="btn danger" type="button" id="clearBtn">Clear history</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="groupTpl">
+    <article class="card group">
+      <div class="group-head">
+        <label class="sr-only">Group name</label>
+        <input type="text" class="g-name" maxlength="60" aria-label="Group name">
+        <span class="pill focus lock hidden">Locked</span>
+        <button class="btn ghost sm danger g-delete" type="button">Delete group</button>
+      </div>
+      <p class="lock-note small hidden"></p>
+      <div class="group-opts">
+        <label>Behavior
+          <select class="g-mode">
+            <option value="gate">Mindful gate: ask for an intention, then a timed pass</option>
+            <option value="block">No gate: only block during schedules and focus</option>
+          </select>
+        </label>
+        <label class="switch"><input type="checkbox" class="g-focus"> Block during focus sessions</label>
+        <label class="switch"><input type="checkbox" class="g-strict"> Strict mode: scheduled blocks cannot be lifted or edited until they end</label>
+      </div>
+      <h3>Sites</h3>
+      <ul class="chips g-sites"></ul>
+      <form class="row g-add">
+        <input type="text" class="g-site-input" placeholder="Add a site, e.g. reddit.com" aria-label="Add a site">
+        <button class="btn sm" type="submit">Add site</button>
+      </form>
+      <h3>Hard-block schedules</h3>
+      <div class="g-schedules"></div>
+      <div class="row">
+        <button class="btn sm g-add-sched" type="button">Add schedule</button>
+        <button class="btn sm ghost g-preset" type="button" data-preset="work">Weekdays 9 to 5</button>
+        <button class="btn sm ghost g-preset" type="button" data-preset="night">Every night 23:00 to 07:00</button>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

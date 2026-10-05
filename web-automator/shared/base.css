@@ -1,0 +1,103 @@
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7f7f8;
+  --bg-sunk: #f0f0f2;
+  --surface: #ffffff;
+  --border: #e3e3e8;
+  --border-strong: #cfcfd6;
+  --text: #18181b;
+  --text-soft: #52525b;
+  --text-faint: #8a8a94;
+  --accent: #ea580c;
+  --accent-hover: #c2410c;
+  --accent-soft: #fff1e7;
+  --accent-text: #ffffff;
+  --danger: #dc2626;
+  --danger-soft: #fdecec;
+  --success: #16a34a;
+  --success-soft: #e8f7ee;
+  --warn: #b45309;
+  --warn-soft: #fef6e4;
+  --info: #2563eb;
+  --info-soft: #eaf1fe;
+  --focus: #2563eb;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+  --radius: 8px;
+  --radius-sm: 6px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17171a;
+    --bg-soft: #1e1e22;
+    --bg-sunk: #121214;
+    --surface: #222227;
+    --border: #33333a;
+    --border-strong: #46464f;
+    --text: #ececf1;
+    --text-soft: #b4b4bd;
+    --text-faint: #7c7c87;
+    --accent: #fb923c;
+    --accent-hover: #fdba74;
+    --accent-soft: #3a2416;
+    --accent-text: #1b0d03;
+    --danger: #f87171;
+    --danger-soft: #3b1d1d;
+    --success: #4ade80;
+    --success-soft: #16301f;
+    --warn: #fbbf24;
+    --warn-soft: #36290f;
+    --info: #60a5fa;
+    --info-soft: #172741;
+    --focus: #60a5fa;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 32px; padding: 0 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+  cursor: pointer; white-space: nowrap; font-weight: 500; font-size: 13px;
+}
+.btn:hover { background: var(--bg-soft); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.ghost:hover { background: var(--bg-sunk); }
+.btn.sm { height: 28px; padding: 0 8px; font-size: 12px; }
+.btn.icon { width: 32px; padding: 0; }
+.btn.sm.icon { width: 28px; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.input, select.input, textarea.input {
+  height: 32px; padding: 0 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface); min-width: 0;
+}
+textarea.input { height: auto; padding: 8px; resize: vertical; }
+.input:focus { border-color: var(--focus); outline: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 25%, transparent); }
+.muted { color: var(--text-soft); }
+.faint { color: var(--text-faint); }
+.mono { font-family: var(--mono); font-size: 12px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--bg-sunk); color: var(--text-soft); }
+.badge.passed { background: var(--success-soft); color: var(--success); }
+.badge.failed { background: var(--danger-soft); color: var(--danger); }
+.badge.running { background: var(--info-soft); color: var(--info); }
+.badge.stopped, .badge.warning { background: var(--warn-soft); color: var(--warn); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.toast {
+  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 1000;
+  background: var(--text); color: var(--bg); padding: 8px 16px; border-radius: var(--radius); box-shadow: var(--shadow);
+  font-size: 13px; max-width: 90vw;
+}
+.toast.error { background: var(--danger); color: #fff; }

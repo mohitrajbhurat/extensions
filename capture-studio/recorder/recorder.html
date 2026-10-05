@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capture Studio - Screen recorder</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="recorder.css">
+</head>
+<body>
+  <header class="bar">
+    <svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><rect width="128" height="128" rx="28" fill="#e5484d"/><circle cx="64" cy="64" r="26" fill="#fff"/><circle cx="64" cy="64" r="14" fill="#e5484d"/></svg>
+    <h1>Screen recorder</h1>
+    <span id="pill" class="pill" hidden><span class="dot"></span><span id="pill-text">Recording</span></span>
+    <span id="timer" class="timer" hidden>0:00</span>
+    <span class="spacer"></span>
+    <a class="btn ghost" href="../library/library.html">Library</a>
+  </header>
+
+  <main class="main">
+    <section id="setup" class="setup card">
+      <h2>What do you want to record?</h2>
+      <div class="segmented" role="radiogroup" aria-label="Capture source">
+        <label><input type="radio" name="mode" value="window"><span>A window</span></label>
+        <label><input type="radio" name="mode" value="screen"><span>Entire screen</span></label>
+      </div>
+      <div class="opts">
+        <label class="opt"><span>Microphone</span><span class="switch"><input type="checkbox" id="opt-mic"><span></span></span></label>
+        <select id="mic-device" aria-label="Microphone device"></select>
+        <label class="opt"><span>System audio <small class="muted">(when the browser and OS support it)</small></span><span class="switch"><input type="checkbox" id="opt-audio"><span></span></span></label>
+        <label class="opt"><span>Webcam bubble</span><span class="switch"><input type="checkbox" id="opt-cam"><span></span></span></label>
+        <select id="cam-device" aria-label="Camera device"></select>
+        <label class="opt"><span>Countdown</span>
+          <select id="opt-countdown"><option value="0">Off</option><option value="3">3 seconds</option><option value="5">5 seconds</option></select>
+        </label>
+      </div>
+      <button id="share" class="btn primary big">Choose what to share</button>
+      <p class="muted small">Your browser will ask which window or screen to share. Recording stays on this device.</p>
+      <p id="setup-error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section id="studio" class="studio" hidden>
+      <div class="stage" id="stage">
+        <canvas id="canvas" aria-label="Recording preview"></canvas>
+        <video id="screen" muted playsinline></video>
+        <div id="countdown" class="countdown" hidden><span id="countdown-n">3</span></div>
+      </div>
+      <div class="controls" role="toolbar" aria-label="Recording controls">
+        <div class="meter" title="Microphone level" id="meter-wrap" hidden><span id="meter"></span></div>
+        <button id="btn-cam" class="btn" hidden>Hide camera</button>
+        <select id="cam-size" aria-label="Bubble size" hidden>
+          <option value="0.1">Small bubble</option>
+          <option value="0.15">Medium bubble</option>
+          <option value="0.22">Large bubble</option>
+        </select>
+        <span class="spacer"></span>
+        <button id="btn-discard" class="btn ghost danger">Discard</button>
+        <button id="btn-pause" class="btn">Pause <span class="kbd">Space</span></button>
+        <button id="btn-stop" class="btn primary">Stop and save</button>
+      </div>
+      <p class="muted small center" id="studio-hint">You can switch to the window you are recording. Stop from here, from the toolbar button, or with the browser's "Stop sharing" bar.</p>
+    </section>
+
+    <section id="saving" class="setup card" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <h2>Saving your recording...</h2>
+    </section>
+  </main>
+  <script type="module" src="recorder.js"></script>
+</body>
+</html>

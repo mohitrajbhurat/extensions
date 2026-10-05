@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "PDF Studio",
+  "short_name": "PDF Studio",
+  "description": "View, annotate, fill, sign, merge, split, reorder and compress PDFs. 100% local, nothing is uploaded.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "PDF Studio: open this PDF or start a new session",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "storage"
+  ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "commands": {
+    "_execute_action": {
+      "description": "Open the current PDF (or a blank session) in PDF Studio"
+    },
+    "open-tools": {
+      "description": "Open PDF Studio page tools (merge, split, organize, compress)"
+    }
+  }
+}

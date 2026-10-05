@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Time Ledger</title>
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <div class="row">
+      <img src="../icons/icon32.png" width="20" height="20" alt="">
+      <strong>Time Ledger</strong>
+    </div>
+    <div class="row">
+      <button id="trackToggle" class="btn sm" type="button" aria-pressed="true" title="Pause or resume automatic tracking">Tracking on</button>
+      <button id="openApp" class="btn sm icon" type="button" title="Open dashboard" aria-label="Open dashboard"></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card timer" aria-label="Timer">
+      <form id="timerForm" autocomplete="off">
+        <input id="desc" class="desc" placeholder="What are you working on?" aria-label="Description" maxlength="200">
+        <div class="row">
+          <select id="project" class="grow" aria-label="Project"></select>
+          <input id="tags" class="grow" placeholder="tags" aria-label="Tags (comma or space separated)">
+        </div>
+        <div class="row between">
+          <div>
+            <div id="elapsed" class="clock mono" aria-live="off">0:00:00</div>
+            <div id="timerSub" class="small muted">Timer stopped</div>
+          </div>
+          <button id="timerBtn" class="btn primary start" type="submit"></button>
+        </div>
+      </form>
+      <div id="recent" class="recent" aria-label="Continue a recent entry"></div>
+    </section>
+
+    <section class="card now" aria-label="Now tracking">
+      <div class="row between">
+        <h3>Now</h3>
+        <span id="nowDur" class="mono small muted"></span>
+      </div>
+      <div id="nowBody" class="now-body"></div>
+    </section>
+
+    <section class="card" aria-label="Today">
+      <div class="row between">
+        <h3>Today</h3>
+        <span class="small muted"><span id="todayTotal" class="mono">0m</span> browsing · <span id="todayTimer" class="mono">0m</span> timer</span>
+      </div>
+      <div id="catBar" class="bar lg" role="img" aria-label="Time by category"></div>
+      <div id="catLegend" class="legend"></div>
+      <div id="goals" class="goals"></div>
+    </section>
+
+    <section class="card" aria-label="Top sites">
+      <div class="row between"><h3>Top sites</h3><a href="#" id="allSites" class="small">All sites</a></div>
+      <ol id="sites" class="sites"></ol>
+    </section>
+  </main>
+
+  <footer class="row between small">
+    <a href="#" data-open="timer">Entries</a>
+    <a href="#" data-open="reports">Reports</a>
+    <a href="#" data-open="projects">Projects</a>
+    <a href="#" data-open="settings">Settings</a>
+  </footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

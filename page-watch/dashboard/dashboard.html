@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Watch</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="dashboard.js" type="module"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><img src="../icons/icon48.png" width="28" height="28" alt=""><h1>Page Watch</h1></div>
+    <label class="search"><span class="sr-only">Search monitors</span>
+      <input type="search" id="search" placeholder="Search monitors  ( / )" autocomplete="off"></label>
+    <div class="top-actions">
+      <button class="btn primary" id="new-monitor" title="New monitor (n)">+ New monitor</button>
+      <button class="btn" id="check-all">Check all</button>
+      <button class="btn" id="import">Import</button>
+      <button class="btn" id="export">Export</button>
+      <button class="btn icon" id="open-settings" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <div class="banner notice warn" id="perm-banner" hidden>
+    <span id="perm-banner-text"></span>
+    <button class="btn small" id="perm-banner-grant">Grant access</button>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Monitors">
+      <div class="filters seg" role="group" aria-label="Filter">
+        <button data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="changed" aria-pressed="false">Changed</button>
+        <button data-filter="problems" aria-pressed="false">Problems</button>
+        <button data-filter="paused" aria-pressed="false">Paused</button>
+      </div>
+      <ul class="list" id="list" role="listbox" aria-label="Monitors"></ul>
+      <p class="hint list-empty" id="list-empty" hidden>No monitors match.</p>
+    </aside>
+
+    <main class="detail" id="detail">
+      <section class="welcome" id="welcome">
+        <img src="../icons/icon128.png" width="72" height="72" alt="">
+        <h2>Watch any part of any page</h2>
+        <p>Open a page, click the Page Watch toolbar button and choose <b>Pick an element</b>, such as a price, a stock label, a grade or a list of new postings. Page Watch checks it in the background and tells you when it changes.</p>
+        <p><button class="btn primary" id="welcome-new">+ Add a monitor by URL</button> <button class="btn" id="welcome-import">Import monitors</button></p>
+      </section>
+
+      <section id="monitor" hidden>
+        <div class="m-head">
+          <div class="grow m-title">
+            <div class="row" style="flex-wrap:wrap"><h2 id="m-name"></h2><span id="m-status" class="pill"></span><span id="m-unread"></span></div>
+            <a id="m-url" target="_blank" rel="noopener"></a>
+          </div>
+          <div class="m-actions">
+            <button class="btn primary" id="m-check" title="Check now (c)">Check now</button>
+            <button class="btn" id="m-pause"></button>
+            <button class="btn" id="m-edit" title="Edit (e)">Edit</button>
+            <button class="btn danger" id="m-delete">Delete</button>
+          </div>
+        </div>
+        <div id="m-notices"></div>
+        <dl class="facts" id="m-facts"></dl>
+
+        <div class="history">
+          <section class="timeline-wrap" aria-labelledby="tl-title">
+            <h3 id="tl-title">History</h3>
+            <ol class="timeline" id="timeline"></ol>
+          </section>
+          <section class="diff-wrap" aria-labelledby="diff-title">
+            <div class="diff-head">
+              <h3 id="diff-title">Changes</h3>
+              <div class="compare">
+                <label><span class="sr-only">Older snapshot</span><select id="cmp-a"></select></label>
+                <span aria-hidden="true">→</span>
+                <label><span class="sr-only">Newer snapshot</span><select id="cmp-b"></select></label>
+              </div>
+              <div class="seg" role="group" aria-label="Diff view" id="diff-mode">
+                <button data-mode="inline" aria-pressed="true">Inline</button>
+                <button data-mode="split" aria-pressed="false">Side by side</button>
+                <button data-mode="text" aria-pressed="false">Text</button>
+              </div>
+            </div>
+            <div class="diff-stats" id="diff-stats"></div>
+            <div class="diff" id="diff" tabindex="0" aria-live="polite"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="editor-dialog" aria-labelledby="editor-title">
+    <form method="dialog" class="dlg-head"><h2 id="editor-title">Edit monitor</h2><button class="btn ghost icon" value="cancel" aria-label="Close">✕</button></form>
+    <div class="picked" id="draft-picked" hidden>
+      <div class="label" id="draft-label"></div>
+      <pre class="preview-text" id="draft-text"></pre>
+    </div>
+    <div id="editor"></div>
+    <div class="dlg-foot">
+      <button class="btn" id="editor-cancel">Cancel</button>
+      <button class="btn primary" id="editor-save">Save</button>
+    </div>
+  </dialog>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form method="dialog" class="dlg-head"><h2 id="settings-title">Settings</h2><button class="btn ghost icon" value="cancel" aria-label="Close">✕</button></form>
+    <form id="settings-form" class="editor">
+      <div class="two">
+        <label class="field"><span>Default check frequency</span><select name="defaultInterval" id="s-interval"></select></label>
+        <label class="field"><span>Snapshots kept per monitor</span><input type="number" name="maxSnapshots" min="2" max="1000"></label>
+      </div>
+      <label class="field"><span>Default render wait (seconds)</span><input type="number" name="renderWait" min="1" max="60"></label>
+      <label class="check"><input type="checkbox" name="notifications"> Show desktop notifications</label>
+      <label class="check"><input type="checkbox" name="showBadge"> Show unread count on the toolbar icon</label>
+      <div class="two">
+        <label class="field"><span>Alert sound</span>
+          <select name="sound"><option value="chime">Chime</option><option value="bell">Bell</option><option value="alert">Alert beeps</option></select></label>
+        <label class="field"><span>Volume</span><input type="range" name="soundVolume" min="0" max="1" step="0.05"></label>
+      </div>
+      <div class="row"><button type="button" class="btn small" id="sound-test">Play sound</button><span class="hint">Sound plays only for monitors with “Play sound” on.</span></div>
+      <p class="hint" id="data-stats"></p>
+    </form>
+    <div class="dlg-foot">
+      <button class="btn" id="settings-cancel">Cancel</button>
+      <button class="btn primary" id="settings-save">Save settings</button>
+    </div>
+  </dialog>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <h2 id="confirm-title">Delete monitor?</h2>
+    <p id="confirm-text" class="hint"></p>
+    <div class="dlg-foot">
+      <button class="btn" id="confirm-no">Cancel</button>
+      <button class="btn primary danger-fill" id="confirm-yes">Delete</button>
+    </div>
+  </dialog>
+</body>
+</html>

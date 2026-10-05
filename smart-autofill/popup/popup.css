@@ -1,0 +1,24 @@
+body { width: 380px; min-height: 200px; }
+.top { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.top h1 { font-size: 15px; margin: 0; flex: 1; }
+main { padding: 16px; display: grid; gap: 12px; }
+#mainView { display: grid; gap: 12px; }
+#mainView[hidden], #lockedView[hidden] { display: none; }
+.profile-row { display: flex; gap: 8px; margin-top: -8px; }
+.pageinfo { font-size: 13px; color: var(--muted); padding: 8px 12px; background: var(--bg-soft); border-radius: 8px; border: 1px solid var(--line); }
+.pageinfo b { color: var(--fg); }
+.actions { display: grid; gap: 8px; }
+.actions .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btn.big { padding: 12px 16px; font-size: 15px; }
+.result { font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); }
+.result.ok { border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); }
+.result.err { border-color: color-mix(in srgb, var(--danger) 50%, var(--line)); color: var(--danger); }
+.result ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+.quick { border-top: 1px solid var(--line); padding-top: 8px; }
+.quick summary { cursor: pointer; font-size: 13px; color: var(--muted); padding: 4px 0; }
+.quick .switch { font-size: 13px; padding: 6px 0; }
+.lockcard { text-align: center; display: grid; gap: 8px; justify-items: center; padding: 16px 8px; }
+.lockcard h2 { margin: 0; font-size: 16px; }
+.lockcard p { margin: 0; }
+.lockcard form { display: flex; gap: 8px; width: 100%; margin-top: 8px; }
+.error { color: var(--danger); font-size: 13px; min-height: 1em; }

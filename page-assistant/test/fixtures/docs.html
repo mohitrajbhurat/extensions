@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Configuring the Cache - Acme Docs</title><meta property="og:site_name" content="Acme Docs"></head>
+<body>
+<nav class="docs-nav" aria-label="Documentation">
+  <ul><li><a href="/start">Getting started</a></li><li><a href="/install">Installation</a></li><li><a href="/cache">Configuring the cache</a></li><li><a href="/deploy">Deployment</a></li><li><a href="/faq">FAQ</a></li></ul>
+</nav>
+<main class="docs-content">
+  <h1>Configuring the Cache</h1>
+  <p>The Acme server keeps a cache of rendered pages in memory so that repeated requests are answered without running the template engine again. This guide explains how to size the cache, how entries expire, and how to clear it during deployments.</p>
+  <h2>Cache size</h2>
+  <p>Set the maximum size with the <code>cache.maxEntries</code> option. When the cache is full, the least recently used entry is evicted first. A good starting point is ten thousand entries, which uses roughly two hundred megabytes of memory for typical pages.</p>
+  <pre><code>cache:
+  maxEntries: 10000
+  ttlSeconds: 300</code></pre>
+  <h2>Expiration</h2>
+  <p>Each entry expires after <code>ttlSeconds</code>. Expired entries are removed lazily, the next time they are requested, so memory is not reclaimed immediately. Set the time to live to zero to disable expiration entirely.</p>
+  <h3>Stale content</h3>
+  <p>When the origin is slow, the server can serve stale entries for a short grace period while it refreshes them in the background. Enable this with <code>cache.serveStale</code>.</p>
+  <h2>Clearing the cache</h2>
+  <p>Run the <code>acme cache clear</code> command after each deployment, or send a POST request to the admin endpoint. Clearing the cache causes a brief spike in CPU usage while pages are rendered again.</p>
+  <table>
+    <thead><tr><th>Option</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>maxEntries</td><td>1000</td><td>Maximum number of cached pages</td></tr>
+      <tr><td>ttlSeconds</td><td>60</td><td>Lifetime of an entry in seconds</td></tr>
+      <tr><td>serveStale</td><td>false</td><td>Serve expired entries while refreshing</td></tr>
+    </tbody>
+  </table>
+</main>
+<footer><p>Copyright Acme Corp. Edit this page on GitHub. Was this page helpful? Yes No</p></footer>
+</body>
+</html>

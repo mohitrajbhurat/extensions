@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Command Palette Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon48.png" width="40" height="40" alt="">
+    <div>
+      <h1>Command Palette</h1>
+      <p class="muted">Press <kbd id="shortcut">Ctrl+Shift+K</kbd> on any page. <button class="link" id="edit-shortcut" type="button">Change shortcut</button></p>
+    </div>
+    <span class="status" id="status" role="status" aria-live="polite"></span>
+  </header>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="Settings sections">
+      <button role="tab" id="tab-general" aria-controls="panel-general" aria-selected="true">General</button>
+      <button role="tab" id="tab-commands" aria-controls="panel-commands" aria-selected="false" tabindex="-1">Search commands</button>
+      <button role="tab" id="tab-quicklinks" aria-controls="panel-quicklinks" aria-selected="false" tabindex="-1">Quicklinks</button>
+      <button role="tab" id="tab-help" aria-controls="panel-help" aria-selected="false" tabindex="-1">Keyboard &amp; prefixes</button>
+    </nav>
+
+    <section class="panel" id="panel-general" role="tabpanel" aria-labelledby="tab-general">
+      <div class="card">
+        <h2>Behavior</h2>
+        <label class="row">
+          <span><b>Enter opens links in</b><small>Shift+Enter does the opposite. Ctrl/Cmd+Enter opens in a background tab.</small></span>
+          <select id="enterOpens">
+            <option value="current">Current tab</option>
+            <option value="new">New tab</option>
+          </select>
+        </label>
+        <label class="row">
+          <span><b>Theme</b><small>Auto follows your system setting.</small></span>
+          <select id="theme">
+            <option value="auto">Auto</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <label class="row">
+          <span><b>Always open in a popup window</b><small>Instead of an overlay on the page. The popup is used automatically where pages can't be scripted (chrome://, Web Store).</small></span>
+          <input type="checkbox" id="preferPopup" class="switch">
+        </label>
+        <label class="row">
+          <span><b>Learn from what I pick</b><small>Frecency ranking: results you choose often and recently rank higher, per query.</small></span>
+          <input type="checkbox" id="learn" class="switch">
+        </label>
+        <div class="row">
+          <span><b>Learned ranking data</b><small id="frecency-stats">Loading…</small></span>
+          <button type="button" class="btn" id="clear-frecency">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Search sources</h2>
+        <p class="muted">What appears when you type without a prefix. Prefixes always search their source.</p>
+        <div class="checks">
+          <label><input type="checkbox" data-source="tabs"> Open tabs</label>
+          <label><input type="checkbox" data-source="closed"> Recently closed</label>
+          <label><input type="checkbox" data-source="bookmarks"> Bookmarks</label>
+          <label><input type="checkbox" data-source="history"> History</label>
+          <label><input type="checkbox" data-source="actions"> Actions</label>
+        </div>
+        <label class="row">
+          <span><b>History entries to index</b><small>More entries find older pages but use a little more memory.</small></span>
+          <select id="historyMax">
+            <option value="1000">1,000</option>
+            <option value="3000">3,000</option>
+            <option value="5000">5,000</option>
+            <option value="10000">10,000</option>
+          </select>
+        </label>
+        <label class="row">
+          <span><b>History window</b></span>
+          <select id="historyDays">
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="365">Last year</option>
+          </select>
+        </label>
+        <label class="row">
+          <span><b>Maximum results</b></span>
+          <select id="maxResults">
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="card">
+        <h2>Backup</h2>
+        <p class="muted">Export or import your settings, search commands and quicklinks as JSON.</p>
+        <div class="buttons">
+          <button type="button" class="btn" id="export">Export…</button>
+          <label class="btn" for="import-file">Import…</label>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-commands" role="tabpanel" aria-labelledby="tab-commands" hidden>
+      <div class="card">
+        <h2>Search commands</h2>
+        <p class="muted">URL templates with <code>{query}</code>. Type the keyword, a space and your search: <code>yt lofi beats</code>. Commands marked <em>Fallback</em> are offered for any text you type.</p>
+        <div class="table-wrap">
+          <table class="table" id="commands-table">
+            <thead><tr><th>Name</th><th>Keyword</th><th>URL template</th><th title="Offer for any query">Fallback</th><th><span class="sr">Actions</span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <form class="add" id="add-command" autocomplete="off">
+          <h3>Add a command</h3>
+          <div class="grid">
+            <label>Name<input name="name" required placeholder="Jira" maxlength="60"></label>
+            <label>Keyword<input name="keyword" required placeholder="jira" maxlength="24" pattern="\S+" title="No spaces"></label>
+            <label class="wide">URL template<input name="url" required placeholder="https://example.atlassian.net/issues/?jql=text~&quot;{query}&quot;"></label>
+            <label class="inline"><input type="checkbox" name="fallback"> Fallback</label>
+          </div>
+          <p class="error" id="command-error" role="alert"></p>
+          <div class="buttons"><button class="btn primary" type="submit">Add command</button><button class="btn" type="button" id="restore-commands">Restore defaults</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-quicklinks" role="tabpanel" aria-labelledby="tab-quicklinks" hidden>
+      <div class="card">
+        <h2>Quicklinks</h2>
+        <p class="muted">Named links that show up in search. Give one a keyword to jump straight to it: type the keyword and press Enter.</p>
+        <div class="table-wrap">
+          <table class="table" id="quicklinks-table">
+            <thead><tr><th>Name</th><th>Keyword</th><th>URL</th><th><span class="sr">Actions</span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <form class="add" id="add-quicklink" autocomplete="off">
+          <h3>Add a quicklink</h3>
+          <div class="grid">
+            <label>Name<input name="name" required placeholder="Team dashboard" maxlength="80"></label>
+            <label>Keyword <span class="muted">(optional)</span><input name="keyword" placeholder="dash" maxlength="24" pattern="\S*" title="No spaces"></label>
+            <label class="wide">URL<input name="url" required placeholder="https://grafana.example.com/d/abc"></label>
+          </div>
+          <p class="error" id="quicklink-error" role="alert"></p>
+          <div class="buttons"><button class="btn primary" type="submit">Add quicklink</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-help" role="tabpanel" aria-labelledby="tab-help" hidden>
+      <div class="card">
+        <h2>Prefixes</h2>
+        <dl class="keys">
+          <dt><kbd>/</kbd></dt><dd>Actions only (type <code>/</code> alone to browse all of them)</dd>
+          <dt><kbd>&gt;</kbd></dt><dd>Open tabs and recently closed tabs</dd>
+          <dt><kbd>#</kbd></dt><dd>Bookmarks and quicklinks</dd>
+          <dt><kbd>@</kbd></dt><dd>History</dd>
+          <dt><kbd>keyword</kbd> <kbd>space</kbd></dt><dd>Run a search command, e.g. <code>gh react router</code></dd>
+        </dl>
+      </div>
+      <div class="card">
+        <h2>Keyboard</h2>
+        <dl class="keys">
+          <dt><kbd>↑</kbd> <kbd>↓</kbd> or <kbd>Ctrl</kbd>+<kbd>N</kbd>/<kbd>P</kbd></dt><dd>Move selection</dd>
+          <dt><kbd>PgUp</kbd> <kbd>PgDn</kbd></dt><dd>Jump 8 results</dd>
+          <dt><kbd>Enter</kbd></dt><dd>Open / switch / run</dd>
+          <dt><kbd>Shift</kbd>+<kbd>Enter</kbd></dt><dd>Open in a new tab (or the current tab, if new tab is your default)</dd>
+          <dt><kbd>Ctrl/Cmd</kbd>+<kbd>Enter</kbd></dt><dd>Open in a background tab (also middle-click)</dd>
+          <dt><kbd>Tab</kbd></dt><dd>Complete a search command's keyword, otherwise next result</dd>
+          <dt><kbd>Shift</kbd>+<kbd>Delete</kbd></dt><dd>Close the selected tab without leaving the palette</dd>
+          <dt><kbd>Esc</kbd></dt><dd>Back out of a sub-list, or close the palette</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Point-and-Click Scraper</title>
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="hd">
+    <img class="logo" src="../icons/icon48.png" alt="">
+    <div class="grow">
+      <h1>Point-and-Click Scraper</h1>
+      <div class="muted site" id="site">&nbsp;</div>
+    </div>
+  </header>
+  <main>
+    <div id="unsupported" class="empty" hidden>This page can’t be scraped. Open a regular website (http or https) and try again.</div>
+    <div id="actions">
+      <button class="primary big" id="detectBtn">
+        <span class="t">Detect data</span>
+        <span class="s">Find tables and repeating lists automatically</span>
+      </button>
+      <button class="big" id="manualBtn">
+        <span class="t">Point &amp; click</span>
+        <span class="s">Click an item; similar ones are selected for you</span>
+      </button>
+    </div>
+
+    <section>
+      <h2>Recipes for this site</h2>
+      <ul class="list" id="recipes"></ul>
+    </section>
+
+    <section>
+      <h2>Recent results</h2>
+      <ul class="list" id="recent"></ul>
+    </section>
+
+    <section id="accessBox" hidden>
+      <h2>Site access</h2>
+      <p class="muted small-text" id="accessText"></p>
+      <button class="small" id="accessBtn"></button>
+    </section>
+  </main>
+  <footer class="ft">
+    <button class="ghost small" id="managerBtn">All results &amp; recipes</button>
+    <button class="ghost small" id="shortcutsBtn">Shortcuts</button>
+  </footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pause - Mindful Gate</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="gate.css">
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section id="gateView" class="view hidden" aria-labelledby="gateTitle">
+      <div class="site-row">
+        <span class="pill accent" id="siteName">site</span>
+        <span class="muted small" id="siteMeta"></span>
+      </div>
+
+      <div class="breath" id="breath" aria-live="polite">
+        <div class="orb" id="orb" aria-hidden="true"><div class="orb-core"></div></div>
+        <div class="breath-text">
+          <strong id="breathCue">Breathe in</strong>
+          <span class="muted" id="breathLeft"></span>
+        </div>
+      </div>
+
+      <h1 id="gateTitle">What's your intention?</h1>
+      <p class="sub lede">Name what you came here to do. A clear intention makes it easier to stop.</p>
+
+      <form id="intentForm" autocomplete="off">
+        <label class="sr-only" for="intention">Your intention</label>
+        <textarea id="intention" rows="2" maxlength="280" placeholder="e.g. Watch the lecture my teacher shared, then close the tab"></textarea>
+        <div class="chips" id="chips" aria-label="Suggestions"></div>
+
+        <fieldset class="passes">
+          <legend>How long do you need?</legend>
+          <div class="pass-buttons" id="passButtons"></div>
+          <p class="muted small" id="passHint">The buttons unlock after your pause.</p>
+        </fieldset>
+      </form>
+
+      <div class="secondary">
+        <button class="btn lg ghost" id="backBtn" type="button">Never mind, take me back</button>
+      </div>
+
+      <div class="recent hidden" id="recentWrap">
+        <h2 class="small muted">Your last intentions here</h2>
+        <ul id="recent"></ul>
+      </div>
+    </section>
+
+    <section id="leftView" class="view hidden" aria-labelledby="leftTitle">
+      <div class="big-check" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="56" height="56"><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 25l7 7 13-15" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h1 id="leftTitle">Good call.</h1>
+      <p class="sub lede" id="leftText">You chose your time over the scroll.</p>
+      <div class="actions">
+        <button class="btn primary lg" id="closeBtn" type="button">Close this tab</button>
+        <a class="btn lg" href="../dashboard/dashboard.html">See your insights</a>
+      </div>
+    </section>
+
+    <aside class="reason card" id="reasonCard" aria-label="Your reasons">
+      <span class="small muted">Remember why</span>
+      <p id="reason"></p>
+    </aside>
+  </main>
+  <script type="module" src="gate.js"></script>
+</body>
+</html>

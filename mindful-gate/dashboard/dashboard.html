@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Insights - Mindful Gate</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand"><img src="../icons/icon48.png" width="28" height="28" alt=""><h1>Insights</h1></div>
+    <div class="bar-actions">
+      <div class="seg" role="group" aria-label="Range">
+        <button type="button" data-range="7" aria-pressed="true">7 days</button>
+        <button type="button" data-range="30" aria-pressed="false">30 days</button>
+      </div>
+      <a class="btn sm" href="../options/options.html">Settings</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="summary card" aria-labelledby="sumTitle">
+      <div class="summary-head">
+        <h2 id="sumTitle">This week</h2>
+        <span class="muted small" id="sumRange"></span>
+      </div>
+      <p class="summary-text" id="summaryText"></p>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <div class="grid2">
+      <section class="card chart-card wide" aria-labelledby="c1Title">
+        <div class="chart-head">
+          <div>
+            <h2 id="c1Title">Time on distracting sites</h2>
+            <p class="small muted">Active-tab time, idle excluded</p>
+          </div>
+          <div class="legend" id="c1Legend"></div>
+        </div>
+        <div id="c1"></div>
+        <details class="table-view"><summary>Show as table</summary><div id="c1Table"></div></details>
+      </section>
+
+      <section class="card chart-card" aria-labelledby="c2Title">
+        <div class="chart-head">
+          <div>
+            <h2 id="c2Title">Focus minutes</h2>
+            <p class="small muted" id="c2Sub">Per day</p>
+          </div>
+        </div>
+        <div id="c2"></div>
+        <details class="table-view"><summary>Show as table</summary><div id="c2Table"></div></details>
+      </section>
+
+      <section class="card chart-card" aria-labelledby="c3Title">
+        <div class="chart-head">
+          <div>
+            <h2 id="c3Title">Gate prompts</h2>
+            <p class="small muted">Times you were asked, and times you turned back</p>
+          </div>
+          <div class="legend" id="c3Legend"></div>
+        </div>
+        <div id="c3"></div>
+        <details class="table-view"><summary>Show as table</summary><div id="c3Table"></div></details>
+      </section>
+    </div>
+
+    <div class="grid2">
+      <section class="card" aria-labelledby="sitesTitle">
+        <h2 id="sitesTitle">Sites</h2>
+        <div class="table-wrap"><table class="data" id="sitesTable"></table></div>
+      </section>
+      <section class="card" aria-labelledby="logTitle">
+        <h2 id="logTitle">Focus log</h2>
+        <div class="table-wrap"><table class="data" id="focusTable"></table></div>
+      </section>
+    </div>
+
+    <section class="card" aria-labelledby="intTitle">
+      <div class="chart-head">
+        <h2 id="intTitle">Intentions</h2>
+        <div class="row">
+          <label class="sr-only" for="intSearch">Search intentions</label>
+          <input type="search" id="intSearch" placeholder="Search intentions or sites">
+          <label class="sr-only" for="intFilter">Outcome</label>
+          <select id="intFilter">
+            <option value="">All outcomes</option>
+            <option value="pass">Passes</option>
+            <option value="extend">Extensions</option>
+            <option value="back">Turned back</option>
+            <option value="snooze">Schedule snoozes</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap"><table class="data" id="intTable"></table></div>
+      <div class="row center"><button class="btn sm hidden" type="button" id="moreInt">Show more</button></div>
+    </section>
+  </main>
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

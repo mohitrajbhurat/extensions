@@ -59,7 +59,9 @@ function close(cur, end, opts, out) {
 }
 
 /**
- * Apply one event. Returns { state, segments } without mutating the input.
+ * Apply one event. Returns { state, segments, trimAfter? } without mutating the input.
+ * When trimAfter is set, previously stored segments must be cut at that time
+ * (see trimSegments) because the user turned out to be idle.
  */
 export function reduce(prev, event, now, options = {}) {
   const opts = { ...ENGINE_DEFAULTS, ...options };
@@ -79,6 +81,7 @@ export function reduce(prev, event, now, options = {}) {
 
   // 2. Apply the event to the environment snapshot.
   let closeAt = now;
+  let trimAfter = null;
   switch (event.type) {
     case 'tab':
       s.tab = event.tab || null;
@@ -93,7 +96,13 @@ export function reduce(prev, event, now, options = {}) {
       // last idleSeconds were not really worked. Trim them, unless audio kept us engaged.
       if (wasActive && event.idle !== 'active' && s.cur) {
         const audibleKeeps = event.idle === 'idle' && opts.countAudible && s.tab && s.tab.audible;
-        if (!audibleKeeps) closeAt = Math.max(s.cur.start, now - opts.idleSeconds * 1000);
+        if (!audibleKeeps) {
+          const idleSince = now - opts.idleSeconds * 1000;
+          closeAt = Math.max(s.cur.start, idleSince);
+          // Earlier heartbeat checkpoints may already have stored part of the
+          // idle stretch; ask the caller to cut stored time after idleSince.
+          if (idleSince < s.cur.start) trimAfter = idleSince;
+        }
       }
       break;
     }
@@ -128,7 +137,7 @@ export function reduce(prev, event, now, options = {}) {
   if (!s.cur && want) s.cur = { ...want, start: now };
 
   s.lastBeat = now;
-  return { state: s, segments: out };
+  return trimAfter !== null ? { state: s, segments: out, trimAfter } : { state: s, segments: out };
 }
 
 /** Split segments that cross local midnight so each piece belongs to one day. */
@@ -170,4 +179,17 @@ export function liveSegment(state, now, maxGapMs = ENGINE_DEFAULTS.maxGapMs) {
   // If the worker has not checkpointed for too long, do not keep counting.
   const end = state.lastBeat ? Math.min(now, state.lastBeat + maxGapMs) : now;
   return { ...state.cur, end: Math.max(state.cur.start, end), live: true };
+}
+
+/**
+ * Cut a stored day list at `ts`: drop segments starting at/after it and
+ * shorten those that cross it. Returns a new array.
+ */
+export function trimSegments(list, ts) {
+  const out = [];
+  for (const seg of list) {
+    if (seg.start >= ts) continue;
+    out.push(seg.end > ts ? { ...seg, end: ts } : seg);
+  }
+  return out;
 }

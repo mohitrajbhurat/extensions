@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "Command Palette",
+  "short_name": "Palette",
+  "description": "A keyboard-first command palette: fuzzy search tabs, bookmarks, history and 60+ browser actions.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Command Palette (Ctrl+Shift+K)",
+    "default_popup": "ui/palette.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "open-palette": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Open the command palette"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "tabGroups",
+    "sessions",
+    "bookmarks",
+    "history",
+    "storage",
+    "browsingData",
+    "favicon",
+    "clipboardWrite"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "_favicon/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

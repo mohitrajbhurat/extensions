@@ -1,0 +1,41 @@
+body { min-height: 100vh; display: flex; flex-direction: column; }
+.bar { display: flex; align-items: center; gap: 12px; padding: 8px 24px; background: var(--surface); border-bottom: 1px solid var(--border); min-height: 56px; }
+.bar h1 { font-size: 16px; }
+.logo { width: 28px; height: 28px; }
+.spacer { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 13px; }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 1.2s infinite; }
+.pill.paused { background: var(--surface-2); color: var(--warning); }
+.pill.paused .dot { animation: none; }
+@keyframes pulse { 50% { opacity: .3; } }
+.timer { font: 600 18px var(--mono); font-variant-numeric: tabular-nums; }
+.main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 32px; }
+.setup { width: min(520px, 100%); }
+.setup h2 { font-size: 20px; margin-bottom: 16px; }
+.segmented { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border-radius: var(--radius-sm); padding: 2px; margin-bottom: 16px; }
+.segmented label { position: relative; }
+.segmented input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.segmented span { display: block; text-align: center; padding: 8px; border-radius: 5px; font-weight: 500; color: var(--muted); }
+.segmented input:checked + span { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.segmented input:focus-visible + span { box-shadow: var(--focus); }
+.opts { display: grid; gap: 8px; margin-bottom: 24px; }
+.opt { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; cursor: pointer; }
+.opts select { width: 100%; }
+.big { width: 100%; height: 44px; font-size: 15px; }
+.small { font-size: 12px; }
+.center { text-align: center; }
+.error { color: var(--danger); margin: 16px 0 0; }
+.studio { width: 100%; max-width: 1280px; display: flex; flex-direction: column; gap: 16px; }
+.stage { position: relative; background: #000; border-radius: var(--radius); overflow: hidden; display: flex; align-items: center; justify-content: center; height: min(68vh, 720px); }
+.stage canvas, .stage video { max-width: 100%; max-height: 100%; display: block; }
+.stage canvas.dragging { cursor: grabbing; }
+.stage canvas.can-drag { cursor: grab; }
+.countdown { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.45); }
+.countdown span { width: 160px; height: 160px; border-radius: 50%; background: rgba(229, 72, 77, .92); color: #fff; font: 700 96px/160px var(--font); text-align: center; }
+.controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; }
+.meter { width: 96px; height: 8px; border-radius: 4px; background: var(--surface-3); overflow: hidden; }
+.meter span { display: block; height: 100%; width: 0; background: var(--success); transition: width .08s linear; }
+.spinner { width: 40px; height: 40px; border-radius: 50%; border: 4px solid var(--surface-3); border-top-color: var(--accent); animation: spin 1s linear infinite; margin: 0 auto 16px; }
+#saving { text-align: center; }
+@keyframes spin { to { transform: rotate(360deg); } }

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research Canvas</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="top">
+      <div class="row">
+        <span class="brand" aria-hidden="true">
+          <svg viewBox="0 0 128 128"><rect x="4" y="4" width="120" height="120" rx="28" fill="#6d4cff"/><rect x="28" y="30" width="72" height="12" rx="6" fill="#fff"/><rect x="28" y="52" width="72" height="14" rx="4" fill="#ffe066"/><rect x="28" y="76" width="48" height="12" rx="6" fill="#fff"/><path d="M84 74h20v22l-10 8h-10z" fill="#ffd43b"/></svg>
+        </span>
+        <div class="project-picker">
+          <span class="project-dot" id="projectDot" aria-hidden="true"></span>
+          <label class="sr-only" for="projectSelect">Current project</label>
+          <select id="projectSelect"></select>
+        </div>
+        <button class="icon-btn" id="newProjectBtn" title="New project" aria-label="New project"></button>
+        <div class="menu-wrap">
+          <button class="icon-btn" id="menuBtn" title="More" aria-label="More actions" aria-haspopup="menu" aria-expanded="false"></button>
+          <div class="menu" id="menu" role="menu" hidden></div>
+        </div>
+      </div>
+      <div class="search">
+        <span class="search-icon" aria-hidden="true"></span>
+        <input id="searchInput" type="search" placeholder="Search everything…  #tag  type:note" aria-label="Search all projects, notes and highlights" autocomplete="off">
+        <kbd class="search-kbd" aria-hidden="true">/</kbd>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Views">
+        <button role="tab" class="tab" data-view="clips" id="tab-clips" aria-controls="main">Clips</button>
+        <button role="tab" class="tab" data-view="notes" id="tab-notes" aria-controls="main">Notes</button>
+        <button role="tab" class="tab" data-view="page" id="tab-page" aria-controls="main">This page</button>
+        <button role="tab" class="tab" data-view="pages" id="tab-pages" aria-controls="main">Pages</button>
+      </nav>
+    </header>
+    <main id="main" class="main" role="tabpanel" tabindex="-1"></main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <dialog id="dialog" class="dialog"></dialog>
+  <input type="file" id="importFile" accept=".json,application/json" hidden>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Bookmarks</title>
+  <link rel="stylesheet" href="../lib/theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" alt="" width="20" height="20">
+    <h1>Smart Bookmarks</h1>
+    <button class="btn ghost icon sm" id="openManager" title="Open bookmark manager" aria-label="Open bookmark manager"></button>
+  </header>
+
+  <section class="card" id="pageCard" aria-label="Current page">
+    <div class="page-head">
+      <img class="fav" id="pageFav" alt="">
+      <div class="page-meta">
+        <input class="title-input" id="pageTitle" aria-label="Title" spellcheck="false">
+        <div class="page-url" id="pageUrl"></div>
+      </div>
+    </div>
+    <div class="status" id="status" hidden></div>
+
+    <div class="field">
+      <div class="field-label"><span>Tags</span><span class="muted small" id="readTime"></span></div>
+      <div id="tagsMount"></div>
+      <div class="suggest" id="suggest" aria-live="polite"></div>
+    </div>
+
+    <label class="check small"><input type="checkbox" id="saveText"> Save page text for full-text search</label>
+
+    <div class="actions">
+      <button class="btn primary" id="saveLater" title="Save for later (Ctrl+Enter)"></button>
+    </div>
+    <div class="bm-row">
+      <select class="select" id="folder" aria-label="Bookmark folder"></select>
+      <button class="btn" id="bookmarkBtn">Bookmark</button>
+    </div>
+  </section>
+
+  <section class="rl" aria-labelledby="rlTitle">
+    <div class="rl-head">
+      <h2 id="rlTitle">Read later</h2>
+      <span class="pill info" id="unreadCount" hidden></span>
+      <span class="spacer"></span>
+      <button class="btn ghost sm" id="viewAll">View all</button>
+    </div>
+    <ul id="rlList" class="rl-list"></ul>
+    <div id="rlEmpty" class="rl-empty" hidden>Nothing to read. Save pages here to read them later.</div>
+  </section>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

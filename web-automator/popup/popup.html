@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Automator</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" alt="" width="24" height="24">
+    <h1>Web Automator</h1>
+    <button class="btn ghost icon" id="openEditor" title="Open editor" aria-label="Open editor"></button>
+  </header>
+
+  <section class="perm card" id="permCard" hidden>
+    <p><strong>Site access needed.</strong> To record and replay across pages and run schedules, Web Automator needs permission to read and change the sites you automate. Nothing leaves your device.</p>
+    <button class="btn primary" id="grant">Allow on all sites</button>
+  </section>
+
+  <section class="card rec" id="recCard">
+    <div class="rec-idle" id="recIdle">
+      <button class="btn primary big" id="recordBtn"><span class="ico" id="recIco"></span>Record in this tab</button>
+      <label class="switch"><input type="checkbox" id="keystrokes"><span>Record keystrokes instead of final values</span></label>
+    </div>
+    <div class="rec-active" id="recActive" hidden>
+      <div class="rec-status"><span class="dot"></span><span id="recText">Recording…</span></div>
+      <button class="btn danger" id="stopRecBtn"><span class="ico" id="stopIco"></span>Stop &amp; save</button>
+    </div>
+  </section>
+
+  <section class="card run" id="runCard" hidden>
+    <div class="run-head">
+      <span class="badge running" id="runBadge">Running</span>
+      <strong id="runName"></strong>
+    </div>
+    <div class="progress"><div class="bar" id="runBar"></div></div>
+    <div class="run-meta muted" id="runMeta"></div>
+    <div class="run-ctrls">
+      <button class="btn sm" id="pauseBtn">Pause</button>
+      <button class="btn sm danger" id="stopRunBtn">Stop</button>
+      <label class="speed">Speed
+        <select class="input" id="runSpeed">
+          <option value="fast">Fast</option>
+          <option value="normal">Normal</option>
+          <option value="slow">Slow</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section class="macros">
+    <div class="macros-head">
+      <h2>Macros</h2>
+      <input class="input" id="search" type="search" placeholder="Search" aria-label="Search macros">
+    </div>
+    <ul id="list" class="list" aria-label="Macros"></ul>
+    <p class="empty muted" id="empty" hidden>No macros yet. Press Record, use the page as usual, then Stop.</p>
+  </section>
+
+  <footer class="foot">
+    <button class="btn sm ghost" id="importBtn">Import</button>
+    <button class="btn sm ghost" id="exportBtn">Export all</button>
+    <span class="spacer"></span>
+    <button class="btn sm" id="editorBtn">Open editor</button>
+  </footer>
+  <div id="toast" class="toast" hidden role="status"></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+body { width: 380px; min-height: 200px; background: var(--bg); }
+.top { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.top h1 { font-size: 15px; margin: 0; }
+main { padding: 12px 16px; display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; display: grid; gap: 12px; box-shadow: var(--shadow); }
+.cur-host { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.section-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 8px; }
+.section-head .section-title { margin: 0; }
+.section-head { margin-bottom: 8px; }
+.mon-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mon { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; padding: 8px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); cursor: pointer; text-align: left; width: 100%; font: inherit; color: inherit; }
+.mon:hover { border-color: var(--border-strong); background: var(--surface-2); }
+.mon .name { font-weight: 600; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mon .meta { grid-column: 1; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mon .side { grid-row: 1 / span 2; grid-column: 2; display: flex; align-items: center; gap: 4px; }
+.empty { text-align: center; padding: 8px 8px 0; margin: 0; }
+.editor-head h2 { font-size: 15px; margin: 0; }
+.editor-foot { position: sticky; bottom: 0; background: var(--bg); padding: 8px 0 0; border-top: 1px solid var(--border); }
+.picked { display: grid; gap: 4px; }
+.picked .preview-text { max-height: 96px; }
+.saved { text-align: center; display: grid; gap: 8px; padding: 16px 0; }
+.saved h2 { margin: 0; font-size: 17px; }
+.saved p { margin: 0; }
+.saved-icon { width: 48px; height: 48px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; font-size: 24px; font-weight: 700; background: var(--accent-soft); color: var(--accent); }
+.foot { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-top: 1px solid var(--border); background: var(--surface); }

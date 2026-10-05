@@ -1,0 +1,4 @@
+:root { color-scheme: light dark; }
+html, body { margin: 0; padding: 0; background: #ffffff; }
+@media (prefers-color-scheme: dark) { html, body { background: #1d1d22; } }
+body.window { overflow: hidden; }

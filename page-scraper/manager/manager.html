@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scraper recipes and results</title>
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="manager.css">
+  <link rel="icon" href="../icons/icon32.png">
+</head>
+<body>
+  <header class="top">
+    <img class="logo" src="../icons/icon48.png" alt="">
+    <h1 class="grow">Point-and-Click Scraper</h1>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tabRecipes" aria-selected="true" aria-controls="recipesSec">Recipes</button>
+      <button role="tab" id="tabResults" aria-selected="false" aria-controls="resultsSec">Results</button>
+      <button role="tab" id="tabHelp" aria-selected="false" aria-controls="helpSec">Help</button>
+    </nav>
+  </header>
+  <main>
+    <section id="recipesSec" role="tabpanel" aria-labelledby="tabRecipes">
+      <div class="bar">
+        <input type="search" id="recipeFilter" placeholder="Filter recipes…" aria-label="Filter recipes">
+        <div class="grow"></div>
+        <label class="button-like" tabindex="0" id="importLabel">Import JSON<input type="file" id="importFile" accept="application/json,.json" hidden></label>
+        <button id="exportSel" disabled>Export selected</button>
+        <button id="exportAll" class="primary">Export all</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th class="chk"><input type="checkbox" id="selAll" aria-label="Select all recipes"></th>
+            <th>Name</th><th>Site</th><th>Columns</th><th>Pagination</th><th>Updated</th><th class="acts"><span class="sr-only">Actions</span></th>
+          </tr></thead>
+          <tbody id="recipeRows"></tbody>
+        </table>
+      </div>
+      <p class="muted note">Run a recipe from the toolbar popup while you are on its site. Recipes are plain JSON: item selector, columns (selector, type) and pagination.</p>
+    </section>
+
+    <section id="resultsSec" role="tabpanel" aria-labelledby="tabResults" hidden>
+      <div class="bar">
+        <span class="muted" id="resultsInfo"></span>
+        <div class="grow"></div>
+        <button id="deleteAll" class="danger">Delete all results</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Site</th><th>Rows</th><th>Pages</th><th>Date</th><th class="acts"><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody id="resultRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="helpSec" role="tabpanel" aria-labelledby="tabHelp" hidden class="help">
+      <h2>How it works</h2>
+      <ol>
+        <li><strong>Detect data</strong> finds tables and repeating blocks (product cards, search results, lists) and ranks them. Use the arrows in the panel to cycle through candidates; matches are outlined on the page.</li>
+        <li><strong>Point &amp; click</strong>: hover and click one item. Similar items are selected using their shared class and structure path. Use <em>Wider</em> / <em>Narrower</em> (or <kbd>↑</kbd> / <kbd>↓</kbd> while picking) to adjust.</li>
+        <li><strong>Columns</strong>: click “Add column by clicking”, then click a field inside any outlined item. Choose Text, Link URL, Image URL, an attribute, or HTML. Rename, reorder and delete columns; the preview updates live.</li>
+        <li><strong>Pagination</strong>: pick the “next” or “load more” button once, or choose infinite scroll. Set the maximum number of pages and the delay between pages. Normal links are loaded in the background; JavaScript buttons are clicked on the page.</li>
+        <li><strong>Results</strong> open in a viewer where you can sort, filter, reorder and hide columns, then export CSV, Excel-compatible CSV, TSV or JSON, or copy straight into Google Sheets or Excel.</li>
+      </ol>
+      <h2>Keyboard</h2>
+      <ul>
+        <li>While picking: <kbd>↑</kbd> select parent, <kbd>↓</kbd> back to child, <kbd>Enter</kbd> confirm, <kbd>Esc</kbd> cancel.</li>
+        <li>Results table: <kbd>Alt</kbd>+<kbd>←</kbd>/<kbd>→</kbd> on a focused header moves the column.</li>
+        <li>Optional shortcuts for “Detect data” and “Point &amp; click” can be assigned at chrome://extensions/shortcuts.</li>
+      </ul>
+      <h2>Privacy</h2>
+      <p>Everything stays in your browser’s extension storage. The extension only reads pages when you ask it to, and only fetches the next pages of the site you are scraping.</p>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="manager.js"></script>
+</body>
+</html>

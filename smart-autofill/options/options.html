@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Autofill: Profiles and settings</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="app">
+    <nav class="side" aria-label="Sections">
+      <div class="brand"><img src="../icons/icon48.png" alt="" width="28" height="28"><span>Smart Autofill</span></div>
+      <a href="#profiles" data-view="profiles">Profiles</a>
+      <a href="#rules" data-view="rules">Site rules</a>
+      <a href="#security" data-view="security">Security</a>
+      <a href="#backup" data-view="backup">Import &amp; export</a>
+      <a href="#settings" data-view="settings">Settings</a>
+      <a href="#help" data-view="help">Help</a>
+      <div class="side-foot">
+        <span id="saveState" class="save-state" aria-live="polite"></span>
+        <button id="lockNow" class="btn small" hidden>Lock now</button>
+      </div>
+    </nav>
+
+    <main id="main">
+      <section id="view-locked" class="view" hidden>
+        <div class="center-card">
+          <h1>Profiles are locked</h1>
+          <p class="muted">Your profiles are encrypted with your passphrase (PBKDF2 + AES-GCM). Unlock to edit them.</p>
+          <form id="unlockForm" class="inline-form">
+            <label class="sr-only" for="unlockPass">Passphrase</label>
+            <input id="unlockPass" class="input" type="password" placeholder="Passphrase" autocomplete="current-password" required>
+            <button class="btn primary" type="submit">Unlock</button>
+          </form>
+          <p id="unlockErr" class="error" role="alert"></p>
+        </div>
+      </section>
+
+      <section id="view-profiles" class="view" hidden>
+        <header class="view-head">
+          <div>
+            <h1>Profiles</h1>
+            <p class="muted">Keep separate details for personal forms, work, and job hunting. Changes save automatically.</p>
+          </div>
+          <div class="head-actions">
+            <button id="newProfile" class="btn primary">New profile</button>
+          </div>
+        </header>
+        <div id="profileTabs" class="profile-tabs" role="tablist" aria-label="Profiles"></div>
+        <div id="profileEditor"></div>
+      </section>
+
+      <section id="view-rules" class="view" hidden>
+        <header class="view-head">
+          <div>
+            <h1>Site rules</h1>
+            <p class="muted">Field mappings learned from your corrections or set from the in-page preview. Rules override automatic matching on that site.</p>
+          </div>
+          <div class="head-actions">
+            <input id="ruleSearch" class="input" type="search" placeholder="Filter sites" aria-label="Filter sites">
+            <button id="clearAllRules" class="btn danger">Clear all</button>
+          </div>
+        </header>
+        <div id="rulesList"></div>
+      </section>
+
+      <section id="view-security" class="view" hidden>
+        <header class="view-head"><div><h1>Security</h1><p class="muted">Optionally encrypt your profiles at rest with a passphrase.</p></div></header>
+        <div id="securityBody"></div>
+      </section>
+
+      <section id="view-backup" class="view" hidden>
+        <header class="view-head"><div><h1>Import &amp; export</h1><p class="muted">Backups are encrypted JSON files protected by a passphrase you choose.</p></div></header>
+        <div class="cards">
+          <div class="card">
+            <h2>Export backup</h2>
+            <form id="exportForm" class="stack">
+              <label class="field"><span>Backup passphrase</span><input id="expPass" class="input" type="password" autocomplete="new-password" minlength="8" required></label>
+              <label class="field"><span>Confirm passphrase</span><input id="expPass2" class="input" type="password" autocomplete="new-password" minlength="8" required></label>
+              <label class="check"><input type="checkbox" id="expRules" checked> Include site rules</label>
+              <label class="check"><input type="checkbox" id="expSettings" checked> Include settings</label>
+              <div><button class="btn primary" type="submit">Download encrypted backup</button></div>
+              <p id="exportMsg" class="msg" role="status"></p>
+            </form>
+          </div>
+          <div class="card">
+            <h2>Import backup</h2>
+            <form id="importForm" class="stack">
+              <label class="field"><span>Backup file</span><input id="impFile" class="input" type="file" accept=".json,application/json" required></label>
+              <label class="field"><span>Backup passphrase</span><input id="impPass" class="input" type="password" autocomplete="off"></label>
+              <fieldset class="radios">
+                <legend>When profiles already exist</legend>
+                <label class="check"><input type="radio" name="impMode" value="merge" checked> Merge (keep current, update matching)</label>
+                <label class="check"><input type="radio" name="impMode" value="replace"> Replace everything</label>
+              </fieldset>
+              <div><button class="btn primary" type="submit">Import</button></div>
+              <p id="importMsg" class="msg" role="status"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view" hidden>
+        <header class="view-head"><div><h1>Settings</h1></div></header>
+        <div class="cards">
+          <div class="card stack">
+            <h2>Filling</h2>
+            <label class="switch"><span><b>Preview before filling</b><br><small class="muted">Keyboard command shows the in-page preview first.</small></span><input type="checkbox" data-setting="previewFirst"></label>
+            <label class="switch"><span><b>Learn from my corrections</b><br><small class="muted">When you change a filled field to another profile value, remember it for that site.</small></span><input type="checkbox" data-setting="learnMode"></label>
+            <label class="switch"><span><b>Fill repeatable sections</b><br><small class="muted">Click "Add another" buttons to fill more work and education entries (best effort).</small></span><input type="checkbox" data-setting="fillRepeatables"></label>
+            <label class="switch"><span><b>Highlight fields after filling</b></span><input type="checkbox" data-setting="highlightAfterFill"></label>
+            <label class="switch"><span><b>Overwrite existing values</b><br><small class="muted">Off: fields that already contain text are left alone.</small></span><input type="checkbox" data-setting="overwrite"></label>
+            <label class="field"><span>Minimum confidence to fill automatically: <output id="minConfOut"></output></span>
+              <input type="range" id="minConf" min="0.3" max="0.9" step="0.05">
+            </label>
+          </div>
+          <div class="card stack">
+            <h2>Embedded forms</h2>
+            <p class="muted">Many job sites embed the application in an iframe from another domain (for example Greenhouse or Lever embeds). Chrome only lets the extension fill those when you grant site access.</p>
+            <label class="switch"><span><b>Allow filling inside embedded forms on all sites</b><br><small class="muted">Optional host permission. Only used when you click Fill.</small></span><input type="checkbox" id="allFramesPerm"></label>
+          </div>
+          <div class="card stack">
+            <h2>Keyboard shortcuts</h2>
+            <p class="muted">Commands ship without default keys to avoid conflicts. Assign them at <span class="kbd">chrome://extensions/shortcuts</span>.</p>
+            <ul class="plain">
+              <li><b>Preview and fill this page</b></li>
+              <li><b>Fill this page immediately</b></li>
+              <li><b>Undo the last fill</b></li>
+            </ul>
+            <div><button id="openShortcuts" class="btn">Open shortcuts page</button></div>
+          </div>
+          <div class="card stack">
+            <h2>Storage</h2>
+            <p class="muted" id="usage"></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-help" class="view" hidden>
+        <header class="view-head"><div><h1>How it works</h1></div></header>
+        <div class="card prose">
+          <ol>
+            <li>Fill in a profile. Add work history, education, documents and answers to common application questions.</li>
+            <li>Open a job application or any long form, click the toolbar button, pick a profile and press <b>Preview &amp; fill</b>.</li>
+            <li>Matched fields are outlined: green is high confidence, amber medium, red low. Click the check mark on a badge to skip a field, or use its menu to map it to a different profile field. Mappings you choose are remembered for that site.</li>
+            <li>Press <b>Fill</b> on the in-page panel. Use <b>Undo fill</b> to restore the previous values.</li>
+            <li>Correct anything that is wrong. If you change a field to another value from your profile, Smart Autofill learns that mapping for the site.</li>
+          </ol>
+          <h2>Answer templates</h2>
+          <p>Custom answers can include <span class="kbd">{company}</span>, <span class="kbd">{role}</span>, <span class="kbd">{name}</span>, <span class="kbd">{current_company}</span>, <span class="kbd">{current_title}</span>, <span class="kbd">{years}</span> and <span class="kbd">{date}</span>. Company and role are guessed from the page (job board URL, page title, heading).</p>
+          <h2>Files</h2>
+          <p>Resumes and cover letters are stored inside the extension and attached to upload fields with the browser's DataTransfer API. Some sites use custom upload widgets that refuse programmatic files; attach those manually.</p>
+          <h2>Privacy</h2>
+          <p>Everything stays in this browser. There are no accounts and no network requests. With the passphrase lock on, profiles are encrypted at rest and the decryption key lives only in session memory until the browser closes or the auto-lock timer runs out.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="dialogHost"></div>
+  <script src="../content/fields.js"></script>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

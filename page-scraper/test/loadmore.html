@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Load more test</title><style>body{font-family:sans-serif;max-width:700px;margin:auto}.item{padding:12px;border-bottom:1px solid #ddd}</style></head><body>
+<h1>Articles</h1><div id="feed"></div><button id="more" type="button">Load more</button>
+<script>
+let n=0;const feed=document.getElementById('feed');
+function add(){for(let i=0;i<10&&n<35;i++){n++;const d=document.createElement('article');d.className='item';d.innerHTML='<h2 class="headline">Article '+n+'</h2><span class="author">Author '+(n%4)+'</span><time>2026-0'+(1+n%9)+'-1'+(n%9)+'</time>';feed.appendChild(d);}if(n>=35)document.getElementById('more').disabled=true;}
+add();document.getElementById('more').addEventListener('click',()=>setTimeout(add,300));
+</script></body></html>

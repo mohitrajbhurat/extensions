@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Total Recall</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="search.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="search.html" aria-label="Total Recall home">
+        <img src="../icons/icon32.png" alt="" width="24" height="24">
+        <span>Total Recall</span>
+      </a>
+      <div class="searchbox" role="search">
+        <span class="searchbox-icon" id="searchIcon"></span>
+        <label for="q" class="sr-only">Search your browsing memory</label>
+        <input id="q" type="search" autocomplete="off" spellcheck="false"
+               placeholder='Search everything you have read… try "exact phrase", -word, site:github.com'
+               aria-controls="results" aria-describedby="summary">
+        <kbd class="searchbox-hint" aria-hidden="true">/</kbd>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn ghost icon-only" id="helpBtn" type="button" title="Search syntax and shortcuts (?)" aria-label="Help" aria-expanded="false" aria-controls="help"></button>
+        <a class="btn ghost icon-only" id="settingsLink" href="../options/options.html" title="Settings" aria-label="Settings"></a>
+      </div>
+    </div>
+    <div class="filters" role="toolbar" aria-label="Filters">
+      <div class="chips" role="radiogroup" aria-label="Date visited" id="rangeChips">
+        <button type="button" class="chip" role="radio" data-range="all">Any time</button>
+        <button type="button" class="chip" role="radio" data-range="today">Today</button>
+        <button type="button" class="chip" role="radio" data-range="week">Past 7 days</button>
+        <button type="button" class="chip" role="radio" data-range="month">Past 30 days</button>
+        <button type="button" class="chip" role="radio" data-range="custom">Custom…</button>
+      </div>
+      <div class="custom-range" id="customRange" hidden>
+        <label>From <input class="input" type="date" id="fromDate"></label>
+        <label>To <input class="input" type="date" id="toDate"></label>
+      </div>
+      <div class="spacer"></div>
+      <label class="sort">Sort
+        <select id="sort" class="input">
+          <option value="relevance">Best match</option>
+          <option value="recent">Most recent</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="summary-row">
+      <p id="summary" class="summary" aria-live="polite"></p>
+      <p class="privacy-note" id="privacyNote"></p>
+    </div>
+
+    <section id="help" class="help" hidden aria-label="Search help">
+      <div class="help-grid">
+        <div>
+          <h3>Search syntax</h3>
+          <dl>
+            <dt><code>memory leak</code></dt><dd>Pages with these words, best matches first</dd>
+            <dt><code>"event loop"</code></dt><dd>Exact phrase</dd>
+            <dt><code>react -native</code></dt><dd>Exclude a word (or <code>-"a phrase"</code>)</dd>
+            <dt><code>site:github.com</code></dt><dd>Only this site and its subdomains (<code>-site:</code> to exclude)</dd>
+            <dt><code>date:today</code></dt><dd>Also <code>yesterday</code>, <code>week</code>, <code>month</code>, <code>year</code></dd>
+            <dt><code>after:2026-09-01</code></dt><dd>Visited on or after a date (<code>before:</code> too)</dd>
+          </dl>
+        </div>
+        <div>
+          <h3>Keyboard</h3>
+          <dl>
+            <dt><kbd>/</kbd></dt><dd>Focus the search box</dd>
+            <dt><kbd>↓</kbd> <kbd>↑</kbd> or <kbd>j</kbd> <kbd>k</kbd></dt><dd>Move through results</dd>
+            <dt><kbd>Enter</kbd></dt><dd>Open and jump to the matching text</dd>
+            <dt><kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Enter</kbd></dt><dd>Open in a background tab</dd>
+            <dt><kbd>Shift</kbd> + <kbd>Enter</kbd></dt><dd>Open in this tab</dd>
+            <dt><kbd>c</kbd></dt><dd>Copy the page link</dd>
+            <dt><kbd>Delete</kbd></dt><dd>Forget the selected page</dd>
+            <dt><kbd>Esc</kbd></dt><dd>Clear the search</dd>
+            <dt><kbd>?</kbd></dt><dd>Toggle this help</dd>
+          </dl>
+          <p class="help-omni">From the address bar: type <kbd>tr</kbd>, press <kbd>Space</kbd> or <kbd>Tab</kbd>, then your query.</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="results" class="results" role="listbox" aria-label="Search results" tabindex="-1"></div>
+    <div class="more-row"><button class="btn" id="moreBtn" type="button" hidden>Show more results</button></div>
+    <section id="empty" class="empty" hidden></section>
+  </main>
+
+  <script type="module" src="search.js"></script>
+</body>
+</html>

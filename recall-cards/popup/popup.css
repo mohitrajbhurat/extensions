@@ -1,0 +1,21 @@
+body { width: 380px; padding: 16px; display: grid; gap: 16px; }
+.top { display: flex; align-items: center; gap: 8px; }
+.top h1 { font-size: 16px; flex: 1; }
+.due { padding: 16px; display: grid; gap: 12px; text-align: center; }
+.due-main { display: grid; }
+.due-num { font-size: 48px; font-weight: 750; line-height: 1; letter-spacing: -1px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.due-label { color: var(--muted); font-weight: 600; }
+.due-break { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.capture { width: 100%; }
+.quick { padding: 16px; display: grid; gap: 8px; }
+.quick h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.quick textarea { min-height: 48px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.actions { display: flex; align-items: center; gap: 8px; }
+.actions span:first-child { flex: 1; }
+.actions .kbd { background: transparent; color: inherit; border-color: currentColor; opacity: .7; }
+.links { display: flex; justify-content: space-between; font-size: 12px; }
+.links a { color: var(--muted); text-decoration: none; padding: 4px; border-radius: 4px; }
+.links a:hover { color: var(--accent); }
+.ok { color: var(--good); }
+.err { color: var(--danger); }

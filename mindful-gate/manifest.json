@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "Mindful Gate",
+  "short_name": "Mindful Gate",
+  "description": "Focus and distraction control: a mindful pause before distracting sites, hard-block schedules, a Pomodoro timer and insights.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Mindful Gate",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "alarms",
+    "tabs",
+    "idle",
+    "notifications",
+    "scripting",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["gate/gate.html", "block/block.html"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
+  "commands": {
+    "toggle-focus": {
+      "description": "Start, pause or resume a focus session"
+    },
+    "open-dashboard": {
+      "description": "Open the insights dashboard"
+    }
+  }
+}

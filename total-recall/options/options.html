@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Total Recall Settings</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../shared/theme.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="page-head">
+      <img src="../icons/icon48.png" alt="" width="40" height="40">
+      <div>
+        <h1>Total Recall settings</h1>
+        <p class="sub">Control what gets remembered, for how long, and how much space it may use.</p>
+      </div>
+      <a class="btn" href="../search/search.html">Open search</a>
+    </header>
+
+    <section class="panel privacy" aria-labelledby="privacyHead">
+      <div class="privacy-icon" id="privacyIcon"></div>
+      <div>
+        <h2 id="privacyHead">Your memory stays on this device</h2>
+        <p>Total Recall stores page text in this browser's local database (IndexedDB). It has no servers, no accounts, no analytics and makes no network requests. Private (incognito) windows, browser pages, password and payment forms, banking sites and the sites you exclude below are never saved. Removing the extension deletes everything.</p>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="indexingHead">
+      <h2 id="indexingHead">Indexing</h2>
+      <div class="row">
+        <div><div class="label">Index pages as I browse</div><div class="hint">Turn off to pause. You can still index a page manually from the toolbar popup.</div></div>
+        <label class="switch"><input type="checkbox" id="enabled" aria-label="Index pages as I browse"><span class="track"></span></label>
+      </div>
+      <div class="row">
+        <div><div class="label">Skip sensitive pages</div><div class="hint">Pages with password or card fields, sign-in, checkout and banking pages.</div></div>
+        <label class="switch"><input type="checkbox" id="skipSensitive" aria-label="Skip sensitive pages"><span class="track"></span></label>
+      </div>
+      <div class="row">
+        <div><label class="label" for="maxChars">Text saved per page</label><div class="hint">Longer pages are truncated. Larger values find more, but use more space.</div></div>
+        <select class="input" id="maxChars">
+          <option value="20000">20,000 characters</option>
+          <option value="60000">60,000 characters</option>
+          <option value="120000">120,000 characters</option>
+          <option value="250000">250,000 characters</option>
+        </select>
+      </div>
+      <div class="row">
+        <div><label class="label" for="minChars">Ignore pages shorter than</label><div class="hint">Skips near-empty pages such as redirects and app shells.</div></div>
+        <select class="input" id="minChars">
+          <option value="0">Index everything</option>
+          <option value="120">120 characters</option>
+          <option value="400">400 characters</option>
+          <option value="1000">1,000 characters</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="excludeHead">
+      <h2 id="excludeHead">Excluded sites</h2>
+      <p class="hint">Pages from these sites are never indexed. A domain also covers its subdomains. Add a path (<code>example.com/private</code>) to exclude only part of a site.</p>
+      <form class="add-row" id="addForm">
+        <label for="newDomain" class="sr-only">Domain to exclude</label>
+        <input class="input" id="newDomain" placeholder="example.com" autocomplete="off" spellcheck="false">
+        <label class="check"><input type="checkbox" id="purgeOnAdd" checked> Also delete saved pages</label>
+        <button class="btn primary" type="submit">Exclude</button>
+      </form>
+      <ul class="domain-list" id="domainList" aria-label="Excluded sites"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="storageHead">
+      <h2 id="storageHead">Retention and storage</h2>
+      <div class="row">
+        <div><label class="label" for="retention">Keep pages for</label><div class="hint">Pages not visited within this period are deleted automatically.</div></div>
+        <select class="input" id="retention">
+          <option value="7">1 week</option>
+          <option value="30">1 month</option>
+          <option value="90">3 months</option>
+          <option value="180">6 months</option>
+          <option value="365">1 year</option>
+          <option value="730">2 years</option>
+          <option value="0">Forever</option>
+        </select>
+      </div>
+      <div class="row">
+        <div><label class="label" for="maxStorage">Maximum storage</label><div class="hint">When the index grows past this, the oldest pages are removed first.</div></div>
+        <select class="input" id="maxStorage">
+          <option value="100">100 MB</option>
+          <option value="250">250 MB</option>
+          <option value="500">500 MB</option>
+          <option value="1024">1 GB</option>
+          <option value="2048">2 GB</option>
+          <option value="5120">5 GB</option>
+        </select>
+      </div>
+      <div class="meter-row">
+        <div class="meter" role="progressbar" id="meter" aria-label="Storage used" aria-valuemin="0" aria-valuemax="100"><div class="meter-fill" id="meterFill"></div></div>
+        <div class="meter-text" id="meterText"></div>
+      </div>
+      <div class="row tight">
+        <div class="hint" id="maintText"></div>
+        <button class="btn" type="button" id="cleanNow">Clean up now</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="dataHead">
+      <h2 id="dataHead">Your data</h2>
+      <div class="row">
+        <div><div class="label">Export index</div><div class="hint">Download every saved page and your settings as a JSON file, for backup or moving to another browser.</div></div>
+        <button class="btn" type="button" id="exportBtn">Export JSON</button>
+      </div>
+      <div class="row">
+        <div><div class="label">Import index</div><div class="hint">Merge pages from a Total Recall export. Existing pages are kept; newer copies win.</div>
+          <label class="check"><input type="checkbox" id="importSettings"> Also restore settings from the file</label></div>
+        <label class="btn" for="importFile" tabindex="0" id="importLabel">Import JSON…</label>
+        <input type="file" id="importFile" accept="application/json,.json" class="sr-only">
+      </div>
+      <div class="progress" id="progress" hidden>
+        <div class="meter"><div class="meter-fill" id="progressFill"></div></div>
+        <div class="hint" id="progressText"></div>
+      </div>
+      <div class="row danger-row">
+        <div><div class="label">Wipe all data</div><div class="hint">Permanently delete every saved page from this device. Settings are kept.</div></div>
+        <button class="btn danger" type="button" id="wipeBtn">Wipe everything</button>
+      </div>
+      <div class="confirm" id="wipeConfirm" hidden>
+        <p>This deletes <strong id="wipeCount"></strong> and cannot be undone. Consider exporting first.</p>
+        <div class="confirm-actions">
+          <button class="btn danger solid" type="button" id="wipeYes">Yes, delete everything</button>
+          <button class="btn" type="button" id="wipeNo">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="shortcutHead">
+      <h2 id="shortcutHead">Shortcuts</h2>
+      <p class="hint">Type <kbd>tr</kbd> then <kbd>Space</kbd> in the address bar to search from anywhere. To open Total Recall with a key, assign one to “Open Total Recall search” at <code>chrome://extensions/shortcuts</code>.</p>
+    </section>
+    <p class="status-line" id="saved" role="status" aria-live="polite"></p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

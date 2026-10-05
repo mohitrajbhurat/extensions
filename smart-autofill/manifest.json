@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Autofill",
+  "short_name": "Smart Autofill",
+  "description": "Fill job applications and long forms from your profiles: smart field matching, preview, undo, learning and an optional encrypted vault.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": {
+    "default_title": "Smart Autofill",
+    "default_popup": "popup/popup.html",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "options_ui": { "page": "options/options.html", "open_in_tab": true },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "optional_host_permissions": ["<all_urls>"],
+  "commands": {
+    "fill-page": { "description": "Preview and fill this page with the active profile" },
+    "fill-now": { "description": "Fill this page immediately (no preview)" },
+    "undo-fill": { "description": "Undo the last fill on this page" }
+  }
+}

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Price Tracker</title>
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" alt="" width="20" height="20">
+    <h1>Price Tracker</h1>
+    <span class="spacer"></span>
+    <button class="btn ghost icon" id="open-settings" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+    <button class="btn" id="open-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>
+      Dashboard
+    </button>
+  </header>
+
+  <main id="main" aria-live="polite">
+    <section id="state-loading" class="state center">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="muted">Looking for a product on this page…</p>
+    </section>
+
+    <section id="state-unsupported" class="state" hidden>
+      <div class="empty">
+        <p><strong>Open a product page to track its price.</strong></p>
+        <p class="muted" id="unsupported-reason">This page can't be read by extensions.</p>
+      </div>
+      <h2 class="section-title" id="recent-title" hidden>Recently tracked</h2>
+      <ul class="recent" id="recent"></ul>
+    </section>
+
+    <section id="state-noproduct" class="state" hidden>
+      <div class="empty">
+        <p><strong>No price found on this page.</strong></p>
+        <p class="muted">If this is a product page, point at the price yourself and Price Tracker will remember where it is.</p>
+        <button class="btn primary lg" id="pick-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51z"/></svg>
+          Pick the price on the page
+        </button>
+      </div>
+      <h2 class="section-title" id="recent-title-2" hidden>Recently tracked</h2>
+      <ul class="recent" id="recent-2"></ul>
+    </section>
+
+    <section id="state-product" class="state" hidden>
+      <article class="product">
+        <div class="thumb"><img id="p-image" alt=""></div>
+        <div class="info">
+          <h2 id="p-title" class="title"></h2>
+          <div class="subtle small" id="p-host"></div>
+          <div class="price-row">
+            <span id="p-price" class="price num"></span>
+            <span id="p-avail" class="pill" hidden></span>
+          </div>
+          <div class="subtle small" id="p-source"></div>
+        </div>
+      </article>
+      <p id="p-sale" class="callout" hidden></p>
+
+      <div id="tracked" hidden>
+        <div class="verdict-row">
+          <span id="t-verdict" class="pill"></span>
+          <span id="t-verdict-detail" class="muted small"></span>
+        </div>
+        <div id="t-chart" class="mini-chart"></div>
+        <dl class="stats num">
+          <div><dt>Lowest</dt><dd id="t-min"></dd></div>
+          <div><dt>Average</dt><dd id="t-avg"></dd></div>
+          <div><dt>Highest</dt><dd id="t-max"></dd></div>
+        </dl>
+        <div id="t-status" class="callout warn" hidden>
+          <span id="t-status-text"></span>
+          <button class="btn" id="t-grant" hidden>Allow access</button>
+        </div>
+      </div>
+
+      <form id="target-form" class="target-form" novalidate>
+        <fieldset>
+          <legend id="target-legend">Alert me when</legend>
+          <div class="seg" role="radiogroup" aria-labelledby="target-legend" id="target-type">
+            <button type="button" role="radio" data-type="percent">Drops by %</button>
+            <button type="button" role="radio" data-type="price">Below price</button>
+            <button type="button" role="radio" data-type="any">Any drop</button>
+            <button type="button" role="radio" data-type="none">Lows only</button>
+          </div>
+          <div class="target-input" id="target-input-row">
+            <label for="target-value" class="sr-only" id="target-value-label">Target</label>
+            <span class="affix" id="target-prefix"></span>
+            <input type="number" id="target-value" min="0" step="any" inputmode="decimal">
+            <span class="affix" id="target-suffix"></span>
+            <span class="subtle small" id="target-hint"></span>
+          </div>
+          <p class="subtle small" id="target-explain"></p>
+        </fieldset>
+        <label class="check" id="bg-check-row">
+          <input type="checkbox" id="bg-check" checked>
+          <span>Check in the background <span class="subtle" id="bg-host"></span></span>
+        </label>
+        <div class="actions">
+          <button type="submit" class="btn primary lg" id="track-btn">Track price</button>
+          <button type="button" class="btn ghost" id="pick-btn">Wrong price? Pick it</button>
+        </div>
+        <p class="error small" id="form-error" role="alert" hidden></p>
+      </form>
+
+      <div class="actions tracked-actions" id="tracked-actions" hidden>
+        <button type="button" class="btn" id="view-history">Full history</button>
+        <button type="button" class="btn danger" id="untrack">Stop tracking</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Automator Editor</title>
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <header class="appbar">
+    <img src="../icons/icon32.png" alt="" width="24" height="24">
+    <h1>Web Automator</h1>
+    <span class="perm-pill" id="permPill" hidden>
+      Site access is off
+      <button class="btn sm primary" id="grantTop">Allow on all sites</button>
+    </span>
+    <span class="spacer"></span>
+    <button class="btn sm" id="newMacro" data-icon="plus">New macro</button>
+    <button class="btn sm" id="importBtn" data-icon="upload">Import</button>
+    <button class="btn sm" id="exportAll" data-icon="download">Export all</button>
+    <button class="btn sm icon ghost" id="settingsBtn" data-icon="settings" title="Settings" aria-label="Settings"></button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden multiple>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Macros">
+      <div class="side-search"><input class="input" id="macroSearch" type="search" placeholder="Search macros" aria-label="Search macros"></div>
+      <ul class="macro-list" id="macroList" role="listbox" aria-label="Macro list"></ul>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="nomacro" id="noMacro" hidden>
+        <h2>No macro selected</h2>
+        <p class="muted">Create a macro, import one, or record from the toolbar popup.</p>
+        <button class="btn primary" id="newMacro2">New macro</button>
+      </div>
+
+      <div class="workspace" id="workspace" hidden>
+        <div class="macro-head">
+          <input class="input name" id="macroName" aria-label="Macro name" maxlength="200">
+          <span class="save-state faint" id="saveState">Saved</span>
+          <span class="spacer"></span>
+          <button class="btn sm" id="recordInto" data-icon="record" title="Record new steps and append them to this macro">Record more</button>
+          <button class="btn sm" id="dupMacro" data-icon="copy">Duplicate</button>
+          <button class="btn sm" id="exportMacro" data-icon="download">Export</button>
+          <button class="btn sm ghost danger-text" id="deleteMacro" data-icon="trash">Delete</button>
+        </div>
+
+        <div class="runbar">
+          <label class="field">Run in
+            <select class="input" id="tabSelect" aria-label="Tab to run in"></select>
+          </label>
+          <label class="field">Speed
+            <select class="input" id="speedSelect">
+              <option value="fast">Fast</option>
+              <option value="normal">Normal</option>
+              <option value="slow">Slow</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="useCsv"> Once per CSV row</label>
+          <span class="spacer"></span>
+          <span class="run-status" id="runStatus" aria-live="polite"></span>
+          <button class="btn sm" id="playFrom" title="Play from the selected step">Play from here</button>
+          <button class="btn primary" id="playBtn" data-icon="play">Play</button>
+          <button class="btn" id="pauseBtn" data-icon="pause" hidden>Pause</button>
+          <button class="btn danger" id="stopBtn" data-icon="stop" hidden>Stop</button>
+        </div>
+
+        <div class="split">
+          <section class="steps-pane" aria-label="Steps">
+            <div class="steps-toolbar">
+              <button class="btn sm" id="addStep" data-icon="plus" title="Add step after selection (Ctrl+Enter)">Add step</button>
+              <button class="btn sm icon ghost" id="moveUp" data-icon="up" title="Move up (Alt+Up)" aria-label="Move step up"></button>
+              <button class="btn sm icon ghost" id="moveDown" data-icon="down" title="Move down (Alt+Down)" aria-label="Move step down"></button>
+              <button class="btn sm icon ghost" id="dupStep" data-icon="copy" title="Duplicate (Ctrl+D)" aria-label="Duplicate step"></button>
+              <button class="btn sm icon ghost" id="toggleStep" data-icon="eyeOff" title="Enable / disable (Ctrl+/)" aria-label="Enable or disable step"></button>
+              <button class="btn sm icon ghost" id="delStep" data-icon="trash" title="Delete (Del)" aria-label="Delete step"></button>
+              <span class="spacer"></span>
+              <span class="faint small" id="stepCount"></span>
+            </div>
+            <div class="block-errors" id="blockErrors" hidden></div>
+            <div class="table-wrap">
+              <table class="steps" id="stepsTable">
+                <thead><tr><th class="c-grip"></th><th class="c-num">#</th><th class="c-cmd">Command</th><th class="c-target">Target</th><th class="c-value">Value</th><th class="c-act"></th></tr></thead>
+                <tbody id="stepsBody"></tbody>
+              </table>
+              <div class="steps-empty muted" id="stepsEmpty" hidden>No steps. Click <strong>Add step</strong> or <strong>Record more</strong>.</div>
+            </div>
+          </section>
+
+          <section class="details" id="details" aria-label="Step details">
+            <div class="details-empty muted" id="detailsEmpty">Select a step to edit its details.</div>
+            <div id="detailsBody" hidden>
+              <h3>Step <span id="dNum"></span></h3>
+              <label class="lbl" for="dCommand">Command</label>
+              <select class="input full" id="dCommand"></select>
+              <p class="help faint" id="dHelp"></p>
+              <div id="dTargetWrap">
+                <label class="lbl" for="dTarget" id="dTargetLabel">Target</label>
+                <div class="row">
+                  <input class="input full mono" id="dTarget" spellcheck="false">
+                  <button class="btn sm icon" id="dPick" data-icon="crosshair" title="Pick an element in the page" aria-label="Pick element"></button>
+                  <button class="btn sm icon" id="dFind" data-icon="target" title="Highlight in page" aria-label="Find in page"></button>
+                </div>
+                <div class="fallbacks" id="dFallbackWrap">
+                  <div class="lbl-row"><span class="lbl">Fallback selectors</span><button class="btn sm ghost" id="dAddFallback" data-icon="plus">Add</button></div>
+                  <ol class="fb-list" id="dFallbacks"></ol>
+                  <p class="help faint">Tried in order when the target is not found. Prefixes: id=, name=, css=, xpath=, text=, label=, aria=, testid=, placeholder=.</p>
+                </div>
+              </div>
+              <div id="dValueWrap">
+                <label class="lbl" for="dValue" id="dValueLabel">Value</label>
+                <textarea class="input full mono" id="dValue" rows="2" spellcheck="false"></textarea>
+              </div>
+              <label class="lbl" for="dComment">Comment</label>
+              <input class="input full" id="dComment">
+              <label class="check"><input type="checkbox" id="dDisabled"> Disabled (skipped when playing)</label>
+              <details class="vars-help">
+                <summary>Variables</summary>
+                <p><code>${name}</code> values from <em>extract</em> / <em>set</em>; <code>${row.column}</code> the current CSV row; <code>${loop.index}</code>; built-ins <code>${date}</code>, <code>${time}</code>, <code>${now}</code>, <code>${timestamp}</code>, <code>${random}</code>.</p>
+              </details>
+            </div>
+          </section>
+        </div>
+
+        <section class="bottom" aria-label="Run output and macro settings">
+          <div class="tabs" role="tablist">
+            <button role="tab" class="tab" data-tab="log" aria-selected="true">Log</button>
+            <button role="tab" class="tab" data-tab="data" aria-selected="false">Data <span class="count" id="dataCount"></span></button>
+            <button role="tab" class="tab" data-tab="csv" aria-selected="false">CSV input <span class="count" id="csvCount"></span></button>
+            <button role="tab" class="tab" data-tab="schedule" aria-selected="false">Schedule <span class="count" id="schedState"></span></button>
+            <button role="tab" class="tab" data-tab="runs" aria-selected="false">Runs</button>
+            <span class="spacer"></span>
+            <span class="faint small" id="viewingRun"></span>
+          </div>
+
+          <div class="panel" data-panel="log" role="tabpanel">
+            <div class="panel-tools">
+              <label class="check"><input type="checkbox" id="logSteps" checked> Steps</label>
+              <label class="check"><input type="checkbox" id="logInfo" checked> Info</label>
+              <label class="check"><input type="checkbox" id="logAuto" checked> Auto-scroll</label>
+              <span class="spacer"></span>
+              <button class="btn sm ghost" id="copyLog">Copy log</button>
+            </div>
+            <ol class="log" id="log"></ol>
+          </div>
+
+          <div class="panel" data-panel="data" role="tabpanel" hidden>
+            <div class="panel-tools">
+              <span class="faint small" id="dataInfo">Run a macro with extract steps to collect data.</span>
+              <span class="spacer"></span>
+              <button class="btn sm" id="exportCsv" data-icon="download">CSV</button>
+              <button class="btn sm" id="exportJson" data-icon="download">JSON</button>
+              <button class="btn sm ghost" id="copyData">Copy</button>
+            </div>
+            <div class="data-wrap"><table class="grid" id="dataTable"></table></div>
+            <div class="shots" id="shots"></div>
+          </div>
+
+          <div class="panel" data-panel="csv" role="tabpanel" hidden>
+            <div class="panel-tools">
+              <button class="btn sm" id="csvUpload" data-icon="upload">Upload CSV</button>
+              <button class="btn sm ghost" id="csvPaste">Paste text</button>
+              <button class="btn sm ghost danger-text" id="csvRemove">Remove</button>
+              <input type="file" id="csvFile" accept=".csv,.tsv,.txt,text/csv" hidden>
+              <span class="spacer"></span>
+              <span class="faint small" id="csvInfo"></span>
+            </div>
+            <div class="csv-drop" id="csvDrop">
+              <p class="muted">Drop a CSV file here. The first row is the header. Use <code>${row.header}</code> in steps, then tick <strong>Once per CSV row</strong> or use a <em>csvLoop</em> block.</p>
+            </div>
+            <div class="csv-cols" id="csvCols"></div>
+            <div class="data-wrap"><table class="grid" id="csvTable"></table></div>
+            <div class="csv-paste" id="csvPasteBox" hidden>
+              <textarea class="input full mono" id="csvText" rows="8" placeholder="name,email&#10;Ada,ada@example.com"></textarea>
+              <div class="row"><button class="btn sm primary" id="csvPasteSave">Use this data</button><button class="btn sm ghost" id="csvPasteCancel">Cancel</button></div>
+            </div>
+          </div>
+
+          <div class="panel" data-panel="schedule" role="tabpanel" hidden>
+            <form class="sched" id="schedForm">
+              <label class="check big"><input type="checkbox" id="sEnabled"> Run this macro on a schedule</label>
+              <div class="sched-grid">
+                <label class="lbl" for="sKind">Repeat</label>
+                <select class="input" id="sKind">
+                  <option value="daily">Daily at a time</option>
+                  <option value="hourly">Every hour</option>
+                  <option value="interval">Every N minutes</option>
+                </select>
+                <label class="lbl s-daily" for="sTime">Time</label>
+                <input class="input s-daily" type="time" id="sTime" value="09:00">
+                <span class="lbl s-daily">Days</span>
+                <div class="days s-daily" id="sDays"></div>
+                <label class="lbl s-hourly" for="sMinute">At minute</label>
+                <input class="input s-hourly" type="number" id="sMinute" min="0" max="59" value="0">
+                <label class="lbl s-interval" for="sEvery">Every (minutes)</label>
+                <input class="input s-interval" type="number" id="sEvery" min="1" max="10080" value="60">
+                <span class="lbl">Options</span>
+                <div class="opts">
+                  <label class="check"><input type="checkbox" id="sCsv"> Once per CSV row</label>
+                  <label class="check"><input type="checkbox" id="sClose" checked> Close the tab afterwards (kept open on failure)</label>
+                </div>
+              </div>
+              <p class="faint small" id="sNext"></p>
+              <p class="help faint">Scheduled runs open a new background tab, start with the macro's first step (usually <em>open</em>) and show a notification with the result. The browser must be running.</p>
+            </form>
+          </div>
+
+          <div class="panel" data-panel="runs" role="tabpanel" hidden>
+            <div class="panel-tools">
+              <span class="faint small">Recent runs of this macro. Click one to view its log and data.</span>
+              <span class="spacer"></span>
+              <button class="btn sm ghost danger-text" id="clearRuns">Clear all history</button>
+            </div>
+            <ul class="runs" id="runsList"></ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="dlg" id="settingsDlg" aria-labelledby="setTitle">
+    <form method="dialog" id="settingsForm">
+      <h2 id="setTitle">Settings</h2>
+      <div class="set-grid">
+        <label for="stSpeed">Default speed</label>
+        <select class="input" id="stSpeed"><option value="fast">Fast (no delay)</option><option value="normal">Normal (0.35 s between steps)</option><option value="slow">Slow (1.2 s between steps)</option></select>
+        <label for="stTimeout">Element timeout (ms)</label>
+        <input class="input" type="number" id="stTimeout" min="500" max="300000" step="500">
+        <label for="stRetries">Retries per step</label>
+        <input class="input" type="number" id="stRetries" min="0" max="10">
+        <label for="stOnError">When a step fails</label>
+        <select class="input" id="stOnError"><option value="stop">Stop the macro</option><option value="continue">Log it and continue (assertions still stop)</option></select>
+        <label for="stKeep">Runs to keep in history</label>
+        <input class="input" type="number" id="stKeep" min="5" max="200">
+      </div>
+      <div class="set-checks">
+        <label class="check"><input type="checkbox" id="stHighlight"> Highlight the current element while playing</label>
+        <label class="check"><input type="checkbox" id="stFront"> Bring the target tab to the front when playing</label>
+        <label class="check"><input type="checkbox" id="stScroll"> Record page scrolling</label>
+        <label class="check"><input type="checkbox" id="stKeys"> Record keystrokes instead of final field values</label>
+        <label class="check"><input type="checkbox" id="stNotify"> Show a notification after manual runs too</label>
+      </div>
+      <div class="perm-box" id="permBox"></div>
+      <div class="dlg-actions">
+        <button class="btn" value="cancel">Cancel</button>
+        <button class="btn primary" id="saveSettings" value="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dlg" id="welcomeDlg" aria-labelledby="welTitle">
+    <h2 id="welTitle">Welcome to Web Automator</h2>
+    <ol class="welcome">
+      <li><strong>Record:</strong> click the toolbar icon, press <em>Record in this tab</em>, then use the site as usual. Clicks, typing, selects, checkboxes, Enter, scrolling and page changes are captured.</li>
+      <li><strong>Edit:</strong> fine-tune steps here, add waits, assertions, extraction, if/else and loops.</li>
+      <li><strong>Play:</strong> run it on demand, once per CSV row, or on a schedule.</li>
+    </ol>
+    <p class="muted">To record and replay across page loads, Web Automator needs access to the sites you automate. Everything stays on this device.</p>
+    <div class="dlg-actions">
+      <button class="btn" id="welcomeLater">Later</button>
+      <button class="btn primary" id="welcomeGrant">Allow on all sites</button>
+    </div>
+  </dialog>
+
+  <dialog class="dlg" id="importDlg" aria-labelledby="impTitle">
+    <h2 id="impTitle">Import macros</h2>
+    <p class="muted">Choose or drop a Web Automator export, or a Ui.Vision JSON macro.</p>
+    <div class="csv-drop" id="importDrop"><p>Drop JSON files here</p></div>
+    <div class="dlg-actions">
+      <button class="btn" id="importCancel">Cancel</button>
+      <button class="btn primary" id="importChoose">Choose file…</button>
+    </div>
+  </dialog>
+
+  <dialog class="dlg shot-dlg" id="shotDlg" aria-label="Screenshot">
+    <img id="shotImg" alt="Screenshot">
+    <div class="dlg-actions">
+      <a class="btn" id="shotDownload" download>Download</a>
+      <button class="btn primary" id="shotClose">Close</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" hidden role="status"></div>
+  <script type="module" src="editor.js"></script>
+</body>
+</html>

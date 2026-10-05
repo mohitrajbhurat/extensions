@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Not right now - Mindful Gate</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/base.css">
+  <link rel="stylesheet" href="block.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <span class="pill focus" id="kind">Blocked</span>
+      <h1 id="title">Not right now.</h1>
+      <p class="sub lede" id="why">This site is blocked.</p>
+      <div class="clock" id="clockWrap" aria-live="off">
+        <span class="clock-num" id="clock">--:--</span>
+        <span class="muted small" id="clockLabel">until it opens again</span>
+      </div>
+      <p class="task hidden" id="task"></p>
+    </header>
+
+    <section class="card reasons" aria-labelledby="reasonsTitle">
+      <h2 id="reasonsTitle">Your reasons</h2>
+      <ol id="reasons"></ol>
+      <a class="small" href="../options/options.html#reasons">Edit your reasons</a>
+    </section>
+
+    <section class="card ended hidden" id="ended" aria-live="polite">
+      <h2>The block has ended</h2>
+      <p class="sub">You can continue. You will still be asked for your intention first.</p>
+      <div class="row"><a class="btn primary" id="continueBtn" href="#">Continue to site</a></div>
+    </section>
+
+    <div class="row center">
+      <button class="btn primary lg" id="backBtn" type="button">Back to what matters</button>
+    </div>
+
+    <details class="card snooze hidden" id="snooze">
+      <summary>I really need this site for 5 minutes</summary>
+      <div class="snooze-body">
+        <label for="snoozeWhy">Why do you need it right now?</label>
+        <textarea id="snoozeWhy" rows="2" maxlength="280" placeholder="Be specific. This is saved to your insights."></textarea>
+        <div class="row">
+          <button class="btn" id="snoozeBtn" type="button" disabled>Wait 30s</button>
+          <span class="muted small">Snoozing pauses this schedule for 5 minutes. Strict schedules cannot be snoozed.</span>
+        </div>
+      </div>
+    </details>
+    <p class="center muted small strict-note hidden" id="strictNote">Strict mode is on. This block cannot be lifted until it ends.</p>
+  </main>
+  <script type="module" src="block.js"></script>
+</body>
+</html>

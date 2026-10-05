@@ -1,0 +1,19 @@
+body { min-height: 100vh; padding: 48px 16px; background:
+  radial-gradient(1200px 500px at 50% -10%, var(--focus-soft), transparent 70%), var(--bg); }
+.wrap { width: min(680px, 100%); margin: 0 auto; display: grid; gap: 24px; }
+.hero { text-align: center; display: grid; gap: 12px; justify-items: center; }
+h1 { font-size: clamp(32px, 5vw, 48px); letter-spacing: -.02em; }
+h2 { font-size: 16px; }
+.lede { max-width: 48ch; font-size: 16px; }
+.clock { display: grid; gap: 0; margin-top: 8px; }
+.clock-num { font: 700 56px/1.1 var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.task { font-weight: 600; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 16px; }
+.reasons { display: grid; gap: 12px; }
+.reasons ol { margin: 0; padding-left: 24px; display: grid; gap: 8px; font-size: 15px; }
+.reasons li::marker { color: var(--accent); font-weight: 700; }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.center { justify-content: center; text-align: center; }
+.snooze summary { cursor: pointer; color: var(--text-2); font-weight: 600; }
+.snooze-body { display: grid; gap: 8px; margin-top: 12px; }
+.snooze textarea { width: 100%; }
+.ended { border-color: var(--accent); }

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recall Cards</title>
+  <link rel="stylesheet" href="../ui/base.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" alt="" width="20" height="20">
+    <h1>Recall Cards</h1>
+    <button class="icon-btn" id="openApp" title="Open full app" aria-label="Open full app">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+    </button>
+  </header>
+
+  <section class="due card-surface" aria-live="polite">
+    <div class="due-main">
+      <div class="due-num" id="dueTotal">0</div>
+      <div class="due-label" id="dueLabel">cards due</div>
+    </div>
+    <div class="due-break">
+      <span class="chip"><b class="n-new" id="cNew">0</b> new</span>
+      <span class="chip"><b class="n-learn" id="cLearn">0</b> learning</span>
+      <span class="chip"><b class="n-review" id="cReview">0</b> review</span>
+    </div>
+    <button class="btn primary lg" id="startReview">Start review</button>
+  </section>
+
+  <button class="btn capture" id="capture" title="Make a flashcard from the text selected on this page">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3"/><path d="M9 12h6"/></svg>
+    Card from page selection
+  </button>
+
+  <form class="quick card-surface" id="quickForm" autocomplete="off">
+    <h2>Quick add</h2>
+    <label class="field">Front <textarea id="qFront" rows="2" placeholder="Question, or text with {{c1::cloze}}" required></textarea></label>
+    <label class="field">Back <textarea id="qBack" rows="2" placeholder="Answer (optional for cloze)"></textarea></label>
+    <div class="row">
+      <label class="field">Deck <select id="qDeck"></select></label>
+      <label class="field">Tags <input type="text" id="qTags" placeholder="tag1 tag2"></label>
+    </div>
+    <div class="actions">
+      <span class="small muted" id="qStatus" role="status"></span>
+      <button type="button" class="btn sm ghost" id="qCloze" title="Wrap the selected text in a cloze (Ctrl+Shift+C)">[…] Cloze</button>
+      <button type="submit" class="btn primary sm">Add <span class="kbd">Ctrl+Enter</span></button>
+    </div>
+  </form>
+
+  <nav class="links">
+    <a href="#" data-hash="#browse">Browse</a>
+    <a href="#" data-hash="#stats">Statistics</a>
+    <a href="#" data-hash="#io">Import / export</a>
+    <a href="#" data-hash="#settings">Settings</a>
+  </nav>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

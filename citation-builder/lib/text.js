@@ -25,7 +25,7 @@ export function collapse(s) {
 
 /** Last visible character of an HTML fragment (ignores tags and closing quotes). */
 function lastChar(html) {
-  const t = htmlToText(html).replace(/[\s”’"')\]]+$/, '');
+  const t = htmlToText(html).replace(/[\s”’"']+$/, '');
   return t.slice(-1);
 }
 
@@ -76,7 +76,7 @@ function hasInnerCaps(word) {
   return /[A-Z]/.test(core.slice(1)) || /\d/.test(core) || /\.[A-Za-z]/.test(core);
 }
 
-function capFirst(word) {
+export function capFirst(word) {
   const lead = word.match(LEADING)[0];
   const rest = word.slice(lead.length);
   return lead + rest.charAt(0).toUpperCase() + rest.slice(1);
@@ -108,7 +108,7 @@ export function titleCase(title) {
       if (hasInnerCaps(p)) return p;
       const bare = p.replace(LEADING, '').replace(/[^A-Za-z.']+$/, '').toLowerCase();
       const isEdge = (pi === 0 && first) || (pi === parts.length - 1 && last);
-      if (MINOR_WORDS.has(bare) && !isEdge && !(pi > 0 && parts.length > 1 && !MINOR_WORDS.has(bare))) {
+      if (MINOR_WORDS.has(bare) && !isEdge) {
         return p.toLowerCase();
       }
       return capFirst(p);
@@ -121,7 +121,7 @@ export function titleCase(title) {
 export function looksTitleCased(title) {
   const words = collapse(title).split(' ').slice(1).filter(w => /^[A-Za-z][a-z]{3,}/.test(w.replace(LEADING, '')));
   if (words.length < 2) {
-    const all = collapse(title).split(' ').slice(1).filter(w => /^[A-Za-z]/.test(w));
+    const all = collapse(title).split(' ').slice(1).filter(w => /^[A-Za-z]/.test(w) && !MINOR_WORDS.has(w.toLowerCase()));
     return all.length > 0 && all.every(w => /^[A-Z]/.test(w));
   }
   const capped = words.filter(w => /^[A-Z]/.test(w.replace(LEADING, ''))).length;
@@ -154,11 +154,19 @@ export function sentenceCase(title, { force = false } = {}) {
   return tokens.join('');
 }
 
-/** A short title for in-text citations: up to the colon, at most `max` words. */
+/**
+ * A short title for in-text citations and short notes: the main title (before a colon), at most
+ * `max` words, without a leading article or trailing minor words.
+ */
 export function shortTitle(title, max = 4) {
-  const t = collapse(title).split(/[:?!]\s/)[0];
-  const words = t.split(' ');
-  return words.length > max ? words.slice(0, max).join(' ') : t;
+  const t = collapse(title).split(/[:?!]\s|\.\s/)[0];
+  let words = t.split(' ');
+  if (words.length > max) {
+    if (/^(the|a|an)$/i.test(words[0])) words = words.slice(1);
+    words = words.slice(0, max);
+    while (words.length > 1 && MINOR_WORDS.has(words[words.length - 1].toLowerCase())) words.pop();
+  }
+  return words.join(' ');
 }
 
 // ---------- dates ----------
