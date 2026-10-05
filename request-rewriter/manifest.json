@@ -30,7 +30,7 @@
     "storage",
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
-    "tabs"
+    "activeTab"
   ],
   "host_permissions": [
     "http://*/*",

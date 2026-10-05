@@ -810,7 +810,7 @@ export function importModHeader(data) {
       const on = []; const off = [];
       for (const h of list || []) {
         if (!h || !h.name) continue;
-        let op = h.value === '' && p.removeEmptyHeaders !== false && kind === 'request' ? 'set' : 'set';
+        let op = 'set';
         if (p.appendMode && (kind === 'response' || APPENDABLE_REQUEST_HEADERS.includes(String(h.name).toLowerCase()))) op = 'append';
         const row = { op, name: String(h.name).trim(), value: String(h.value ?? '') };
         (h.enabled === false ? off : on).push(row);

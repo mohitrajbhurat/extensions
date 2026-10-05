@@ -179,14 +179,15 @@ async function inject(page) {
     ok('live theme change applies to open reader', liveTheme === 'rgb(0, 0, 0)', liveTheme);
 
     // bionic in reader
+    const plainText = await page.evaluate(() => document.getElementById('rs-reader').shadowRoot.querySelector('.content').textContent.replace(/\s+/g, ' ').trim());
     await page.evaluate(() => RS.reader.setBionic(true));
     const bionic = await page.evaluate(() => {
       const root = document.getElementById('rs-reader').shadowRoot;
       const bs = root.querySelectorAll('.content rs-b');
-      return { n: bs.length, first: bs[0] && bs[0].textContent, weight: bs[0] && getComputedStyle(bs[0]).fontWeight, text: root.querySelector('.content').textContent.slice(0, 30) };
+      return { n: bs.length, first: bs[0] && bs[0].textContent, weight: bs[0] && getComputedStyle(bs[0]).fontWeight, text: root.querySelector('.content').textContent.replace(/\s+/g, ' ').trim() };
     });
     ok('bionic bolds word starts in reader', bionic.n > 50 && bionic.weight === '700', `${bionic.n} spans, weight ${bionic.weight}`);
-    ok('bionic preserves text', /Good typography disappears/.test(bionic.text), bionic.text);
+    ok('bionic preserves text', bionic.text === plainText && /Good typography disappears/.test(bionic.text), bionic.text.slice(0, 60));
     await page.evaluate(() => RS.reader.setBionic(false));
     const unbionic = await page.evaluate(() => document.getElementById('rs-reader').shadowRoot.querySelectorAll('rs-b').length);
     ok('bionic can be removed', unbionic === 0);
@@ -563,29 +564,55 @@ async function inject(page) {
   // ================================================================ 6. background wiring
   console.log('\nBackground and popup');
   {
-    const page = await open('article.html');
-    const res = await sw.evaluate(async () => {
-      const tabs = await chrome.tabs.query({});
-      const tab = tabs.find((t) => t.url && t.url.includes('article.html'));
-      const out = {};
-      const send = (action, args) => chrome.tabs.sendMessage(tab.id, { action, args: args || {} }, { frameId: 0 });
-      await chrome.scripting.executeScript({ target: { tabId: tab.id, frameIds: [0] }, files: ['common/defaults.js', 'content/shared.js', 'content/readability.js', 'content/segmenter.js', 'content/darkmode.js', 'content/focus.js', 'content/tts.js', 'content/reader.js', 'content/main.js'] });
-      out.ping = await send('ping');
-      out.reader = await send('reader-toggle');
-      out.state = await send('get-state');
-      out.close = await send('reader-toggle');
-      out.voices = await new Promise((r) => chrome.tts.getVoices((v) => r((v || []).length)));
-      out.commands = (await chrome.commands.getAll()).map((c) => `${c.name}:${c.shortcut}`);
-      out.menus = true;
-      return out;
+    // A real user grants page access through activeTab (a click or shortcut), which automation cannot
+    // do. Simulate that grant with a temporary copy of the extension that holds host access, and drive
+    // the real background code paths (popup -> service worker -> tab) from an extension page.
+    const copyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rs-ext-'));
+    fs.cpSync(EXT, copyDir, { recursive: true, filter: (src) => !src.includes(`${path.sep}test${path.sep}`) && !src.endsWith(`${path.sep}test`) });
+    const man = JSON.parse(fs.readFileSync(path.join(copyDir, 'manifest.json'), 'utf8'));
+    man.host_permissions = ['http://127.0.0.1/*'];
+    fs.writeFileSync(path.join(copyDir, 'manifest.json'), JSON.stringify(man));
+    const ctx2 = await chromium.launchPersistentContext(fs.mkdtempSync(path.join(os.tmpdir(), 'rs-test2-')), {
+      headless: true, channel: 'chromium',
+      args: [`--disable-extensions-except=${copyDir}`, `--load-extension=${copyDir}`]
     });
-    ok('service worker injects the full feature set', res.ping && res.ping.full === true);
-    ok('reader opens through a background message', res.reader && res.reader.result === true);
+    const sw2 = ctx2.serviceWorkers()[0] || await ctx2.waitForEvent('serviceworker', { timeout: 15000 });
+    const id2 = sw2.url().split('/')[2];
+    const tabPage = await ctx2.newPage();
+    tabPage.on('pageerror', (e) => errors.push(`bg-test page: ${e.message}`));
+    await tabPage.goto(`${base}/article.html`, { waitUntil: 'load' });
+    const ext = await ctx2.newPage();
+    await ext.goto(`chrome-extension://${id2}/options/options.html`);
+    await ext.waitForTimeout(400);
+    const res = await ext.evaluate(async (pageUrl) => {
+      const tabs = await chrome.tabs.query({});
+      const tab = tabs.find((t) => t.url === pageUrl);
+      const out = { found: !!tab };
+      const act = (action, args) => chrome.runtime.sendMessage({ type: 'tab-action', tabId: tab.id, action, args });
+      out.reader = await act('reader-toggle');
+      out.state = await act('get-state');
+      out.ping = await chrome.tabs.sendMessage(tab.id, { action: 'ping' }, { frameId: 0 });
+      out.close = await act('reader-toggle');
+      out.dark = await chrome.runtime.sendMessage({ type: 'toggle-dark', tabId: tab.id });
+      out.sites = (await chrome.storage.local.get('sites')).sites;
+      out.darkOff = await chrome.runtime.sendMessage({ type: 'toggle-dark', tabId: tab.id });
+      out.registered = (await chrome.scripting.getRegisteredContentScripts()).map((c) => c.id);
+      out.voices = (await chrome.runtime.sendMessage({ type: 'get-voices' })).voices.length;
+      out.commands = (await chrome.commands.getAll()).map((c) => `${c.name}:${c.shortcut}`);
+      return out;
+    }, `${base}/article.html`);
+    const domDark = await tabPage.evaluate(() => document.documentElement.getAttribute('data-rs-dark-mode'));
+    ok('service worker injects the full feature set on demand', res.found && res.ping && res.ping.full === true, JSON.stringify(res.ping));
+    ok('reader opens through a background message', res.reader && res.reader.result === true, JSON.stringify(res.reader));
     ok('tab state reported to the popup', res.state && res.state.result && res.state.result.reader === true && typeof res.state.result.host === 'string', JSON.stringify(res.state && res.state.result));
     ok('reader closes through a background message', res.close && res.close.result === false);
+    ok('dark mode toggles per site through the background', res.dark.ok && res.dark.active === true && res.sites['127.0.0.1'].dark === 'on' && res.darkOff.active === false, JSON.stringify(res.dark));
+    ok('dark mode script auto-registers for granted sites', res.registered.includes('rs-dark'), JSON.stringify(res.registered));
+    ok('dark mode removed from the page after toggling off', domDark === null || domDark === '', String(domDark));
     ok('Alt+Shift+R is bound to the reader', res.commands.includes('toggle-reader:Alt+Shift+R'), JSON.stringify(res.commands));
     console.log(`  note: ${res.voices} TTS voices in this headless container (0 is expected; the Web Speech fallback covers it)`);
-    await page.close();
+    await ctx2.close();
+    fs.rmSync(copyDir, { recursive: true, force: true });
 
     const popup = await ctx.newPage();
     const perrors = [];

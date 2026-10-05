@@ -8,7 +8,6 @@ export const DEFAULT_SETTINGS = {
   badgeMode: 'matches',       // 'matches' | 'count' | 'off'
   logMatches: true,
   logLimit: 300,
-  showExamples: true,
   theme: 'system',            // 'system' | 'light' | 'dark'
 };
 

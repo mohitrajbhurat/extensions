@@ -24,9 +24,9 @@ async function init() {
   state = await getState();
   wire();
   render();
-  await refreshStatus();
+  await refreshStatus(true);
   onStateChanged(s => { state = s; render(); refreshStatus(); });
-  setInterval(refreshStatus, 2000);
+  setInterval(() => refreshStatus(false), 2000);
 }
 
 function wire() {
@@ -112,8 +112,8 @@ function render() {
   }
 }
 
-async function refreshStatus() {
-  status = await send({ cmd: 'status', tabId: tab && tab.id, limit: 60 });
+async function refreshStatus(poll = false) {
+  status = await send({ cmd: 'status', tabId: tab && tab.id, limit: 60, poll });
   if (!status || status.error) return;
   const notice = $('#statusNotice');
   const errs = (status.status && status.status.errors) || [];

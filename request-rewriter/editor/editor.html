@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request Rewriter — Rules</title>
+<link rel="icon" href="../icons/icon32.png">
+<link rel="stylesheet" href="../shared/base.css">
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+<header class="topbar">
+  <svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><rect x="4" y="4" width="120" height="120" rx="28" fill="#2743b8"/><g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"><path d="M28 46h50"/><path d="M64 32l16 14-16 14"/><path d="M100 82H50"/><path d="M64 96 48 82l16-14"/></g></svg>
+  <h1>Request Rewriter</h1>
+  <span id="syncPill" class="pill" role="status" aria-live="polite">…</span>
+  <div class="spacer"></div>
+  <input type="search" id="search" placeholder="Search rules  ( / )" aria-label="Search rules" autocomplete="off">
+  <button id="importBtn" title="Import rules or ModHeader profiles from a JSON file">Import</button>
+  <button id="exportBtn" title="Export every group as JSON">Export</button>
+  <label class="check pause-label" title="Pause every rule without losing them">
+    <span id="pauseText">On</span>
+    <span class="switch"><input type="checkbox" id="pauseToggle" checked aria-label="Rules on"><span></span></span>
+  </label>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" aria-label="Groups and tools">
+    <div class="side-head">
+      <h2>Groups</h2>
+      <div class="spacer"></div>
+      <button class="sm" id="newGroup" title="Create a group">+ New</button>
+    </div>
+    <ul id="groupNav" class="group-nav"></ul>
+    <div class="side-sep"></div>
+    <ul class="group-nav">
+      <li><button class="nav-item" data-view="tester">Test a URL</button></li>
+      <li><button class="nav-item" data-view="status">Installed rules</button></li>
+      <li><button class="nav-item" data-view="settings">Settings &amp; data</button></li>
+    </ul>
+  </nav>
+  <main id="main" tabindex="-1"></main>
+</div>
+
+<dialog id="ruleDialog" class="dlg" aria-labelledby="ruleDialogTitle">
+  <form method="dialog" id="ruleForm" novalidate>
+    <header class="dlg-head">
+      <h2 id="ruleDialogTitle">Edit rule</h2>
+      <div class="spacer"></div>
+      <button type="button" class="ghost icon" id="ruleClose" aria-label="Close">✕</button>
+    </header>
+    <div class="dlg-body" id="ruleBody"></div>
+    <footer class="dlg-foot">
+      <span class="tiny muted"><kbd>Ctrl</kbd>+<kbd>S</kbd> save · <kbd>Esc</kbd> cancel</span>
+      <div class="spacer"></div>
+      <button type="button" id="ruleCancel">Cancel</button>
+      <button type="submit" class="primary" id="ruleSave">Save rule</button>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="importDialog" class="dlg narrow" aria-labelledby="importTitle">
+  <form method="dialog" id="importForm">
+    <header class="dlg-head"><h2 id="importTitle">Import</h2></header>
+    <div class="dlg-body" id="importBody"></div>
+    <footer class="dlg-foot">
+      <div class="spacer"></div>
+      <button type="button" id="importCancel">Cancel</button>
+      <button type="button" id="importReplace" class="danger">Replace all</button>
+      <button type="button" id="importAdd" class="primary">Add groups</button>
+    </footer>
+  </form>
+</dialog>
+
+<script type="module" src="editor.js"></script>
+</body>
+</html>

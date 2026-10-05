@@ -85,7 +85,7 @@ async function poll(fn, timeout = 4000) {
       const p = document.querySelector(sel);
       const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
       for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-        const i = n.data.indexOf(text);
+        const i = text ? n.data.indexOf(text) : -1;
         if (i >= 0) {
           const r = document.createRange();
           r.setStart(n, i); r.setEnd(n, i + text.length);
@@ -141,8 +141,7 @@ async function poll(fn, timeout = 4000) {
     check('sticky drag persisted', !!rec);
 
     // 4. Clip a selection with formatting.
-    await select('#p2', 'essentially scrapbooks filled');
-    await select('#p2', '');
+    await select('#p2', null); // whole paragraph, spanning the <em>
     await page.locator('rc-ui .toolbar button[aria-label="Clip selection to project"]').click();
     cl = await poll(async () => (await clips()).find(c => c.type === 'text'));
     check('selection clipped as Markdown', cl && cl.content.includes('*scrapbooks*'), cl && cl.content.slice(0, 60));
@@ -184,10 +183,10 @@ async function poll(fn, timeout = 4000) {
       await send({ type: 'clip:add', clip: { type: 'note', title: 'Beta', content: '# Beta\nBase idea.' } });
     });
     await app.click('#tab-notes');
-    await app.locator('.note-item', { hasText: 'Beta' }).click();
+    await app.locator('.note-item .t', { hasText: /^Beta$/ }).click();
     const back = await poll(async () => (await app.locator('.backlink').allTextContents()).join('|'));
     check('backlinks show the linking note', back.includes('Alpha'), back);
-    await app.locator('.note-item', { hasText: 'Alpha' }).click();
+    await app.locator('.note-item .t', { hasText: /^Alpha$/ }).click();
     const seg = app.locator('.seg button', { hasText: /Preview/i });
     if (await seg.count()) await seg.first().click();
     const wl = await poll(async () => app.locator('.preview a.wikilink[data-wikilink="Beta"]').count());
