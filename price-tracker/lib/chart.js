@@ -152,8 +152,8 @@ export class PriceChart {
       return;
     }
     const t0 = pts[0].t;
-    const t1 = Math.max(now, pts[pts.length - 1].t + 1);
-    const tSpan = Math.max(t1 - t0, 3600000);
+    const t1 = Math.max(now, pts[pts.length - 1].t + 1, t0 + 3600000);
+    const tSpan = t1 - t0;
     let vMin = Math.min(...priced.map(p => p.p));
     let vMax = Math.max(...priced.map(p => p.p));
     if (target && target > 0 && target >= vMin * 0.6 && target <= vMax * 1.4) { vMin = Math.min(vMin, target); vMax = Math.max(vMax, target); }

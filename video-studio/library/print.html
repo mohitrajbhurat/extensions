@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Studio print view</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; background: var(--bg-soft); }
+    .bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .bar strong { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    iframe { flex: 1; border: 0; background: #fff; width: 100%; }
+    .msg { margin: 15vh auto; text-align: center; color: var(--fg-muted); }
+  </style>
+  <script src="../lib/defaults.js"></script>
+  <script type="module" src="print.js"></script>
+</head>
+<body>
+  <div class="bar">
+    <strong id="title">Print view</strong>
+    <span class="muted" id="hint">Use "Save as PDF" in the print dialog to create a PDF.</span>
+    <button class="btn" id="download" disabled>Download HTML</button>
+    <button class="btn primary" id="print" disabled>Print</button>
+  </div>
+  <p class="msg" id="msg" hidden></p>
+  <iframe id="frame" title="Printable notes" hidden></iframe>
+</body>
+</html>

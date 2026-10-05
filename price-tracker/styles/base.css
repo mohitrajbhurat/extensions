@@ -124,6 +124,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 .pill.unknown::before { content: "…"; }
 .pill.status-needs_visit, .pill.status-error, .pill.status-no_permission { background: var(--warn-soft); color: var(--warn); }
 .pill.status-needs_visit::before, .pill.status-error::before, .pill.status-no_permission::before { content: "!"; font-weight: 800; }
+.pill.instock { background: var(--good-soft); color: var(--good); }
+.pill.instock::before { content: "✓"; }
 .pill.oos { background: var(--danger-soft); color: var(--danger); }
 .pill.oos::before { content: "✕"; }
 .pill.target { background: var(--accent-soft); color: var(--accent); }

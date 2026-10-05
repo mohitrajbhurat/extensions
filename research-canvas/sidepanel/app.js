@@ -616,11 +616,11 @@ function setupDnD(ul) {
     if (!dragId) return;
     e.preventDefault();
     const li = ul.querySelector('.drop-before,.drop-after');
+    const before = !!li && li.classList.contains('drop-before');
     clear();
     const id = dragId;
     dragId = null;
     if (!li) return;
-    const before = li.classList.contains('drop-before');
     const rest = visibleClips().filter(c => c.id !== id);
     const idx = rest.findIndex(c => c.id === li.dataset.id);
     const insertAt = before ? idx : idx + 1;

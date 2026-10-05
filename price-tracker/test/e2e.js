@@ -245,6 +245,33 @@ async function waitFor(fn, timeout = 15000, label = 'condition') {
     await dash.screenshot({ path: path.join(tmp, 'dashboard.png') });
     await dash.close();
   });
+  await check('Popup detects a product, tracks it and shows the mini chart', async () => {
+    const product = await ectx.newPage();
+    await product.goto(base + '/jsonld.html');
+    const tabId = await sw.evaluate(async u => (await chrome.tabs.query({ url: u }))[0].id, base + '/jsonld.html');
+    const pop = await ectx.newPage();
+    pop.on('pageerror', e => errors.push('popup: ' + e.message));
+    pop.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('popup: ' + m.text()); });
+    await pop.setViewportSize({ width: 392, height: 640 });
+    await pop.goto(`chrome-extension://${extId}/popup/popup.html?tabId=${tabId}`);
+    await pop.waitForSelector('#state-product:not([hidden])');
+    assert.equal(await pop.locator('#p-price').innerText(), '$1,299.00');
+    assert.match(await pop.locator('#p-title').innerText(), /Aurora Laptop/);
+    assert.match(await pop.locator('#p-sale').innerText(), /claims 13% off/);
+    await pop.click('#target-type [data-type="percent"]');
+    await pop.fill('#target-value', '15');
+    assert.match(await pop.locator('#target-hint').innerText(), /\$1,104\.15/);
+    await pop.click('#track-btn');
+    await pop.waitForSelector('#tracked:not([hidden]) canvas');
+    const items = Object.values(await sw.evaluate(() => globalThis.__priceTracker.getItems()));
+    const it = items.find(i => /Aurora/.test(i.title));
+    assert.ok(it, 'item stored');
+    assert.deepEqual(it.target, { type: 'percent', value: 15 });
+    assert.equal(it.listPrice, 1499);
+    await pop.screenshot({ path: path.join(tmp, 'popup.png') });
+    await pop.close();
+    await product.close();
+  });
   await check('Delete removes the item', async () => {
     await call('delete', { ids: [guardedId] });
     assert.equal(await getItem(guardedId), undefined);

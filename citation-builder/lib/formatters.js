@@ -62,13 +62,13 @@ export function apaAuthors(list) {
   const n = names.length;
   if (!n) return '';
   if (n === 1) return names[0];
-  if (n <= 20) return names.slice(0, -1).join(', ') + ', & ' + names[n - 1];
+  if (n <= 20) return names.slice(0, -1).join(', ') + ', &amp; ' + names[n - 1];
   return names.slice(0, 19).join(', ') + ', . . . ' + names[n - 1];
 }
 
 function apaEditorsNatural(list) {
   const names = list.map(n => (n.literal ? e(n.literal) : e([initials(n.given), n.family].filter(Boolean).join(' '))));
-  return joinNames(names, { and: '&', serial: names.length > 2 });
+  return joinNames(names, { and: '&amp;', serial: names.length > 2 });
 }
 
 function apaDate(item, opts) {
@@ -145,7 +145,7 @@ function apa(item, opts) {
 }
 
 function apaInText(item, opts) {
-  const who = authorDateNames(item, { and: '&', etAl: 3, titleWrap: t => (STANDALONE.has(item.type) ? italic(t) : quoted(t)) });
+  const who = authorDateNames(item, { and: '&amp;', etAl: 3, titleWrap: t => (STANDALONE.has(item.type) ? italic(t) : quoted(t)) });
   const y = yearOf(item.date);
   const sfx = opts.yearSuffix || '';
   const date = y ? y + sfx : 'n.d.' + (sfx ? '-' + sfx : '');

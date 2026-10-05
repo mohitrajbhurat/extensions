@@ -99,7 +99,7 @@ function tabRow(t, d) {
     t.discarded ? h('span.flag.sleep', 'Suspended') : null,
     d.isDup(t.id) ? h('span.flag.dup', 'Duplicate') : null,
     !t.discarded && reason && reason !== 'active' && reason !== 'browser page' ? h('span.flag', { title: 'Memory saver will not suspend this tab' }, reason) : null,
-    h('span.meta', hostOf(t.url)),
+    h('span.meta', own ? 'Tab Workspaces' : hostOf(t.url)),
     h('div.actions',
       !own && !t.discarded ? h('button.icon-btn', { title: 'Suspend now', 'aria-label': 'Suspend now', onclick: () => act(() => send('mem.suspendTab', { tabId: t.id }), r => (r ? 'Tab suspended' : 'This tab cannot be suspended')) }, icon('moon')) : null,
       !own ? h('button.icon-btn', { title: 'Stash', 'aria-label': 'Stash tab', onclick: () => act(() => send('stash.tabs', { windowId: t.windowId, which: 'tabs', tabIds: [t.id] }), 'Tab stashed') }, icon('inbox')) : null,

@@ -90,6 +90,7 @@ export function buildHtml(video, notes) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<base target="_blank">
 <title>${escapeHtml(title)} - notes</title>
 <style>
   :root { --fg:#1d2433; --muted:#5b6578; --line:#e3e6ee; --accent:#d9480f; --bg:#fff; --soft:#f6f7fa; }

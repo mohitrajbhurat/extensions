@@ -20,8 +20,7 @@ main { padding: 0 16px 8px; max-height: 470px; overflow-y: auto; }
 .ws-item .key { font: 11px var(--mono); color: var(--text-3); width: 12px; text-align: center; }
 .ws-item .icon-btn { margin-right: 4px; opacity: 0; }
 .ws-item:hover .icon-btn, .ws-item:focus-within .icon-btn { opacity: 1; }
-.new-ws { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.new-ws .btn:first-child { flex: 1; }
+.new-ws { display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 8px; margin-top: 8px; }
 .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .action {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-align: left;

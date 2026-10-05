@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Bookmarks</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../lib/theme.css">
+  <link rel="stylesheet" href="manager.css">
+</head>
+<body class="loading">
+  <a class="skip" href="#content">Skip to bookmarks</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Navigation">
+      <div class="brand"><img src="../icons/icon32.png" alt="" width="24" height="24"><span>Smart Bookmarks</span></div>
+      <div class="search-wrap">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="search" type="search" placeholder="Search everything" aria-label="Search bookmarks" autocomplete="off" spellcheck="false">
+        <kbd>/</kbd>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="side-section">
+        <div class="side-head"><span>Folders</span>
+          <button class="btn ghost icon sm" id="newFolderSide" title="New folder" aria-label="New folder"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+        <div id="tree" class="tree" role="tree" aria-label="Folders"></div>
+      </div>
+      <div class="side-section">
+        <div class="side-head"><span>Tags</span><a class="btn ghost sm" href="#tags">All</a></div>
+        <div id="sideTags" class="side-tags"></div>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <main class="main">
+      <header class="toolbar">
+        <button class="btn ghost icon menu-btn" id="menuBtn" aria-label="Show navigation"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+        <div class="crumbs" id="crumbs"></div>
+        <div class="tb-actions" id="viewActions"></div>
+        <div class="list-controls" id="listControls">
+          <select class="select sort" id="sort" aria-label="Sort"></select>
+          <div class="seg" role="group" aria-label="Layout">
+            <button class="btn icon sm" id="layoutList" title="List (G)" aria-label="List view"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></button>
+            <button class="btn icon sm" id="layoutGrid" title="Grid (G)" aria-label="Grid view"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+          </div>
+          <button class="btn ghost icon sm" id="inspectorToggle" title="Details panel (I)" aria-label="Toggle details panel"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+        </div>
+      </header>
+      <div class="bulkbar" id="bulkbar" role="toolbar" aria-label="Selection actions" hidden></div>
+      <div class="content" id="content" tabindex="-1">
+        <div class="empty"><span class="spinner"></span><p>Loading bookmarks…</p></div>
+      </div>
+    </main>
+
+    <aside class="inspector" id="inspector" aria-label="Details" hidden></aside>
+  </div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <div id="tasks" class="tasks" aria-live="polite"></div>
+  <div id="dragGhost" class="drag-ghost" aria-hidden="true"></div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

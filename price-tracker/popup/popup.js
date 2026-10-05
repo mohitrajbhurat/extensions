@@ -114,7 +114,7 @@ function renderProduct() {
   const avail = (p && p.availability !== 'unknown' ? p.availability : null) || (it && it.availability);
   const pill = $('p-avail');
   pill.hidden = !avail || avail === 'unknown';
-  pill.className = 'pill ' + (avail === 'out_of_stock' ? 'oos' : 'good');
+  pill.className = 'pill ' + (avail === 'out_of_stock' ? 'oos' : 'instock');
   pill.textContent = avail === 'out_of_stock' ? 'Out of stock' : 'In stock';
   const sourceText = {
     jsonld: 'Found in the page\'s product data', microdata: 'Found in the page\'s product markup', opengraph: 'Found in the page\'s product tags',
@@ -250,7 +250,9 @@ function wire() {
 async function init() {
   wire();
   state.settings = await getSettings();
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  // ?tabId= lets automated tests open the popup UI in a tab for a given product tab.
+  const forced = Number(new URLSearchParams(location.search).get('tabId'));
+  const [tab] = forced ? [await chrome.tabs.get(forced).catch(() => null)] : await chrome.tabs.query({ active: true, currentWindow: true });
   state.tab = tab;
   if (!tab || !/^https?:/i.test(tab.url || '')) {
     $('unsupported-reason').textContent = tab && tab.url ? 'Browser and extension pages can\'t be read.' : 'No page is open.';

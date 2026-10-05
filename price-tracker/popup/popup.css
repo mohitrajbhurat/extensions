@@ -15,7 +15,7 @@ main { padding: 16px; }
 .recent a:hover, .recent a:focus-visible { background: var(--surface-2); }
 .recent img, .recent .ph { width: 40px; height: 40px; border-radius: 6px; object-fit: contain; background: var(--surface-2); }
 .recent .mid { min-width: 0; display: grid; gap: 2px; justify-items: start; }
-.recent .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.recent .name { max-width: 100%;  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .recent .p { font-weight: 600; font-size: 13px; text-align: right; }
 
 .product { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start; }

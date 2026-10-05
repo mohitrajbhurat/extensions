@@ -56,8 +56,8 @@ td.c-num { font-variant-numeric: tabular-nums; }
 .small { font-size: 12px; }
 
 .detail-head { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 16px; align-items: start; }
-.thumb { width: 96px; height: 96px; border-radius: var(--radius-sm); background: #fff; border: 1px solid var(--border); display: grid; place-items: center; overflow: hidden; }
-.thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.thumb { width: 96px; height: 96px; border-radius: var(--radius-sm); background: var(--surface-2); border: 1px solid var(--border); display: grid; place-items: center; overflow: hidden; }
+.thumb img { max-width: 100%; max-height: 100%; object-fit: contain; background: #fff; }
 .d-info { min-width: 0; display: grid; gap: 4px; }
 .d-info h2 { font-size: 16px; }
 .d-info a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

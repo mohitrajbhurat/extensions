@@ -160,7 +160,7 @@ async function renderDetail(fresh) {
   $('d-verdict-detail').textContent = verdict.detail;
   const av = $('d-avail');
   av.hidden = !item.availability || item.availability === 'unknown';
-  av.className = 'pill ' + (item.availability === 'out_of_stock' ? 'oos' : 'good');
+  av.className = 'pill ' + (item.availability === 'out_of_stock' ? 'oos' : 'instock');
   av.textContent = item.availability === 'out_of_stock' ? 'Out of stock' : 'In stock';
   $('d-sale').hidden = !sale;
   if (sale) { $('d-sale').textContent = sale.text; $('d-sale').className = 'callout ' + (sale.honest === false ? 'bad' : sale.honest ? 'good' : ''); }

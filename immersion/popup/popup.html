@@ -1,1 +1,82 @@
-<!doctype html><title>stub</title>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Language Immersion</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" width="28" height="28" alt="">
+    <div class="title">
+      <h1>Language Immersion</h1>
+      <div class="muted small" id="tagline">Learning <span id="tagLang">Spanish</span></div>
+    </div>
+    <label class="switch" title="Turn immersion on or off everywhere">
+      <input type="checkbox" id="enabled" aria-label="Immersion on">
+      <span class="track"></span>
+    </label>
+  </header>
+
+  <main>
+    <section class="card site" aria-live="polite">
+      <div class="site-row">
+        <div class="site-info">
+          <div class="site-host" id="host">This page</div>
+          <div class="muted small" id="pageStatus">Checking this page&hellip;</div>
+        </div>
+        <label class="switch" title="Pause or resume on this site">
+          <input type="checkbox" id="siteOn" aria-label="Immersion on this site">
+          <span class="track"></span>
+        </label>
+      </div>
+      <div class="engine" id="engineRow">
+        <span class="dot" id="engineDot"></span>
+        <span id="engineText" class="small">Translation engine</span>
+        <button class="btn sm hidden" id="downloadModel">Enable on-device AI</button>
+      </div>
+      <div class="progress hidden" id="dlProgress"><i></i></div>
+    </section>
+
+    <section class="settings">
+      <div class="field">
+        <label for="targetLang">I'm learning</label>
+        <select id="targetLang"></select>
+      </div>
+      <div class="field">
+        <span class="label" id="diffLabel">Difficulty</span>
+        <div class="segmented" role="radiogroup" aria-labelledby="diffLabel" id="difficulty">
+          <button type="button" role="radio" data-v="beginner" title="Common nouns">Beginner</button>
+          <button type="button" role="radio" data-v="intermediate" title="Adds verbs, adjectives and adverbs">Intermediate</button>
+          <button type="button" role="radio" data-v="advanced" title="Adds whole phrases">Advanced</button>
+        </div>
+        <div class="muted small" id="diffHint"></div>
+      </div>
+      <div class="field">
+        <div class="label-row"><label for="density">Words per page</label><output id="densityOut" for="density">20</output></div>
+        <input type="range" id="density" min="5" max="80" step="1">
+      </div>
+    </section>
+
+    <section class="stat-grid" aria-label="Your progress">
+      <div class="stat"><b id="sKnown">0</b><span>Learned</span></div>
+      <div class="stat"><b id="sLearning">0</b><span>Learning</span></div>
+      <div class="stat"><b id="sStreak">0</b><span>Day streak</span></div>
+      <div class="stat"><b id="sToday">0</b><span>Seen today</span></div>
+    </section>
+
+    <div class="actions">
+      <button class="btn primary block" id="review">Review words</button>
+      <div class="row">
+        <button class="btn ghost sm" id="quiz">Quiz</button>
+        <button class="btn ghost sm" id="words">My words</button>
+        <button class="btn ghost sm" id="options">Settings</button>
+      </div>
+    </div>
+  </main>
+  <script src="../lib/common.js"></script>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

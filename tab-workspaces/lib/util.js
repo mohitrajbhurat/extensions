@@ -66,9 +66,8 @@ export function normalizeUrl(url, { ignoreHash = true, ignoreTracking = true } =
     for (const k of [...u.searchParams.keys()]) if (TRACKING.test(k)) u.searchParams.delete(k);
   }
   u.searchParams.sort();
-  let s = u.toString();
-  if (s.endsWith('/') && u.pathname !== '/') s = s.slice(0, -1);
-  if (u.pathname === '/' && !u.search && !u.hash) s = s.replace(/\/$/, '');
+  if (u.pathname.length > 1 && u.pathname.endsWith('/')) u.pathname = u.pathname.replace(/\/+$/, '');
+  const s = u.toString();
   return s;
 }
 
@@ -130,15 +129,24 @@ export function fuzzyScore(query, text) {
   const q = query.toLowerCase(), t = text.toLowerCase();
   const idx = t.indexOf(q);
   if (idx >= 0) return 1000 - idx + (idx === 0 || /\W/.test(t[idx - 1]) ? 200 : 0) + q.length * 10;
+  // Subsequence match: after a gap, the next character must start a word (or a camelCase hump),
+  // which keeps "gh pr" -> "GitHub pull request" while rejecting scattered letters.
+  const orig = String(text);
+  const boundary = k => k === 0 || /[\W_]/.test(t[k - 1]) ||
+    (orig[k] !== t[k] && orig[k - 1] === t[k - 1] && /[a-z]/.test(orig[k - 1])) || (/\d/.test(t[k]) !== /\d/.test(t[k - 1]));
   let score = 0, ti = 0, run = 0, first = -1;
   for (let qi = 0; qi < q.length; qi++) {
     const ch = q[qi];
     if (ch === ' ') { run = 0; continue; }
-    const found = t.indexOf(ch, ti);
+    let found = -1;
+    for (let k = ti; k < t.length; k++) {
+      if (t[k] !== ch) continue;
+      if ((k === ti && run > 0) || boundary(k)) { found = k; break; }
+    }
     if (found < 0) return -1;
     if (first < 0) first = found;
-    if (found === ti) { run++; score += 5 * run; } else { run = 1; score += 1; }
-    if (found === 0 || /[\W_]/.test(t[found - 1])) score += 8;
+    if (found === ti && run > 0) { run++; score += 5 * run; } else { run = 1; score += 1; }
+    if (boundary(found)) score += 8;
     ti = found + 1;
   }
   return score - Math.min(first, 50) * 0.5 - (t.length - q.length) * 0.01;

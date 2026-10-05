@@ -1,5 +1,5 @@
 import { h, icon, send, act, fav, clear, colorDot, dialog, confirmDialog } from '../../shared/ui.js';
-import { COLOR_HEX, plural, relTime, fuzzyFilter } from '../../lib/util.js';
+import { COLOR_HEX, plural, relTime, fuzzyFilter, isMeaningfulUrl } from '../../lib/util.js';
 import { menuButton, viewHead, searchBox, emptyState, openUrl, highlightText } from '../common.js';
 
 let root, listEl, ctx;
@@ -43,7 +43,7 @@ function card(ws) {
   const openIn = openWindowOf(ws.id);
   const isHere = openIn === ctx.windowId;
   const isExpanded = expanded.has(ws.id);
-  const live = openIn != null ? ctx.tabs.filter(t => t.windowId === openIn && !t.url?.startsWith(chrome.runtime.getURL(''))) : null;
+  const live = openIn != null ? ctx.tabs.filter(t => t.windowId === openIn && isMeaningfulUrl(t.url || t.pendingUrl) && !(t.url || '').startsWith(chrome.runtime.getURL(''))) : null;
   const tabs = ws.tabs;
   const groupCount = ws.groups?.length || 0;
 

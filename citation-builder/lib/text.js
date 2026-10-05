@@ -73,7 +73,7 @@ function isAllCaps(s) {
 function hasInnerCaps(word) {
   // iPhone, McDonald, eBay, DNA, COVID-19, U.S.
   const core = word.replace(LEADING, '');
-  return /[A-Z]/.test(core.slice(1)) || /\d/.test(core) || /\.[A-Za-z]/.test(core);
+  return core.split('-').some(p => /[A-Z]/.test(p.slice(1))) || /\d/.test(core) || /\.[A-Za-z]/.test(core);
 }
 
 export function capFirst(word) {

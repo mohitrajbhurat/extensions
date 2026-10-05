@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "Video Studio: notes and speed control",
+  "short_name": "Video Studio",
+  "description": "Speed control for any HTML5 video plus timestamped Markdown notes, frame screenshots, bookmarks and A-B loops.",
+  "version": "1.0.0",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Video Studio",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options/options.html",
+  "side_panel": {
+    "default_path": "sidepanel/panel.html"
+  },
+  "permissions": ["storage", "unlimitedStorage", "sidePanel", "activeTab"],
+  "optional_host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["lib/defaults.js", "content/content.js"],
+      "all_frames": true,
+      "match_about_blank": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["sidepanel/panel.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "open-notes": { "description": "Open or close the notes panel" },
+    "add-note": { "description": "Add a note at the current video time" },
+    "add-screenshot-note": { "description": "Add a note with a screenshot of the current frame" },
+    "open-library": { "description": "Open the notes library" }
+  }
+}
