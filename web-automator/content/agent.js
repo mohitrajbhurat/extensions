@@ -271,9 +271,15 @@
     const v = fieldValue(el);
     if (rec.lastValues.get(el) === v) return;
     rec.lastValues.set(el, v);
-    const step = stepFor(rec.keystrokes ? 'typeKeys' : 'type', el, v);
-    if (el.type === 'password') step.comment = 'Password field (stored locally in plain text)';
-    send(step);
+    if (el.type === 'password') {
+      // Never store the typed password. Replay fills it from a ${password} variable
+      // (a "Set variable" step or a CSV "password" column via ${row.password}).
+      const step = stepFor('type', el, '${password}');
+      step.comment = 'Password not recorded: add a "Set variable" step named password before this one, or use ${row.password} with CSV';
+      send(step);
+      return;
+    }
+    send(stepFor(rec.keystrokes ? 'typeKeys' : 'type', el, v));
   }
   function flushAll() { for (const el of [...rec.pending]) flushField(el); }
   function updatePill(n) {

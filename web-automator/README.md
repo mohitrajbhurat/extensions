@@ -42,4 +42,4 @@ Record, edit and replay the clicks and form entries you repeat every day in web 
 - Only the top frame is automated. Elements inside iframes and closed shadow roots are not supported.
 - Synthetic events are not `isTrusted`, so a few sites that check for that (some file pickers and anti-bot widgets) will not respond.
 - Browser pages (`chrome://`, web stores) cannot be automated.
-- Scheduled runs need the browser to be open. Typed values, including passwords, are stored in plain text in local extension storage.
+- Scheduled runs need the browser to be open. Typed values are stored in plain text in local extension storage, except passwords: the recorder never saves them and writes a `${password}` placeholder instead, which you fill with a "Set variable" step or a CSV column.
