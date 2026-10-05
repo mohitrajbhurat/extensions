@@ -57,7 +57,7 @@ export const CATEGORIES = {
       u('qt', 'US quarts', 0.946352946, ['qt', 'quart', 'quarts'], 'imperial', ['l']),
       u('gal', 'US gallons', 3.785411784, ['gal', 'gallon', 'gallons', 'us gal'], 'imperial', ['l']),
       u('impgal', 'imperial gallons', 4.54609, ['imp gal', 'imperial gallon', 'imperial gallons', 'uk gallon', 'uk gallons'], 'imperial', ['l', 'gal']),
-      u('ft3', 'cubic feet', 0.028316846592, ['ft3', 'cu ft', 'cubic foot', 'cubic feet'], 'imperial', ['l', 'm3']),
+      u('ft3', 'cubic feet', 28.316846592, ['ft3', 'cu ft', 'cubic foot', 'cubic feet'], 'imperial', ['l', 'm3']),
     ],
   },
   area: {
@@ -146,7 +146,7 @@ export function normalizeUnitText(text) {
     .replace(/\s*\/\s*/g, '/')
     .replace(/^square\s+/, 'square ')
     .replace(/^sq\.?\s*/, 'sq ')
-    .replace(/^cu\.?\s*/, 'cu ')
+    .replace(/^cu(?:\.\s*|\s+)/, 'cu ')
     .replace(/^(?:deg(?:rees?)?\.?\s*|°\s*)(c|f|celsius|fahrenheit)$/, '°$1')
     .replace(/\.$/, '')
     .replace(/\s+/g, ' ');

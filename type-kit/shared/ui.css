@@ -1,0 +1,82 @@
+/* Type Kit shared design tokens and controls (popup + manager). */
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --bg-2: #f7f6f9;
+  --bg-3: #efedf3;
+  --fg: #1d1b22;
+  --muted: #6c6877;
+  --line: #e3e0e8;
+  --accent: #db2777;
+  --accent-2: #be185d;
+  --accent-fg: #ffffff;
+  --accent-soft: #fde7f1;
+  --danger: #c2262d;
+  --ok: #15803d;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 8px 28px rgba(30, 10, 40, .14);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1820;
+    --bg-2: #221f29;
+    --bg-3: #2c2834;
+    --fg: #ecebf1;
+    --muted: #a19dab;
+    --line: #37333f;
+    --accent: #f472b6;
+    --accent-2: #f9a8d4;
+    --accent-fg: #1b0b14;
+    --accent-soft: #46203a;
+    --danger: #f87171;
+    --ok: #4ade80;
+    --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.45 var(--font); }
+button, input, select, textarea { font: inherit; color: inherit; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--fg);
+  border-radius: var(--radius); padding: 6px 12px; cursor: pointer; white-space: nowrap;
+}
+.btn:hover { background: var(--bg-3); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.btn.danger { color: var(--danger); }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.ghost:hover { background: var(--bg-3); }
+.btn.icon { padding: 4px 8px; min-width: 32px; }
+.btn:disabled { opacity: .5; cursor: default; }
+.input, select.input, textarea.input {
+  width: 100%; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 8px 12px; outline: none;
+}
+.input:focus { border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.input:focus-visible { outline-offset: 0; }
+.kbd {
+  font: 12px var(--mono); background: var(--bg-3); border: 1px solid var(--line); border-radius: 6px;
+  padding: 1px 6px; white-space: nowrap;
+}
+.muted { color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.switch input { appearance: none; width: 36px; height: 20px; border-radius: 999px; background: var(--bg-3); border: 1px solid var(--line); position: relative; margin: 0; cursor: pointer; transition: background .15s; }
+.switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--muted); transition: transform .15s, background .15s; }
+.switch input:checked { background: var(--accent); border-color: var(--accent); }
+.switch input:checked::after { transform: translateX(16px); background: var(--accent-fg); }
+.seg { display: inline-flex; background: var(--bg-3); border-radius: var(--radius); padding: 2px; gap: 2px; }
+.seg button { border: 0; background: transparent; padding: 4px 12px; border-radius: 6px; cursor: pointer; color: var(--muted); }
+.seg button[aria-selected="true"], .seg button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.toast {
+  position: fixed; left: 50%; bottom: 16px; transform: translate(-50%, 8px); opacity: 0;
+  background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: var(--radius);
+  transition: opacity .15s, transform .15s; pointer-events: none; z-index: 100; font-size: 13px;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+mark { background: transparent; color: var(--accent); font-weight: 700; }

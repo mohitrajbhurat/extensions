@@ -136,4 +136,32 @@ await test('compress re-save keeps pages', async () => {
   assert.equal((await info(out)).count, 16);
 });
 
+await test('compress keeps AcroForm fields; inspect reports pages', async () => {
+  const doc = await PDFLib.PDFDocument.create();
+  const page = doc.addPage([300, 300]);
+  const tf = doc.getForm().createTextField('name');
+  tf.setText('Ada');
+  tf.addToPage(page, { x: 20, y: 200, width: 150, height: 24 });
+  const out = await ops.compressResave(await doc.save());
+  const back = await PDFLib.PDFDocument.load(out);
+  assert.equal(back.getForm().getTextField('name').getText(), 'Ada');
+  assert.deepEqual(await ops.inspect(out), { pages: 1, encrypted: false });
+});
+
+await test('zip writer produces a valid archive header and CRC', async () => {
+  const { makeZip, crc32 } = await import('../lib/zip.js');
+  assert.equal(crc32(new TextEncoder().encode('123456789')), 0xcbf43926);
+  const zip = makeZip([{ name: 'a.pdf', bytes: a }, { name: 'b.pdf', bytes: b }]);
+  const v = new DataView(zip.buffer);
+  assert.equal(v.getUint32(0, true), 0x04034b50);
+  assert.equal(v.getUint32(zip.length - 22, true), 0x06054b50);
+  assert.equal(v.getUint16(zip.length - 12, true), 2);
+});
+
+await test('wrapText breaks long lines and words', async () => {
+  const { wrapText } = await import('../lib/annogeom.js');
+  const lines = wrapText('hello world foo\nsupercalifragilistic', 11, (s) => s.length);
+  assert.deepEqual(lines, ['hello world', 'foo', 'supercalifr', 'agilistic']);
+});
+
 console.log(`\n${passed} tests passed${process.exitCode ? ', some FAILED' : ''}`);

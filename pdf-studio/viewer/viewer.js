@@ -263,12 +263,19 @@ async function openFile(file) {
   openBytes(await readFile(file), file.name);
 }
 
-async function openUrl(url) {
+async function openUrl(url, { activeTabGrant = false } = {}) {
   let parsed;
   try {
     parsed = new URL(url);
   } catch {
     return showError('Invalid link', url);
+  }
+  // Ask for the site's host permission before fetching, so we never make a doomed cross-origin request.
+  // activeTabGrant: opened from the toolbar button or page menu on that PDF's tab, where activeTab
+  // already lets us read it, so try the download first and only ask if it fails.
+  if (/^https?:$/.test(parsed.protocol) && chrome.permissions && !activeTabGrant) {
+    const has = await chrome.permissions.contains({ origins: [`${parsed.protocol}//${parsed.host}/*`] }).catch(() => false);
+    if (!has) return askHostPermission(url, parsed);
   }
   busy('Downloading PDF…');
   try {
@@ -289,23 +296,28 @@ async function openUrl(url) {
         { label: 'Open extension settings', primary: true, onClick: () => chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` }) }
       ]);
     }
-    const origin = `${parsed.protocol}//${parsed.host}/*`;
-    const has = await chrome.permissions?.contains({ origins: [origin] }).catch(() => false);
-    if (!has && /^https?:$/.test(parsed.protocol)) {
-      return showError(`Allow PDF Studio to read ${parsed.host}?`, 'PDF Studio needs your permission to download this PDF. The file is processed on this computer and is never uploaded anywhere.', [
-        {
-          label: `Allow access to ${parsed.host}`,
-          primary: true,
-          onClick: async () => {
-            const ok = await chrome.permissions.request({ origins: [origin] }).catch(() => false);
-            if (ok) openUrl(url);
-            else toast('Permission was not granted', 'error');
-          }
-        }
-      ]);
+    if (/^https?:$/.test(parsed.protocol)) {
+      const has = await chrome.permissions?.contains({ origins: [`${parsed.protocol}//${parsed.host}/*`] }).catch(() => false);
+      if (!has) return askHostPermission(url, parsed);
     }
     showError("Couldn't download the PDF", `${err.message || err}. Check your connection, or download the file and drop it here.`);
   }
+}
+
+function askHostPermission(url, parsed) {
+  const origin = `${parsed.protocol}//${parsed.host}/*`;
+  return showError(`Allow PDF Studio to read ${parsed.host}?`, 'PDF Studio needs your permission to download this PDF. The file is processed on this computer and is never uploaded anywhere.', [
+    {
+      label: `Allow access to ${parsed.host}`,
+      primary: true,
+      onClick: async () => {
+        // permissions.request must run inside the click's user gesture.
+        const ok = await chrome.permissions.request({ origins: [origin] }).catch(() => false);
+        if (ok) openUrl(url);
+        else toast('Permission was not granted', 'error');
+      }
+    }
+  ]);
 }
 
 function filenameFromResponse(res) {
@@ -1478,7 +1490,7 @@ async function init() {
     if (entry) return openBytes(entry.bytes, entry.name);
     toast('That document is no longer available. Open it again.', 'error');
   } else if (url) {
-    return openUrl(url);
+    return openUrl(url, { activeTabGrant: params.get('from') === 'tab' });
   }
 }
 

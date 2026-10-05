@@ -22,8 +22,9 @@ function looksLikePdfUrl(url) {
   }
 }
 
-function openViewer(pdfUrl, openerTab) {
-  const url = chrome.runtime.getURL(VIEWER) + (pdfUrl ? '?url=' + encodeURIComponent(pdfUrl) : '');
+// fromTab: the PDF is the document of the tab the user invoked us on, so activeTab grants access to it.
+function openViewer(pdfUrl, openerTab, fromTab = false) {
+  const url = chrome.runtime.getURL(VIEWER) + (pdfUrl ? '?url=' + encodeURIComponent(pdfUrl) + (fromTab ? '&from=tab' : '') : '');
   const props = { url };
   if (openerTab && openerTab.index !== undefined) props.index = openerTab.index + 1;
   if (openerTab && openerTab.id !== undefined && openerTab.id >= 0) props.openerTabId = openerTab.id;
@@ -67,7 +68,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       openViewer(info.linkUrl, tab);
       break;
     case 'open-page':
-      openViewer(info.frameUrl || info.pageUrl, tab);
+      openViewer(info.frameUrl || info.pageUrl, tab, true);
       break;
     case 'open-viewer':
       openViewer(null, tab);
@@ -82,7 +83,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // activeTab gives us the tab URL for this click without the broad "tabs" permission.
 chrome.action.onClicked.addListener((tab) => {
   const url = tab && tab.url;
-  openViewer(looksLikePdfUrl(url) ? url : null, tab);
+  openViewer(looksLikePdfUrl(url) ? url : null, tab, true);
 });
 
 chrome.commands.onCommand.addListener((command) => {

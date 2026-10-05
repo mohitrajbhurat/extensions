@@ -20,7 +20,8 @@
     historyExpiryDays: 0,          // 0 = never
     minClipLength: 2,
     maxClipLength: 20000,
-    excludedSites: [],             // hostname globs, e.g. "*.bank.com"
+    excludedSites: [],             // clipboard history ignores these hosts (globs, e.g. "*.bank.com")
+    expanderExcludedSites: [],     // shortcuts do not expand on these hosts
     wpm: 40,                       // typing speed used for "time saved"
     dateFormat: 'YYYY-MM-DD',
     timeFormat: 'HH:mm',

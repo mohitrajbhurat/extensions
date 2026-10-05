@@ -100,7 +100,7 @@ export function uid(prefix = 'r') {
 
 export function clone(v) { return v === undefined ? v : JSON.parse(JSON.stringify(v)); }
 
-export function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'); }
+export function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 function escapeSubstitution(s) { return String(s).replace(/\\/g, '\\\\'); }
 

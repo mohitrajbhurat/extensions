@@ -518,7 +518,7 @@
     const target = e.composedPath ? e.composedPath()[0] : e.target;
     const el = editableOf(target && target.nodeType === 1 ? target : deepActiveElement());
     if (!el) return;
-    if (state.lastExpansion && e.inputType && e.inputType.startsWith('insert')) state.lastExpansion = null;
+    if (state.lastExpansion && e.inputType === 'insertText') state.lastExpansion = null;
     if (!expansionAllowed()) return;
     if (e.isComposing) return;
     const t = e.inputType || 'insertText';
