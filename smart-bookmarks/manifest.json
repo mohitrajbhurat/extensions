@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Bookmarks",
+  "short_name": "Smart Bookmarks",
+  "description": "Organize, search and tag bookmarks, find dead links and duplicates, and keep a read-later list.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Smart Bookmarks",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "bookmarks",
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "favicon"
+  ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "commands": {
+    "_execute_action": {
+      "description": "Open the Smart Bookmarks popup"
+    },
+    "save-for-later": {
+      "description": "Save the current page to Read Later"
+    },
+    "open-manager": {
+      "description": "Open the bookmark manager"
+    }
+  }
+}
