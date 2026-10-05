@@ -308,3 +308,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 
 load().catch(e => toast(e.message, true));
+
+// Schedules start and end on their own: refresh lock state every minute unless the user is editing.
+setInterval(() => {
+  if (!settings || saveTimer && $('#saveState').textContent === 'Saving...') return;
+  const a = document.activeElement;
+  if (a && a.closest && a.closest('#groupList') && a.matches('input, select')) return;
+  renderGroups();
+}, 60000);

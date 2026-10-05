@@ -151,7 +151,7 @@ export function relTime(ts, now = Date.now()) {
 
 export function fmtTime(ts) {
   if (!ts) return '—';
-  return new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+  return new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
 }
 
 export const STATUS_LABEL = {

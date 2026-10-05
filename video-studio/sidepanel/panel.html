@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Studio notes</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="panel.css">
+  <script src="../lib/defaults.js"></script>
+  <script type="module" src="panel.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="head">
+      <div class="head-main">
+        <img class="head-thumb" alt="" hidden>
+        <div class="head-text">
+          <h1 id="video-title">Video Studio</h1>
+          <div id="video-meta" class="muted"></div>
+        </div>
+      </div>
+      <div class="head-actions">
+        <button class="btn ghost icon" id="btn-library" title="Open library"></button>
+        <button class="btn ghost icon" id="btn-settings" title="Settings"></button>
+        <button class="btn ghost icon" id="btn-close" title="Close panel" hidden></button>
+      </div>
+    </header>
+
+    <section id="no-video" class="no-video" hidden>
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h13a1 1 0 0 1 1 1v3.5l4-3v11l-4-3V18a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>
+        <h3 id="nv-title">No video on this tab</h3>
+        <p id="nv-text">Open a lecture or tutorial and press play. Notes you take here are saved to that video.</p>
+        <button class="btn" id="btn-reload" hidden>Reload page</button>
+      </div>
+      <div class="recent">
+        <h2 class="section-title">Recent videos</h2>
+        <ul id="recent-list" class="recent-list"></ul>
+      </div>
+    </section>
+
+    <section id="player" class="player" hidden>
+      <div class="transport">
+        <button class="btn icon" id="btn-play" title="Play or pause"></button>
+        <button class="btn ghost icon small" id="btn-back" title="Rewind"></button>
+        <span id="time" class="time">0:00</span>
+        <button class="btn ghost icon small" id="btn-fwd" title="Advance"></button>
+        <span class="spacer"></span>
+        <div class="speed" role="group" aria-label="Playback speed">
+          <button class="btn small icon" id="btn-slower" title="Slower"></button>
+          <button class="speed-val" id="speed-val" title="Click to toggle 1x">1.00×</button>
+          <button class="btn small icon" id="btn-faster" title="Faster"></button>
+        </div>
+      </div>
+      <div class="progress" id="progress" title="Click to seek"><div class="progress-fill" id="progress-fill"></div><div class="progress-marks" id="progress-marks"></div><div class="progress-loop" id="progress-loop" hidden></div></div>
+      <div class="loop-row">
+        <span class="loop-label">Loop</span>
+        <button class="btn small" id="btn-loop-a" title="Set loop start to current time">A <span id="loop-a">–</span></button>
+        <button class="btn small" id="btn-loop-b" title="Set loop end to current time">B <span id="loop-b">–</span></button>
+        <button class="btn small icon" id="btn-loop-toggle" title="Loop on or off"></button>
+        <button class="btn small ghost" id="btn-loop-clear">Clear</button>
+      </div>
+      <div class="banner" id="banner" hidden></div>
+    </section>
+
+    <nav class="tabs" id="tabs" role="tablist" hidden>
+      <button role="tab" class="tab" id="tab-notes" aria-selected="true" aria-controls="pane-notes">Notes <span class="count" id="count-notes">0</span></button>
+      <button role="tab" class="tab" id="tab-chapters" aria-selected="false" aria-controls="pane-chapters">Bookmarks <span class="count" id="count-chapters">0</span></button>
+      <span class="spacer"></span>
+      <button class="btn ghost small" id="btn-export" title="Export these notes as Markdown"></button>
+    </nav>
+
+    <main class="scroll" id="scroll">
+      <section id="pane-notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+        <ol class="notes" id="notes"></ol>
+        <div class="empty-state" id="notes-empty" hidden>
+          <h3>No notes yet</h3>
+          <p>Type below or press <kbd id="kbd-note">N</kbd> on the video to stamp a note at the current time. Press <kbd id="kbd-shot">P</kbd> to include a screenshot.</p>
+        </div>
+      </section>
+      <section id="pane-chapters" role="tabpanel" aria-labelledby="tab-chapters" hidden>
+        <form class="bm-form" id="bm-form">
+          <input class="input" id="bm-label" placeholder="Bookmark or chapter title" maxlength="300" autocomplete="off">
+          <button class="btn primary" id="bm-add" type="submit">Add at <span id="bm-time">0:00</span></button>
+        </form>
+        <ol class="chapters" id="chapters"></ol>
+        <div class="empty-state" id="chapters-empty" hidden>
+          <h3>No bookmarks yet</h3>
+          <p>Bookmarks mark chapters of the video. Press <kbd id="kbd-bm">B</kbd> on the video or use the form above. You can loop any chapter.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="composer" id="composer" hidden>
+      <div class="composer-top">
+        <button class="ts-btn" id="stamp" title="Note time. Click to restamp to the current time">0:00</button>
+        <span class="muted small" id="composer-hint">Markdown supported</span>
+      </div>
+      <div class="shot-preview" id="shot-preview" hidden>
+        <img id="shot-img" alt="Frame to attach">
+        <button class="btn small icon" id="shot-remove" title="Remove screenshot"></button>
+      </div>
+      <div class="banner warn" id="shot-warn" hidden></div>
+      <textarea class="input" id="note-text" rows="3" placeholder="Write a note…  (Ctrl+Enter to save)"></textarea>
+      <div class="composer-bar">
+        <button class="btn small" id="btn-shot" title="Capture the current frame"></button>
+        <button class="btn small" id="btn-bm-quick" title="Add bookmark at current time"></button>
+        <span class="spacer"></span>
+        <button class="btn primary small" id="btn-save">Save note</button>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

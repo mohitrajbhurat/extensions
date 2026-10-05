@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Senior Software Engineer at Acme Robotics</title>
+<meta property="og:site_name" content="Acme Robotics">
+<style>
+  body { font: 15px system-ui, sans-serif; max-width: 760px; margin: 24px auto; padding: 0 16px; }
+  .q { margin: 12px 0; display: grid; gap: 4px; }
+  .row { display: flex; gap: 12px; } .row > * { flex: 1; }
+  fieldset { border: 1px solid #ddd; border-radius: 8px; margin: 12px 0; }
+  .sr { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  [contenteditable] { border: 1px solid #aaa; min-height: 60px; padding: 4px; }
+</style>
+</head>
+<body>
+<h1>Senior Software Engineer</h1>
+<form id="app" onsubmit="return false">
+  <h2>Personal information</h2>
+  <div class="row">
+    <div class="q"><label for="first_name">First Name *</label><input id="first_name" name="first_name" type="text"></div>
+    <div class="q"><label for="last_name">Last Name *</label><input id="last_name" name="last_name" type="text"></div>
+  </div>
+  <div class="q"><label for="email">Email *</label><input id="email" name="email" type="text"></div>
+  <div class="q"><label for="phone">Phone</label><input id="phone" name="phone" type="tel"></div>
+  <div class="q"><label for="loc">Location (City)</label><input id="loc" name="job_application[location]" type="text"></div>
+  <div class="q"><span>Street</span><input name="addr1" autocomplete="address-line1"></div>
+  <div class="row">
+    <div class="q"><label>City <input name="city_field"></label></div>
+    <div class="q"><label for="st">State</label>
+      <select id="st" name="state"><option value="">Select...</option><option value="CA">California</option><option value="TX">Texas</option><option value="NY">New York</option></select></div>
+    <div class="q"><input name="zip" placeholder="ZIP code"></div>
+  </div>
+  <div class="q"><label for="country">Country</label>
+    <select id="country" name="country"><option value="">--</option><option>Canada</option><option>United States of America</option><option>Mexico</option></select></div>
+
+  <h2>Resume / CV</h2>
+  <div class="q"><label for="resume">Attach resume</label><input id="resume" type="file" name="resume" accept=".pdf,.doc,.docx"></div>
+
+  <h2>Links</h2>
+  <div class="q"><input name="urls[LinkedIn]" placeholder="LinkedIn Profile"></div>
+  <div class="q"><input name="urls[GitHub]" aria-label="GitHub URL"></div>
+  <div class="q"><label for="site">Website</label><input id="site" name="urls[Portfolio]" type="url"></div>
+
+  <h2>Work Experience</h2>
+  <div id="jobs">
+    <div class="job" data-i="0">
+      <div class="row">
+        <div class="q"><label for="exp0c">Company</label><input id="exp0c" name="experience[0][company]"></div>
+        <div class="q"><label for="exp0t">Title</label><input id="exp0t" name="experience[0][title]"></div>
+      </div>
+      <div class="row">
+        <div class="q"><label for="exp0s">Start date</label><input id="exp0s" name="experience[0][start]" placeholder="MM/YYYY"></div>
+        <div class="q"><label for="exp0e">End date</label><input id="exp0e" name="experience[0][end]" placeholder="MM/YYYY"></div>
+      </div>
+      <label><input type="checkbox" name="experience[0][current]"> I currently work here</label>
+    </div>
+  </div>
+  <button type="button" id="addJob">+ Add another position</button>
+
+  <h2>Education</h2>
+  <div class="q"><label for="school">School</label><input id="school" name="education[0][school]"></div>
+  <div class="q"><label for="degree">Degree</label>
+    <select id="degree" name="education[0][degree]"><option value="">Select</option><option>High School</option><option>Associate's Degree</option><option>Bachelor's Degree</option><option>Master's Degree</option><option>Doctor of Philosophy (Ph.D.)</option></select></div>
+  <div class="q"><label for="disc">Discipline</label><input id="disc" name="education[0][discipline]"></div>
+  <div class="row">
+    <div class="q"><label for="gm">End date month</label><select id="gm" name="education[0][end_month]"><option value="">Month</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+    <div class="q"><label for="gy">End date year</label><select id="gy" name="education[0][end_year]"><option value="">Year</option><option>2014</option><option>2015</option><option>2016</option><option>2017</option><option>2018</option></select></div>
+  </div>
+
+  <h2>Questions</h2>
+  <fieldset>
+    <legend>Are you legally authorized to work in the United States?</legend>
+    <label><input type="radio" name="q_auth" value="1"> Yes</label>
+    <label><input type="radio" name="q_auth" value="0"> No</label>
+  </fieldset>
+  <div class="q"><label for="spons">Will you now or in the future require sponsorship for employment visa status (e.g. H-1B)?</label>
+    <select id="spons" name="q_spons"><option value="">Select...</option><option>Yes</option><option>No</option></select></div>
+  <div class="q"><label for="why">Why do you want to work at Acme Robotics?</label><textarea id="why" name="q_why" rows="4"></textarea></div>
+  <div class="q"><label for="salary">What are your salary expectations?</label><input id="salary" name="q_salary"></div>
+  <div class="q"><label for="start">Earliest start date</label><input id="start" type="date" name="q_start"></div>
+  <div class="q"><label for="hear">How did you hear about this job?</label>
+    <select id="hear" name="q_hear"><option value="">Select</option><option>Job board</option><option>LinkedIn</option><option>Employee referral</option></select></div>
+  <div class="q"><span id="extraLbl">Is there anything else you'd like us to know?</span><div contenteditable="true" aria-labelledby="extraLbl"></div></div>
+
+  <h3>React-controlled field</h3>
+  <div class="q"><label for="react_pref">Preferred First Name</label><input id="react_pref" name="preferredName"><small>State: <span id="react_state"></span></small></div>
+
+  <h3>Web component</h3>
+  <pronoun-field></pronoun-field>
+  <closed-field></closed-field>
+
+  <h2>Voluntary Self-Identification</h2>
+  <div class="q"><label for="gender">Gender</label><select id="gender" name="gender"><option value="">Please select</option><option>Male</option><option>Female</option><option>Decline To Self Identify</option></select></div>
+  <div class="q"><label for="race">Race</label><select id="race" name="race"><option value="">Please select</option><option>Asian (Not Hispanic or Latino)</option><option>White (Not Hispanic or Latino)</option><option>Two or More Races</option><option>Decline To Self Identify</option></select></div>
+  <fieldset><legend>Veteran Status</legend>
+    <label><input type="radio" name="vet" value="a"> I am not a protected veteran</label>
+    <label><input type="radio" name="vet" value="b"> I identify as one or more of the classifications of protected veteran</label>
+    <label><input type="radio" name="vet" value="c"> I don't wish to answer</label>
+  </fieldset>
+
+  <h2>Embedded</h2>
+  <iframe id="frame" title="extra" style="width:100%;height:160px;border:1px solid #ccc"
+    srcdoc="<label for=g>GitHub</label><input id=g name=gh><br><label for=yrs>Years of experience</label><input id=yrs name=years type=number>"></iframe>
+
+  <button type="submit">Submit application</button>
+</form>
+
+<script>
+  // Mimic React's value tracker: an instance-level value property that remembers the last value
+  // set through it; React only fires onChange when the DOM value differs from the tracked one.
+  (function () {
+    const el = document.getElementById('react_pref');
+    const proto = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    let tracked = '';
+    Object.defineProperty(el, 'value', { configurable: true, get() { return proto.get.call(this); }, set(v) { tracked = String(v); proto.set.call(this, v); } });
+    el.addEventListener('input', () => {
+      const real = proto.get.call(el);
+      if (real !== tracked) { tracked = real; document.getElementById('react_state').textContent = real; }
+    });
+  })();
+  customElements.define('pronoun-field', class extends HTMLElement {
+    constructor() { super(); const r = this.attachShadow({ mode: 'open' }); r.innerHTML = '<label for="p">Pronouns</label> <input id="p" name="pronouns">'; }
+  });
+  customElements.define('closed-field', class extends HTMLElement {
+    constructor() { super(); const r = this.attachShadow({ mode: 'closed' }); r.innerHTML = '<label for="m">Middle name</label> <input id="m" name="middle_name">'; window.__closedRoot = r; }
+  });
+  let n = 1;
+  document.getElementById('addJob').addEventListener('click', () => {
+    const i = n++;
+    const div = document.createElement('div');
+    div.className = 'job';
+    div.innerHTML = `<h4>Position ${i + 1}</h4><div class="row"><div class="q"><label for="exp${i}c">Company</label><input id="exp${i}c" name="experience[${i}][company]"></div>
+      <div class="q"><label for="exp${i}t">Title</label><input id="exp${i}t" name="experience[${i}][title]"></div></div>
+      <div class="row"><div class="q"><label for="exp${i}s">Start date</label><input id="exp${i}s" name="experience[${i}][start]" placeholder="MM/YYYY"></div>
+      <div class="q"><label for="exp${i}e">End date</label><input id="exp${i}e" name="experience[${i}][end]" placeholder="MM/YYYY"></div></div>
+      <label><input type="checkbox" name="experience[${i}][current]"> I currently work here</label>`;
+    setTimeout(() => document.getElementById('jobs').appendChild(div), 60);
+  });
+</script>
+</body>
+</html>

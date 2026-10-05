@@ -182,3 +182,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 chrome.tabs.onRemoved.addListener((tabId) => { chrome.storage.session.remove(sessionKeyFor(tabId)); });
+
+// Handy for debugging from the service worker console and for automated tests.
+globalThis.SmartAutofill = { preview, fill: (tabId, profileId, usePreview) => fill(tabId, profileId, usePreview), undo, detect };

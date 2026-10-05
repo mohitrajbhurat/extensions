@@ -2,7 +2,15 @@
 // ui/palette-ui.js. Running it again toggles the palette.
 (function () {
   'use strict';
-  if (window.__commandPaletteOverlay) { window.__commandPaletteOverlay.toggle(); return; }
+  const prev = window.__commandPaletteOverlay;
+  if (prev) {
+    let alive = false;
+    try { alive = prev.alive(); } catch (e) { alive = false; }
+    if (alive) { prev.toggle(); return; }
+    // Left over from before an extension reload: clean up and start fresh.
+    try { prev.close({}); } catch (e) { /* ignore */ }
+    document.querySelectorAll('command-palette-overlay, command-palette-toast').forEach(n => n.remove());
+  }
 
   const UI = globalThis.CommandPaletteUI;
   const ISOLATE_EVENTS = ['keydown', 'keyup', 'keypress', 'input', 'beforeinput', 'paste', 'copy', 'cut',
@@ -92,6 +100,7 @@
   }
 
   window.__commandPaletteOverlay = {
+    alive() { return !!(chrome.runtime && chrome.runtime.id); },
     toggle() { if (isOpen()) close({}); else open(); },
     open,
     close,

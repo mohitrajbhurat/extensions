@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Language Immersion",
+  "short_name": "Immersion",
+  "description": "Learn a language while you browse: swaps a few words on each page into Spanish, French, German and more, with review quizzes.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Language Immersion",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_page": "options/options.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["lib/common.js", "content/engine.js", "content/ui.js", "content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "commands": {
+    "toggle-site": {
+      "description": "Pause or resume immersion on the current site"
+    },
+    "open-review": {
+      "description": "Open the vocabulary review page"
+    }
+  }
+}

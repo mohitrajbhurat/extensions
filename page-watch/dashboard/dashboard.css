@@ -70,6 +70,7 @@ body { display: flex; flex-direction: column; }
 .diff { font-family: var(--mono); font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; max-height: 64vh; overflow: auto; }
 .diff ins { background: var(--add-bg); color: var(--add-text); text-decoration: none; border-radius: 2px; }
 .diff del { background: var(--del-bg); color: var(--del-text); text-decoration: line-through; text-decoration-thickness: 1px; border-radius: 2px; }
+.diff del + ins, .diff ins + del { margin-left: 2px; }
 .diff .fold { display: block; width: 100%; margin: 4px 0; font: 12px var(--font); color: var(--muted); background: var(--surface-2); border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 4px; cursor: pointer; }
 .diff .fold:hover { color: var(--text); }
 .diff .empty { font-family: var(--font); color: var(--muted); }

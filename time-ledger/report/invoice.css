@@ -1,0 +1,38 @@
+body { background: var(--surface-2); }
+.toolbar { display: flex; gap: 12px; align-items: center; padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; flex-wrap: wrap; }
+.grow { flex: 1; }
+.paper {
+  --ink: #111827; --soft: #6b7280; --line: #e5e7eb;
+  max-width: 860px; margin: 24px auto; padding: 48px 56px; background: #fff; color: var(--ink);
+  border-radius: 8px; box-shadow: 0 2px 24px rgba(0,0,0,.08); font-size: 13px;
+}
+.paper .head { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; }
+.paper h1 { font-size: 28px; letter-spacing: -.01em; }
+.paper .soft { color: var(--soft); }
+.paper .from { white-space: pre-line; }
+.paper .meta { text-align: right; }
+.paper .meta div { margin-bottom: 2px; }
+.paper .parties { display: flex; gap: 48px; margin: 32px 0 24px; }
+.paper .parties h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--soft); margin-bottom: 4px; }
+.paper .parties p { white-space: pre-line; }
+.paper table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.paper th { color: var(--soft); border-bottom: 2px solid var(--ink); font-size: 11px; text-align: left; padding: 8px 6px; }
+.paper td { border-bottom: 1px solid var(--line); padding: 8px 6px; vertical-align: top; color: var(--ink); }
+.paper tbody tr:hover { background: none; }
+.paper .num { text-align: right; font-variant-numeric: tabular-nums; font-family: inherit; }
+.paper .totals { margin-left: auto; width: 320px; margin-top: 16px; }
+.paper .totals td { border: none; padding: 4px 6px; }
+.paper .totals tr.grand td { border-top: 2px solid var(--ink); font-size: 16px; font-weight: 700; padding-top: 8px; }
+.paper h2 { font-size: 15px; margin: 32px 0 4px; color: var(--ink); }
+.paper .notes { margin-top: 32px; white-space: pre-line; color: var(--soft); }
+.paper .dot { width: 8px; height: 8px; margin-right: 6px; vertical-align: middle; }
+.paper .day td { background: #f9fafb; font-weight: 600; }
+.paper .footer { margin-top: 48px; font-size: 11px; color: var(--soft); text-align: center; }
+@media print {
+  @page { margin: 16mm; }
+  body { background: #fff; }
+  .no-print { display: none !important; }
+  .paper { box-shadow: none; margin: 0; padding: 0; max-width: none; border-radius: 0; }
+  tr { break-inside: avoid; }
+}
+@media (max-width: 700px) { .paper { padding: 24px; margin: 0; border-radius: 0; } .paper .parties { flex-direction: column; gap: 16px; } }

@@ -68,12 +68,13 @@
       const t = norm(n.data);
       if (!t) continue;
       if (!isRe && !want.includes(t)) continue;
+      // climb to the deepest element whose whole text equals the wanted text
       let el = n.parentElement, best = null;
-      while (el && el !== document.body) {
-        if (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(el.tagName)) { best = null; break; }
+      while (el && el !== document.documentElement) {
+        if (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(el.tagName)) break;
         const txt = norm(el.innerText !== undefined && el.offsetParent !== null ? el.innerText : el.textContent);
-        if (textMatches(txt, want)) best = el;
-        else if (txt.length > want.length || best) break;
+        if (textMatches(txt, want)) { best = el; break; }
+        if (!isRe && txt.length > want.length) break;
         el = el.parentElement;
       }
       if (best) found.add(best.closest('a,button,[role=button],[role=link],[role=menuitem],[role=tab],[role=option],summary,label') || best);
@@ -293,6 +294,9 @@
       const c = el.control;
       if (c && (isToggle(c) || isTextField(c) || c.tagName === 'SELECT')) return;
     }
+    // Enter in a form field triggers a synthetic click on the default button (implicit submission);
+    // the pressKey step already replays that, so skip the click.
+    if (e.detail === 0 && rec.lastEnter && Date.now() - rec.lastEnter.t < 500 && el.form && el.form === rec.lastEnter.form) return;
     flushAll();
     send(stepFor('click', el));
   }
@@ -334,6 +338,7 @@
     const el = e.composedPath()[0];
     if (e.key === 'Enter' && !e.isComposing && el && el.tagName !== 'TEXTAREA' && !el.isContentEditable && (el.tagName === 'INPUT' || el.tagName === 'SELECT')) {
       if (el.tagName === 'INPUT' && isTextField(el)) flushField(el);
+      rec.lastEnter = { form: el.form || null, t: Date.now() };
       send(stepFor('pressKey', el, 'Enter'));
       return;
     }

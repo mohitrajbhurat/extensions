@@ -129,11 +129,16 @@ export function pickFiles({ accept = '', multiple = false } = {}) {
 // ---------- Hand-off store (IndexedDB) to pass a document between viewer and tools pages ----------
 const DB_NAME = 'pdf-studio';
 const STORE = 'handoff';
+const DRAFTS = 'drafts';
 
 function openDb() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    const req = indexedDB.open(DB_NAME, 2);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      if (!db.objectStoreNames.contains(DRAFTS)) db.createObjectStore(DRAFTS);
+    };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
@@ -177,6 +182,33 @@ export async function takeHandoff(key) {
   });
   db.close();
   return result;
+}
+
+// ---------- Drafts: unsaved annotations per document fingerprint ----------
+async function draftOp(mode, fn) {
+  const db = await openDb();
+  try {
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(DRAFTS, mode);
+      const req = fn(tx.objectStore(DRAFTS));
+      tx.oncomplete = () => resolve(req && req.result);
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally {
+    db.close();
+  }
+}
+
+export function getDraft(key) {
+  return draftOp('readonly', (s) => s.get(key)).catch(() => null);
+}
+
+export function putDraft(key, value) {
+  return draftOp('readwrite', (s) => s.put({ ...value, at: Date.now() }, key)).catch(() => {});
+}
+
+export function deleteDraft(key) {
+  return draftOp('readwrite', (s) => s.delete(key)).catch(() => {});
 }
 
 /** Open a page of this extension with a document handed over. page: 'viewer' | 'tools' */

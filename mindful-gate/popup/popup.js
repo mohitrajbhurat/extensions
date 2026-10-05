@@ -85,6 +85,7 @@ async function renderSite() {
   const status = $('#siteStatus');
   const detail = $('#siteDetail');
   status.className = 'pill';
+  status.classList.remove('hidden');
   let url = tab && tab.url || '';
   // On our own gate/block page, describe the site behind it.
   if (url.startsWith(chrome.runtime.getURL(''))) {
@@ -95,6 +96,7 @@ async function renderSite() {
   if (!st.trackable) {
     $('#siteTitle').textContent = 'No website';
     status.textContent = '';
+    status.classList.add('hidden');
     detail.textContent = 'Open a website to add it to your distraction list.';
     return;
   }

@@ -231,11 +231,34 @@ export async function exportAll() {
 }
 
 export async function importAll(payload, { replace = false } = {}) {
-  if (!payload || payload.app !== 'time-ledger' || !payload.data) throw new Error('This file is not a Time Ledger backup.');
-  if (replace) await area().clear();
-  const data = { ...payload.data };
-  delete data.engine;
-  await set(data);
+  if (!payload || payload.app !== 'time-ledger' || !payload.data || typeof payload.data !== 'object') {
+    throw new Error('This file is not a Time Ledger backup.');
+  }
+  const incoming = { ...payload.data };
+  delete incoming.engine;
+  if (replace) {
+    await area().clear();
+    await set(incoming);
+    return;
+  }
+  // Merge: lists by id, activity by start time, maps by key; keep current settings.
+  const current = await get(null);
+  const patch = {};
+  for (const [k, v] of Object.entries(incoming)) {
+    if (LISTS.includes(k) && Array.isArray(v)) {
+      const byId = new Map((Array.isArray(current[k]) ? current[k] : []).map((x) => [x.id, x]));
+      for (const x of v) if (x && x.id && !byId.has(x.id)) byId.set(x.id, x);
+      patch[k] = [...byId.values()];
+    } else if (k.startsWith('act:') && Array.isArray(v)) {
+      const seen = new Set((current[k] || []).map((x) => x.start + '|' + x.url));
+      patch[k] = [...(current[k] || []), ...v.filter((x) => !seen.has(x.start + '|' + x.url))].sort((a, b) => a.start - b.start);
+    } else if (k === 'categoryMap' && v && typeof v === 'object') {
+      patch[k] = { ...v, ...(current[k] || {}) };
+    } else if (!(k in current) && k !== 'timer') {
+      patch[k] = v;
+    }
+  }
+  await set(patch);
 }
 
 /** Ask the service worker to do something; resolves with its reply. */

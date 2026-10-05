@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Page Assistant",
+  "short_name": "Page Assistant",
+  "description": "Summarize, question and study any article or PDF with on-device AI, plus a private offline fallback.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Page Assistant (Ctrl+Shift+Y)",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "sidepanel/sidepanel.html"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus", "sidePanel"],
+  "optional_host_permissions": ["<all_urls>"],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Open Page Assistant"
+    },
+    "summarize-page": {
+      "description": "Open Page Assistant and summarize the page"
+    },
+    "explain-selection": {
+      "description": "Explain the selected text"
+    }
+  }
+}

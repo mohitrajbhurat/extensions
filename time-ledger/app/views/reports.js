@@ -1,5 +1,5 @@
 // Reports: date range, filters, charts, weekly timesheet grid, billing, exports.
-import { total, totalsBy, timesheet, billing, itemsToCSV, clip } from '../../lib/report.js';
+import { totalsBy, timesheet, billing, itemsToCSV, clip } from '../../lib/report.js';
 import { fmtDur, fmtHours, fmtMoney, fmtDate, escapeHtml, startOfDay, addDays, startOfWeek, startOfMonth, addMonths, dayKey, parseDay } from '../../lib/util.js';
 import { stackedBars, donut, PALETTE } from '../../shared/charts.js';
 import { toast, download, loadRange, projectName, projectColor } from '../../shared/ui.js';
@@ -201,4 +201,3 @@ function timesheetCSV(ts, data) {
   return lines.join('\r\n') + '\r\n';
 }
 
-export { total };

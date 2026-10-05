@@ -6,7 +6,7 @@ function sourceHtml(card) {
   let host = card.source.url;
   try { host = new URL(card.source.url).hostname.replace(/^www\./, ''); } catch {}
   const safe = /^https?:|^file:/i.test(card.source.url) ? escapeHtml(card.source.url) : '#';
-  return `<span class="src">Source: <a href="${safe}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.source.title || host)}</a> · ${escapeHtml(host)}</span>`;
+  return `<span class="src">Source: <a href="${safe}" target="_blank" rel="noopener noreferrer">${escapeHtml(card.source.title || host)}</a>${host && card.source.title ? ' · ' + escapeHtml(host) : ''}</span>`;
 }
 
 export function renderFront(card) {

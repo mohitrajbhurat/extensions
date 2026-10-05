@@ -1,0 +1,31 @@
+/* Language Immersion - replaced word styling. Kept subtle and inheriting the page's typography. */
+span.lim-w {
+  --lim-accent: 15, 118, 110;
+  font: inherit !important;
+  color: inherit !important;
+  cursor: help !important;
+  border-radius: 3px !important;
+  text-decoration: none !important;
+  border-bottom: 1.5px dotted rgba(var(--lim-accent), .75) !important;
+  background: rgba(var(--lim-accent), .07) !important;
+  padding: 0 1px !important;
+  transition: background-color .15s ease;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+span.lim-w:hover { background: rgba(var(--lim-accent), .16) !important; }
+span.lim-w[data-lim-state="learning"] { --lim-accent: 217, 119, 6; }
+span.lim-w[data-lim-state="known"] { --lim-accent: 16, 150, 105; border-bottom-style: solid !important; border-bottom-width: 1px !important; background: transparent !important; }
+span.lim-w.lim-w--orig { border-bottom-style: dashed !important; background: transparent !important; }
+
+html[data-lim-style="tint"] span.lim-w { border-bottom: none !important; background: rgba(var(--lim-accent), .14) !important; }
+html[data-lim-style="minimal"] span.lim-w { background: transparent !important; border-bottom: 1px dotted rgba(var(--lim-accent), .55) !important; }
+
+@media (prefers-color-scheme: dark) {
+  span.lim-w { --lim-accent: 45, 212, 191; }
+  span.lim-w[data-lim-state="learning"] { --lim-accent: 251, 191, 36; }
+  span.lim-w[data-lim-state="known"] { --lim-accent: 52, 211, 153; }
+}
+@media print {
+  span.lim-w { background: none !important; border: none !important; }
+}

@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Price Tracker",
+  "short_name": "Price Tracker",
+  "description": "Track prices on any store, see the full price history and find out whether a sale is real. Alerts for target prices, lows and restocks.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Price Tracker",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["storage", "alarms", "notifications", "offscreen", "activeTab", "scripting"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "commands": {
+    "_execute_action": {
+      "description": "Open Price Tracker for the current page"
+    },
+    "open-dashboard": {
+      "description": "Open the Price Tracker dashboard"
+    }
+  }
+}

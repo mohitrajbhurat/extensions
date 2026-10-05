@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Options · Citation Builder</title>
+<link rel="icon" href="../icons/icon32.png">
+<link rel="stylesheet" href="../shared/base.css">
+<link rel="stylesheet" href="options.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="head">
+    <img src="../icons/icon48.png" width="40" height="40" alt="">
+    <div>
+      <h1>Citation Builder options</h1>
+      <p class="muted">Settings sync with your browser profile. Citations stay on this device.</p>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>Formatting</h2>
+    <div class="row">
+      <label for="style">Default citation style</label>
+      <select id="style"></select>
+    </div>
+    <div class="row toggle">
+      <div>
+        <label for="sentence-case">Convert titles to sentence case for APA</label>
+        <p class="hint">APA uses sentence case for article and book titles. Words with inner capitals and acronyms (DNA, iPhone) are kept, and titles that already look sentence-cased are left alone. Turn off if proper nouns are being lowercased.</p>
+      </div>
+      <input type="checkbox" id="sentence-case" role="switch">
+    </div>
+    <div class="row">
+      <label for="theme">Appearance</label>
+      <select id="theme">
+        <option value="auto">Match system</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+    <div class="sample">
+      <div class="eyebrow">Sample</div>
+      <div id="sample" class="citation hanging"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Online lookup <span class="badge">Off by default</span></h2>
+    <div class="row toggle">
+      <div>
+        <label for="online">Fill in details from DOI, ISBN and arXiv IDs</label>
+        <p class="hint">When on, Citation Builder may send the identifier (and nothing else) to <b>api.crossref.org</b>, <b>openlibrary.org</b> or <b>export.arxiv.org</b> to fetch the title, authors and publication details. These public services need no account. Turning this on asks for permission to contact those three sites only.</p>
+      </div>
+      <input type="checkbox" id="online" role="switch">
+    </div>
+    <p id="online-status" class="hint" aria-live="polite"></p>
+  </section>
+
+  <section class="card">
+    <h2>Your data</h2>
+    <p class="hint" id="data-summary">Loading…</p>
+    <div class="actions">
+      <button class="btn" id="backup" type="button">Download backup (.json)</button>
+      <label class="btn" for="restore-file">Restore from backup…</label>
+      <input type="file" id="restore-file" accept=".json,application/json" class="sr-only">
+      <button class="btn btn-danger" id="clear" type="button">Delete all citations</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Keyboard shortcuts</h2>
+    <p class="hint">Set shortcuts for “Cite the current page” and “Open the bibliography manager” at <code>chrome://extensions/shortcuts</code>.</p>
+    <ul class="keys">
+      <li><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> Save the citation (popup and editor)</li>
+      <li><span class="kbd">/</span> Search the bibliography</li>
+      <li><span class="kbd">N</span> Add a citation by hand</li>
+      <li><span class="kbd">Ctrl</span> + <span class="kbd">A</span> Select all shown citations; <span class="kbd">Delete</span> removes the selection (with undo)</li>
+    </ul>
+  </section>
+  <p class="footer"><button class="link-btn" id="open-manager" type="button">Open the bibliography manager →</button></p>
+</main>
+<script type="module" src="options.js"></script>
+</body>
+</html>

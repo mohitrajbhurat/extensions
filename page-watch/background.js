@@ -379,11 +379,14 @@ async function startPicker(tabId) {
 
 async function onPickDone(draft, sender) {
   await chrome.storage.local.set({ draft: { ...draft, createdAt: Date.now() } });
-  try {
-    await chrome.action.openPopup(sender && sender.tab ? { windowId: sender.tab.windowId } : undefined);
-  } catch {
-    await openDashboard('new');
-  }
+  // Show the editor: the toolbar popup when the browser allows opening it, else the dashboard.
+  const opened = chrome.action.openPopup
+    ? await Promise.race([
+      chrome.action.openPopup(sender && sender.tab ? { windowId: sender.tab.windowId } : undefined).then(() => true, () => false),
+      sleep(2000).then(() => false),
+    ])
+    : false;
+  if (!opened) await openDashboard('new');
 }
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
@@ -465,7 +468,10 @@ async function preview({ url, selector, mode, renderWait }) {
 
 const handlers = {
   'pick:start': async (msg) => { await startPicker(msg.tabId); return { ok: true }; },
-  'pick:done': async (msg, sender) => { await onPickDone(msg.draft, sender); return { ok: true }; },
+  'pick:done': async (msg, sender) => {
+    onPickDone(msg.draft, sender).catch(() => {});
+    return { ok: true };
+  },
   'monitor:save': async (msg) => ({ monitor: await saveMonitor(msg.monitor) }),
   'monitor:delete': async (msg) => { await deleteMonitor(msg.id); return { ok: true }; },
   'monitor:check': async (msg) => runCheck(msg.id, { manual: true }),

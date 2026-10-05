@@ -101,10 +101,10 @@ function copyExt() {
       const [dj] = await Promise.all([res.waitForEvent('download'), res.locator('[data-export="json"]').click()]);
       const json = JSON.parse(fs.readFileSync(await dj.path(), 'utf8'));
       check('export: JSON array of 25 objects', Array.isArray(json) && json.length === 25 && 'City' in json[0]);
-      await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(res.url()).origin });
+      await res.evaluate(() => { navigator.clipboard.writeText = async (t) => { window.__clip = t; }; });
       await res.locator('#copyTsv').click();
       await res.waitForTimeout(300);
-      const clip = await res.evaluate(() => navigator.clipboard.readText());
+      const clip = await res.evaluate(() => window.__clip || '');
       check('export: TSV copied to clipboard', clip.split('\n').length === 26 && clip.split('\n')[0].includes('\t'), clip.split('\n')[0]);
       await res.close(); await page.close();
     }
@@ -150,8 +150,7 @@ function copyExt() {
       check('cards: still on page 1 (background fetch)', page.url().endsWith('cards-1.html'));
       // Re-run the saved recipe: dedupe must keep counts stable within one run
       await res.close();
-      await inject(page, { type: 'ps:open', action: 'recipe', recipe: recipes[0], run: true });
-      const res2 = await waitResults();
+      const [res2] = await Promise.all([waitResults(), inject(page, { type: 'ps:open', action: 'recipe', recipe: recipes[0], run: true })]);
       await res2.waitForTimeout(300);
       check('recipes: re-run from saved recipe gives 36 rows', (await res2.locator('#tbody tr').count()) === 36);
       await res2.close(); await page.close();
@@ -161,8 +160,8 @@ function copyExt() {
     {
       const page = await open('cards-2.html');
       await inject(page, { type: 'ps:open', action: 'manual' });
-      await page.locator('.price').nth(3).hover();
-      await page.locator('.price').nth(3).click();
+      await page.locator('.price').nth(0).hover();
+      await page.locator('.price').nth(0).click();
       const lvl = await ui(page, '#levelInfo').innerText();
       check('manual: click on a price generalizes to the 12 cards', /^12 matches/.test(lvl) && /div/.test(lvl), lvl);
       check('manual: page click was not followed', page.url().endsWith('cards-2.html'));
@@ -203,6 +202,38 @@ function copyExt() {
       await res.close(); await page.close();
     }
 
+    // 4b. Infinite scroll
+    {
+      const page = await open('scroll.html');
+      await inject(page, { type: 'ps:open', action: 'detect' });
+      const label = await ui(page, '#candLabel').innerText();
+      check('scroll: detects post list', /10 items/.test(label), label);
+      await ui(page, '#pgMode').selectOption('scroll');
+      await ui(page, '#maxPages').fill('10'); await ui(page, '#maxPages').dispatchEvent('change');
+      await ui(page, '#delay').fill('0.5'); await ui(page, '#delay').dispatchEvent('change');
+      const [res] = await Promise.all([waitResults(), ui(page, '#scrapeBtn').click()]);
+      await res.waitForTimeout(300);
+      const rows = await res.locator('#tbody tr').count();
+      check('scroll: infinite scroll collected all 40 posts', rows === 40, `${rows}`);
+      await res.close(); await page.close();
+    }
+
+    // 4c. "Next" button that reloads the page: service worker re-injects and resumes
+    {
+      const page = await open('nav-1.html');
+      await inject(page, { type: 'ps:open', action: 'detect' });
+      check('reload: detects results list', /6 items/.test(await ui(page, '#candLabel').innerText()));
+      await ui(page, '#pgMode').selectOption('next');
+      await ui(page, '#autoNext').click();
+      await ui(page, '#delay').fill('0.2'); await ui(page, '#delay').dispatchEvent('change');
+      const [res] = await Promise.all([waitResults(), ui(page, '#scrapeBtn').click()]);
+      await res.waitForTimeout(300);
+      const rows = await res.locator('#tbody tr').count();
+      check('reload: crawl resumed across full page loads, 18 rows', rows === 18, `${rows}`);
+      check('reload: ended on page 3', page.url().endsWith('nav-3.html'));
+      await res.close(); await page.close();
+    }
+
     // 5. Recipe import/export round trip in the manager page
     {
       const id = sw.url().split('/')[2];
@@ -221,7 +252,7 @@ function copyExt() {
       check('manager: import recipes JSON', count === 2, `${count}`);
       await page.locator('#tabResults').click();
       const resCount = await page.locator('#resultRows tr').count();
-      check('manager: results history listed', resCount >= 4, `${resCount}`);
+      check('manager: results history listed', resCount >= 6, `${resCount}`);
       await page.close();
     }
   } catch (e) {

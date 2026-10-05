@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Test Form</title>
+<style>body{font:14px system-ui;margin:24px;max-width:640px} label{display:block;margin:8px 0 2px} .spacer{height:1200px}</style>
+</head>
+<body>
+  <h1>Signup form</h1>
+  <form id="signup" action="result.html" method="get">
+    <label for="fullName">Full name</label>
+    <input id="fullName" name="fullName" autocomplete="off">
+    <label>Email <input name="email" type="email" data-testid="email-input"></label>
+    <label for="r9f8a7b6c5d4">Company</label>
+    <input id="r9f8a7b6c5d4" name="company" aria-label="Company name">
+    <label for="plan">Plan</label>
+    <select id="plan" name="plan">
+      <option value="">Choose…</option>
+      <option value="free">Free</option>
+      <option value="pro">Professional</option>
+      <option value="ent">Enterprise</option>
+    </select>
+    <label><input type="checkbox" name="terms" value="yes" id="terms"> I accept the terms</label>
+    <fieldset><legend>Contact</legend>
+      <label><input type="radio" name="contact" value="email"> By email</label>
+      <label><input type="radio" name="contact" value="phone"> By phone</label>
+    </fieldset>
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes"></textarea>
+    <p><button type="submit" class="btn btn-primary">Create account</button></p>
+  </form>
+  <div id="late" hidden>Loaded later</div>
+  <div class="spacer"></div>
+  <p id="bottom">Bottom of page</p>
+  <script>setTimeout(() => { document.getElementById('late').hidden = false; }, 800);</script>
+</body>
+</html>

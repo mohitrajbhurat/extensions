@@ -57,6 +57,7 @@
   const CSS = `
 :host { all: initial; }
 .cp-root, .cp-root * { box-sizing: border-box; }
+.cp-root [hidden] { display: none !important; }
 .cp-root {
   --cp-bg: #ffffff; --cp-fg: #1b1b1f; --cp-muted: #6b6b76; --cp-faint: #9a9aa5;
   --cp-border: rgba(0,0,0,.09); --cp-sel: #eef0ff; --cp-sel-border: rgba(91,91,214,.28);

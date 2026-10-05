@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Video Studio</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="popup.css">
+  <script src="../lib/defaults.js"></script>
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" width="24" height="24" alt="">
+    <strong>Video Studio</strong>
+    <span class="spacer"></span>
+    <button class="btn ghost icon small" id="btn-settings" title="Settings"></button>
+  </header>
+
+  <section class="card" id="video-card" hidden>
+    <div class="v-title" id="v-title"></div>
+    <div class="v-meta muted" id="v-meta"></div>
+    <div class="speed-row">
+      <button class="btn icon" id="btn-slower" title="Slower"></button>
+      <button class="speed-big" id="speed" title="Click to toggle 1x">1.00×</button>
+      <button class="btn icon" id="btn-faster" title="Faster"></button>
+    </div>
+    <input type="range" id="speed-range" min="0" max="1000" step="1" aria-label="Playback speed">
+    <div class="presets" id="presets"></div>
+    <label class="custom">Custom <input class="input" id="speed-custom" type="number" min="0.07" max="16" step="0.05" aria-label="Custom speed"></label>
+  </section>
+
+  <section class="card empty" id="no-video" hidden>
+    <strong id="nv-title">No video on this tab</strong>
+    <p class="muted" id="nv-text">Play a video on any site to control its speed and take notes.</p>
+  </section>
+
+  <div class="actions">
+    <button class="btn primary" id="btn-notes"></button>
+    <button class="btn" id="btn-shot"></button>
+    <button class="btn" id="btn-library"></button>
+  </div>
+
+  <label class="switch-row" id="site-row" hidden>
+    <span>Speed controller on <strong id="site-name"></strong></span>
+    <input type="checkbox" id="site-toggle" role="switch">
+  </label>
+
+  <footer class="keys muted" id="keys"></footer>
+</body>
+</html>

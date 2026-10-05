@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Citation Builder",
+  "short_name": "Citations",
+  "description": "Cite any page in APA, MLA, Chicago, Harvard, IEEE, BibTeX or RIS, and keep project bibliographies. Works offline.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Cite this page",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "optional_host_permissions": [
+    "https://api.crossref.org/*",
+    "https://openlibrary.org/*",
+    "https://export.arxiv.org/*"
+  ],
+  "commands": {
+    "_execute_action": {
+      "description": "Cite the current page"
+    },
+    "open-manager": {
+      "description": "Open the bibliography manager"
+    }
+  }
+}

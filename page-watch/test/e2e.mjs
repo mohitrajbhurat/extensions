@@ -14,6 +14,8 @@ import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
+const SHOTS = process.env.SHOTS; // optional folder for screenshots
+const shot = (page, name) => (SHOTS ? page.screenshot({ path: path.join(SHOTS, name + '.png') }) : null);
 const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // ----------------------------------------------------------------- local site
@@ -120,6 +122,7 @@ test('picker: hover, click, parent/child, confirm saves a draft', async () => {
   await host.locator('button.parent').click();
   assert.equal(await input.inputValue(), 'div.buy-box');
   assert.match(await host.locator('.preview').textContent(), /\$59\.99 Sold out/);
+  await shot(page, 'picker');
   await host.locator('button.parent').click();
   assert.equal(await input.inputValue(), '#prod');
   await host.locator('button.child').click();
@@ -202,9 +205,14 @@ test('fetch + extract: baseline, change detection, condition, badge, diff UI', a
   await dash.locator('#timeline .tl').nth(1).click();
   await waitFor(async () => (await dash.locator('#diff ins').textContent()) === '54.00');
   assert.equal(await dash.locator('#diff del').textContent(), '59.99');
+  await shot(dash, 'dashboard-inline');
   // Side-by-side view.
   await dash.locator('#diff-mode button[data-mode="split"]').click();
   await dash.locator('#diff table.split').waitFor();
+  await shot(dash, 'dashboard-split');
+  await dash.emulateMedia({ colorScheme: 'dark' });
+  await shot(dash, 'dashboard-dark');
+  await dash.emulateMedia({ colorScheme: 'light' });
   await dash.locator('#diff-mode button[data-mode="inline"]').click();
 
   // Pause/resume clears and restores the alarm.
@@ -300,12 +308,15 @@ test('popup renders monitors and the editor from a draft', async () => {
   const popup = await extPage('popup/popup.html');
   await popup.locator('#view-editor:not([hidden])').waitFor();
   assert.equal(await popup.locator('input[name="selector"]').inputValue(), '#price');
+  await popup.setViewportSize({ width: 380, height: 760 });
+  await shot(popup, 'popup-editor');
   await popup.selectOption('select[name="ctype"]', 'above');
   await popup.fill('input[name="cvalue"]', 'abc');
   await popup.click('#editor-save');
   assert.match(await popup.locator('.form-error').textContent(), /valid number/);
   await popup.click('#editor-cancel');
   await popup.locator('#view-home:not([hidden])').waitFor();
+  await shot(popup, 'popup-home');
   assert.equal(await storage('draft'), undefined);
   assert.deepEqual(popup.errors, []);
   await popup.close();

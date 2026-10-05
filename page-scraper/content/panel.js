@@ -682,7 +682,7 @@
     return changed;
   }
 
-  const seenRows = new WeakMap(); // live element -> row key, avoids re-adding unchanged rows
+  let seenRows = new WeakMap(); // live element -> row key, avoids re-adding unchanged rows within one crawl
 
   function extractFrom(doc, base) {
     const recipe = currentRecipe();
@@ -719,6 +719,7 @@
     if (!S.itemSelector || !S.columns.length) { toast('Select items and columns first.'); return; }
     stopPick();
     S.crawling = true; S.stopRequested = false;
+    seenRows = new WeakMap();
     const p = S.pagination;
     const max = p.mode === 'none' ? 1 : Math.max(1, Math.min(1000, p.maxPages | 0 || 1));
     const delayMs = Math.max(0, Number(p.delay) || 0) * 1000;

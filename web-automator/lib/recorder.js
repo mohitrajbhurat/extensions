@@ -4,6 +4,15 @@ import { getMacro, getSettings, saveMacro } from './storage.js';
 import { uid } from './commands.js';
 import { ensureAgent, sendToTab, isRestrictedUrl } from './tabs.js';
 
+// All state mutations run one at a time: recorder messages arrive in bursts (e.g. a field
+// flush immediately followed by a click) and must not overwrite each other.
+let queue = Promise.resolve();
+function serial(fn) {
+  const p = queue.then(fn);
+  queue = p.catch(() => {});
+  return p;
+}
+
 async function getRec() { return (await chrome.storage.session.get('rec')).rec || null; }
 async function setRec(rec) {
   if (rec) await chrome.storage.session.set({ rec });
@@ -27,7 +36,8 @@ async function injectRecorder(tabId, rec) {
   await sendToTab(tabId, { type: 'wa:startRecording', opts: { keystrokes: rec.keystrokes, recordScroll: rec.recordScroll, count: rec.steps.length } }, 3000);
 }
 
-export async function startRecording({ tabId, appendTo } = {}) {
+export const startRecording = (...args) => serial(() => _startRecording(...args));
+async function _startRecording({ tabId, appendTo } = {}) {
   if (await getRec()) throw new Error('Already recording');
   if (!tabId) {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -47,7 +57,8 @@ export async function startRecording({ tabId, appendTo } = {}) {
   return recordingState();
 }
 
-export async function stopRecording() {
+export const stopRecording = (...args) => serial(() => _stopRecording(...args));
+async function _stopRecording() {
   const rec = await getRec();
   if (!rec) return null;
   await setRec(null);
@@ -71,13 +82,16 @@ export async function stopRecording() {
   return { macroId: saved.id, added: rec.steps.length };
 }
 
-export async function onRecordStep(step, sender) {
+export const onRecordStep = (...args) => serial(() => _onRecordStep(...args));
+async function _onRecordStep(step, sender) {
   const rec = await getRec();
   if (!rec || !sender.tab || sender.tab.id !== rec.tabId || sender.frameId !== 0) return { count: rec ? rec.steps.length : 0, ignored: true };
   const last = rec.steps[rec.steps.length - 1];
   const s = { id: uid(), command: step.command, target: step.target || '', targets: step.targets || [], value: step.value || '', comment: step.comment || '', disabled: false };
-  if (last && (s.command === 'type' || s.command === 'typeKeys') && last.command === s.command && last.target === s.target) {
+  if (last && (s.command === 'type' || s.command === 'typeKeys' || s.command === 'select') && last.command === s.command && last.target === s.target) {
     last.value = s.value;
+  } else if (last && (s.command === 'check' || s.command === 'uncheck') && (last.command === 'check' || last.command === 'uncheck') && last.target === s.target) {
+    last.command = s.command;
   } else if (last && s.command === 'scroll' && !s.target && last.command === 'scroll' && !last.target) {
     last.value = s.value;
   } else if (s.command === 'doubleClick') {
@@ -94,7 +108,8 @@ export async function onRecordStep(step, sender) {
 }
 
 /** Called on main-frame navigation commits in the recorded tab. */
-export async function onCommitted(details) {
+export const onCommitted = (...args) => serial(() => _onCommitted(...args));
+async function _onCommitted(details) {
   if (details.frameId !== 0) return;
   const rec = await getRec();
   if (!rec || details.tabId !== rec.tabId) return;

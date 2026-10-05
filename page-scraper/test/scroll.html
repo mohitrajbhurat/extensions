@@ -1,0 +1,9 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Infinite scroll test</title>
+<style>body{font-family:sans-serif;max-width:700px;margin:auto}.post{height:140px;padding:12px;border-bottom:1px solid #ddd}</style></head><body>
+<h1>Feed</h1><div id="feed"></div><p id="end"></p>
+<script>
+let n=0;const feed=document.getElementById('feed');let busy=false;
+function add(){for(let i=0;i<10&&n<40;i++){n++;const d=document.createElement('div');d.className='post';d.innerHTML='<h2 class="post-title">Post '+n+'</h2><p class="post-body">Body text for post number '+n+'.</p><a class="permalink" href="/post/'+n+'">Read</a>';feed.appendChild(d);}if(n>=40)document.getElementById('end').textContent='The end';}
+add();
+addEventListener('scroll',()=>{if(busy||n>=40)return;if(innerHeight+scrollY>=document.body.scrollHeight-200){busy=true;setTimeout(()=>{add();busy=false;},400);}});
+</script></body></html>

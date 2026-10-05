@@ -194,17 +194,30 @@
       .replace(/^./, (c) => c.toUpperCase());
   }
 
-  function nameFor(el, type) {
-    const cls = stableClasses(el).filter((c) => !/^(col|row|flex|grid|text|font|m[trblxy]?|p[trblxy]?|w|h|d)-?\d*$/i.test(c) && c.length > 2);
-    let base = '';
+  const GENERIC_CLASS = /^(col|row|flex|grid|text|font|m[trblxy]?|p[trblxy]?|w|h|d|container|wrapper|wrap|inner|outer|content|body|box|block|item|card|link|left|right|center|small|large|big|bold|muted|primary|secondary)(-?\d+|-[a-z]{1,3})?$/i;
+
+  function meaningfulName(el) {
     const itemprop = el.getAttribute('itemprop');
-    if (itemprop) base = humanize(itemprop);
-    else if (cls.length) {
-      const pick = cls.slice().sort((a, b) => b.length - a.length)[0];
-      base = humanize(pick.replace(/^.*__/, '').replace(/^(product|item|card|listing|result)[-_]/i, ''));
-    } else base = PRETTY_TAG[tagOf(el)] || humanize(tagOf(el));
+    if (itemprop) return humanize(itemprop);
+    const cls = stableClasses(el).filter((c) => c.length > 2 && !GENERIC_CLASS.test(c));
+    if (!cls.length) return '';
+    const pick = cls.slice().sort((a, b) => b.length - a.length)[0];
+    const cleaned = pick.replace(/^.*__/, '').replace(/^(product|item|card|listing|result|search-result|entry)[-_]/i, '');
+    return humanize(cleaned || pick);
+  }
+
+  function nameFor(el, type, item) {
+    if (type === 'src') {
+      const n = meaningfulName(el);
+      return n && /image|img|photo|thumb|picture|avatar|logo/i.test(n) ? n.replace(/\bimg\b/i, 'Image') : 'Image';
+    }
+    let base = '';
+    for (let cur = el, d = 0; cur && d < 3; cur = cur.parentElement, d++) {
+      base = meaningfulName(cur);
+      if (base || cur === item) break;
+    }
+    if (!base) base = PRETTY_TAG[tagOf(el)] || humanize(tagOf(el));
     if (type === 'href') return /link|url/i.test(base) ? base : base === 'Link text' ? 'Link' : base + ' link';
-    if (type === 'src') return /image|img|photo|thumb/i.test(base) ? base : 'Image';
     return base;
   }
 
@@ -234,7 +247,7 @@
       if (el.tagName === 'IMG' || (!textOf(el) && el.querySelector('img'))) t = 'src';
       else t = 'text';
     }
-    return makeColumn(nameFor(el, t), rel.selector, rel.index, t);
+    return makeColumn(nameFor(el, t, item), rel.selector, rel.index, t);
   }
 
   function tableColumns(rows, table) {
@@ -291,7 +304,7 @@
                 if (seenInItem.has(key)) continue;
                 seenInItem.add(key);
                 let f = fields.get(key);
-                if (!f) { f = { selector: rel.selector, index: rel.index, type: kind, el, count: 0, pos: 0 }; fields.set(key, f); }
+                if (!f) { f = { selector: rel.selector, index: rel.index, type: kind, el, item, count: 0, pos: 0 }; fields.set(key, f); }
                 f.count++; f.pos += pos;
               }
             }
@@ -317,7 +330,7 @@
       if (f.type === 'text' && vecSample.length >= 4 && distinct === 1 && vals[0].length < 30) continue;
       if (f.type === 'text' && vals.every((v) => v.length > 2000)) continue;
       seenVec.add(vec);
-      col.name = nameFor(f.el, f.type);
+      col.name = nameFor(f.el, f.type, f.item);
       out.push(col);
       if (out.length >= 30) break;
     }

@@ -4,7 +4,7 @@
 /** Split text into word, whitespace and punctuation tokens. Joining the tokens gives back the text. */
 export function tokenize(text) {
   if (!text) return [];
-  return text.match(/\r?\n|[^\S\r\n]+|\p{N}+(?:[.,:]\p{N}+)*(?![\p{L}_])|[\p{L}\p{N}_'’]+|[^\s\p{L}\p{N}_]/gu) || [];
+  return text.match(/\r?\n|[^\S\r\n]+|\p{N}+(?:[.,:]\p{N}+)*(?![\p{L}\p{N}_])|[\p{L}\p{N}_'’]+|[^\s\p{L}\p{N}_]/gu) || [];
 }
 
 /**

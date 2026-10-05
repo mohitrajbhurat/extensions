@@ -1,7 +1,8 @@
 // Cloze deletion helpers. Syntax: {{c1::answer}} or {{c1::answer::hint}} (Anki compatible).
 // Pure module, safe for node:test.
 
-const CLOZE_RE = /\{\{c(\d+)::([\s\S]*?)(?:::([\s\S]*?))?\}\}/g;
+const CLOZE_SRC = /\{\{c(\d+)::([\s\S]*?)(?:::([\s\S]*?))?\}\}/;
+const clozeRe = () => new RegExp(CLOZE_SRC.source, 'g'); // fresh regex: no shared lastIndex state
 
 export function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -13,14 +14,13 @@ export function textToHtml(s) {
 }
 
 export function hasCloze(text) {
-  CLOZE_RE.lastIndex = 0;
-  return CLOZE_RE.test(String(text || ''));
+  return CLOZE_SRC.test(String(text || ''));
 }
 
 /** Sorted unique cloze numbers used in text. */
 export function clozeNumbers(text) {
   const nums = new Set();
-  for (const m of String(text || '').matchAll(CLOZE_RE)) nums.add(Number(m[1]));
+  for (const m of String(text || '').matchAll(clozeRe())) nums.add(Number(m[1]));
   return [...nums].filter(n => n > 0).sort((a, b) => a - b);
 }
 
@@ -38,7 +38,7 @@ export function renderCloze(text, n, reveal) {
   const src = String(text || '');
   let out = '';
   let last = 0;
-  for (const m of src.matchAll(CLOZE_RE)) {
+  for (const m of src.matchAll(clozeRe())) {
     out += textToHtml(src.slice(last, m.index));
     const num = Number(m[1]);
     const answer = m[2];
@@ -58,7 +58,7 @@ export function renderCloze(text, n, reveal) {
 
 /** Plain text with all clozes replaced by their answers (for search and list previews). */
 export function stripCloze(text) {
-  return String(text || '').replace(CLOZE_RE, (_, _n, answer) => answer);
+  return String(text || '').replace(clozeRe(), (_, _n, answer) => answer);
 }
 
 /**

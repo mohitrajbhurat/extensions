@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Price Tracker Settings</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="options.css">
+  <script type="module" src="options.js"></script>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <img src="../icons/icon48.png" alt="" width="32" height="32">
+      <h1>Price Tracker settings</h1>
+    </header>
+    <form id="form" novalidate>
+      <section class="card">
+        <h2>Background checks</h2>
+        <div class="field">
+          <label for="intervalHours">Check prices every</label>
+          <select id="intervalHours">
+            <option value="1">1 hour</option>
+            <option value="3">3 hours</option>
+            <option value="6">6 hours (recommended)</option>
+            <option value="12">12 hours</option>
+            <option value="24">24 hours</option>
+            <option value="48">2 days</option>
+          </select>
+          <p class="help">Stores may block frequent automated checks. Blocked items are marked <em>Needs visit</em> and update when you open the page.</p>
+        </div>
+        <label class="check"><input type="checkbox" id="recordVisits"> <span>Record the price when I visit a tracked product page <span class="help">(only on stores you allowed)</span></span></label>
+      </section>
+
+      <section class="card">
+        <h2>Notifications</h2>
+        <label class="check"><input type="checkbox" id="notifyTarget"> <span>Target price reached</span></label>
+        <label class="check"><input type="checkbox" id="notifyLow"> <span>New all-time low</span></label>
+        <label class="check"><input type="checkbox" id="notifyStock"> <span>Back in stock</span></label>
+      </section>
+
+      <section class="card">
+        <h2>Deals</h2>
+        <div class="field">
+          <label for="goodDealPct">Call it a good deal when the price is at least</label>
+          <div class="inline"><input type="number" id="goodDealPct" min="1" max="50" step="1"> <span>% below the average</span></div>
+        </div>
+        <div class="field">
+          <label for="defaultTargetValue">Default alert for new items: drop by</label>
+          <div class="inline"><input type="number" id="defaultTargetValue" min="1" max="95" step="1"> <span>%</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Store access</h2>
+        <p class="help">Price Tracker only reads stores you allowed when you started tracking. Remove access to stop background checks for a store.</p>
+        <ul id="origins" class="origins"></ul>
+      </section>
+      <p id="saved" class="saved" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+</body>
+</html>

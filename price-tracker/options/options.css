@@ -1,0 +1,17 @@
+.wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; display: grid; gap: 16px; }
+header { display: flex; align-items: center; gap: 12px; }
+header h1 { font-size: 20px; }
+form { display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 24px; display: grid; gap: 12px; }
+.card h2 { font-size: 15px; }
+.field { display: grid; gap: 8px; }
+.field label { font-weight: 500; }
+.inline { display: flex; align-items: center; gap: 8px; }
+.inline input { width: 80px; }
+.help { color: var(--text-3); font-size: 12px; margin: 0; }
+.check { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
+.check input { margin-top: 3px; accent-color: var(--accent); }
+.origins { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.origins li { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.origins li:last-child { border-bottom: 0; }
+.saved { color: var(--accent); font-weight: 500; min-height: 20px; margin: 0; }

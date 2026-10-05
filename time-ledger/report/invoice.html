@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Time report</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../shared/ui.css">
+  <link rel="stylesheet" href="invoice.css">
+</head>
+<body>
+  <div class="toolbar no-print">
+    <a class="btn" href="../app/app.html#reports">Back to reports</a>
+    <label class="check"><input type="checkbox" id="details" checked> Include entry details</label>
+    <label class="check"><input type="checkbox" id="asInvoice" checked> Invoice layout</label>
+    <span class="grow"></span>
+    <button class="btn primary" type="button" id="print">Print or save as PDF</button>
+  </div>
+  <article class="paper" id="paper" aria-live="polite"><p class="muted">Loading…</p></article>
+  <script type="module" src="invoice.js"></script>
+</body>
+</html>

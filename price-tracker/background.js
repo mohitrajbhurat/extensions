@@ -588,3 +588,9 @@ chrome.tabs.onRemoved.addListener(tabId => {
 
 // Exposed for automated tests (service worker console only).
 globalThis.__priceTracker = { checkItem, checkDue, recordObservation, trackProduct, handlers, getItems, syncContentScripts };
+
+if (chrome.commands && chrome.commands.onCommand) {
+  chrome.commands.onCommand.addListener(cmd => {
+    if (cmd === 'open-dashboard') chrome.tabs.create({ url: chrome.runtime.getURL('dashboard/dashboard.html') });
+  });
+}

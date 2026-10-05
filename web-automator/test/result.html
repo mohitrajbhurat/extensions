@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Result</title></head>
+<body>
+  <h1 id="title">Thanks!</h1>
+  <table id="summary"><tbody></tbody></table>
+  <ul class="items"><li>Alpha</li><li>Beta</li><li>Gamma</li></ul>
+  <a href="form.html" id="again">Back to form</a>
+  <script>
+    const tb = document.querySelector('#summary tbody');
+    for (const [k, v] of new URLSearchParams(location.search)) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<th></th><td></td>';
+      tr.querySelector('th').textContent = k;
+      tr.querySelector('td').textContent = v;
+      tr.querySelector('td').dataset.field = k;
+      tb.append(tr);
+    }
+  </script>
+</body>
+</html>

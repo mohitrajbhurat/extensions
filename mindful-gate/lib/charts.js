@@ -37,6 +37,7 @@ export function barChart(container, opts) {
   tip.hidden = true;
   container.append(canvas, tip);
   const fmt = opts.format || (v => String(v));
+  const tipFmt = opts.tipFormat || fmt;
   const height = opts.height || 220;
   let geom = null;
   let hover = -1;
@@ -57,7 +58,11 @@ export function barChart(container, opts) {
     const totals = opts.labels.map((_, i) => opts.stacked
       ? opts.series.reduce((a, s) => a + (s.values[i] || 0), 0)
       : Math.max(0, ...opts.series.map(s => s.values[i] || 0)));
-    const max = niceMax(Math.max(...totals, opts.minMax || 0));
+    const raw = Math.max(...totals, opts.minMax || 0, (opts.goal || 0) * 1.15);
+    let max;
+    if (opts.integer) max = Math.max(4, Math.ceil(raw / 4) * 4);
+    else if (opts.steps) max = 4 * (opts.steps.find(st => st * 4 >= raw) || Math.ceil(raw / 4 / 60) * 60);
+    else max = niceMax(raw);
     ctx.font = '12px ' + css('--font');
     const yLabels = [0, max / 4, max / 2, (3 * max) / 4, max];
     const padL = Math.max(...yLabels.map(v => ctx.measureText(fmt(v)).width)) + 12;
@@ -159,14 +164,14 @@ export function barChart(container, opts) {
       const name = document.createElement('span');
       name.textContent = s.name;
       const val = document.createElement('b');
-      val.textContent = fmt(v);
+      val.textContent = tipFmt(v);
       row.append(sw, name, val);
       tip.append(row);
     }
     if (opts.stacked && rows.length > 1) {
       const row = document.createElement('div');
       row.className = 'tip-row total';
-      row.append(document.createElement('span'), Object.assign(document.createElement('span'), { textContent: 'Total' }), Object.assign(document.createElement('b'), { textContent: fmt(total) }));
+      row.append(document.createElement('span'), Object.assign(document.createElement('span'), { textContent: 'Total' }), Object.assign(document.createElement('b'), { textContent: tipFmt(total) }));
       tip.append(row);
     }
     if (!rows.length) tip.append(Object.assign(document.createElement('div'), { className: 'tip-row', textContent: 'Nothing recorded' }));

@@ -228,6 +228,7 @@ export function lastNDays(n, end = Date.now()) {
 
 export function fmtDuration(sec) {
   sec = Math.max(0, Math.round(sec));
+  if (sec === 0) return '0m';
   if (sec < 60) return `${sec}s`;
   const m = Math.round(sec / 60);
   if (m < 60) return `${m}m`;

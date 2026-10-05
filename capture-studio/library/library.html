@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capture Studio - Library</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="library.css">
+</head>
+<body>
+  <header class="bar">
+    <svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><rect width="128" height="128" rx="28" fill="#e5484d"/><circle cx="64" cy="64" r="26" fill="#fff"/><circle cx="64" cy="64" r="14" fill="#e5484d"/></svg>
+    <h1>Library</h1>
+    <nav class="tabs" role="tablist" aria-label="Library sections">
+      <button role="tab" id="tab-recordings" aria-controls="grid" aria-selected="true" data-tab="recordings">Recordings <span class="count" id="count-recordings"></span></button>
+      <button role="tab" id="tab-shots" aria-controls="grid" aria-selected="false" data-tab="shots">Screenshots <span class="count" id="count-shots"></span></button>
+    </nav>
+    <span class="spacer"></span>
+    <input type="search" id="search" placeholder="Search" aria-label="Search library">
+    <a class="btn" href="../editor/editor.html">Open image</a>
+  </header>
+  <main class="main">
+    <p class="storage muted" id="storage"></p>
+    <div class="grid" id="grid" role="tabpanel" aria-live="polite"></div>
+    <div class="empty" id="empty" hidden>
+      <h2 id="empty-title">No recordings yet</h2>
+      <p class="muted" id="empty-text">Click the Capture Studio toolbar button and choose Start recording.</p>
+    </div>
+  </main>
+
+  <dialog id="player" aria-labelledby="player-name">
+    <div class="player">
+      <div class="video-wrap">
+        <video id="video" controls playsinline preload="metadata"></video>
+      </div>
+      <aside class="side">
+        <label class="field">
+          <span class="muted small">Name</span>
+          <input type="text" id="player-name" maxlength="120">
+        </label>
+        <dl class="meta" id="player-meta"></dl>
+        <div class="actions">
+          <button class="btn primary" id="act-download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download WebM</button>
+          <button class="btn" id="act-trim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>Trim</button>
+          <button class="btn danger" id="act-delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>Delete</button>
+        </div>
+        <section class="trim" id="trim" hidden aria-label="Trim recording">
+          <h3>Trim</h3>
+          <div class="timeline" id="timeline">
+            <div class="range" id="range"></div>
+            <div class="playhead" id="playhead"></div>
+            <button class="handle" id="h-in" aria-label="Start point" role="slider"></button>
+            <button class="handle" id="h-out" aria-label="End point" role="slider"></button>
+          </div>
+          <div class="trim-times">
+            <button class="btn" id="set-in" title="Set start at playhead (I)">Set start <span class="kbd">I</span></button>
+            <span id="trim-label" class="mono"></span>
+            <button class="btn" id="set-out" title="Set end at playhead (O)">Set end <span class="kbd">O</span></button>
+          </div>
+          <label class="check"><input type="checkbox" id="trim-replace"> Replace the original</label>
+          <p class="muted small">Trimming re-records the selected part in real time, so it takes as long as the clip.</p>
+          <div class="progress" id="trim-progress" hidden><span></span></div>
+          <div class="actions row">
+            <button class="btn" id="trim-preview">Preview</button>
+            <button class="btn ghost" id="trim-cancel">Cancel</button>
+            <button class="btn blue" id="trim-go">Save trimmed</button>
+          </div>
+        </section>
+      </aside>
+      <button class="btn ghost icon close" id="player-close" aria-label="Close">&times;</button>
+    </div>
+  </dialog>
+  <script type="module" src="library.js"></script>
+</body>
+</html>

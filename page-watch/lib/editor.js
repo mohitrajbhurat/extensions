@@ -45,8 +45,8 @@ export function createEditor(container, initial = {}, opts = {}) {
       <select name="interval">${intervals.map((i) => `<option value="${i.min}">${escapeHtml(i.label)}</option>`).join('')}</select></label>
     <label class="field"><span>Load page by</span>
       <select name="mode">
-        <option value="fetch">Fetching HTML (fast)</option>
-        <option value="render">Rendering in a background tab (for JavaScript sites)</option>
+        <option value="fetch">Fetch HTML (fast)</option>
+        <option value="render" title="For pages that build their content with JavaScript">Render in background tab</option>
       </select></label>
   </div>
   <label class="field render-wait"><span>Wait after load (seconds)</span>

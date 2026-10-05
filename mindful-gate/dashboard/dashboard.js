@@ -91,6 +91,7 @@ function table(container, head, rows, numCols = []) {
   const tb = el('tbody');
   if (!rows.length) tb.append(el('tr', {}, el('td', { class: 'empty', colspan: head.length }, 'Nothing recorded yet')));
   for (const r of rows) tb.append(el('tr', {}, r.map((c, i) => el('td', { class: numCols.includes(i) ? 'num' : '' }, c))));
+  t.append(tb);
   container.textContent = '';
   container.append(t);
 }
@@ -106,19 +107,22 @@ function renderCharts() {
   const ranking = totals(lastNDays(30)).sites;
   const top = Object.entries(ranking).sort((a, b) => b[1] - a[1]).slice(0, 7).map(([s]) => s);
   const rangeSites = totals(keys).sites;
-  const series = top.filter(s => rangeSites[s]).map(s => ({ name: s, color: cssColor(color(top.indexOf(s))), values: keys.map(k => (day(k).sites[s] || 0)) }));
-  const otherVals = keys.map(k => Object.entries(day(k).sites).filter(([s]) => !top.includes(s)).reduce((a, [, v]) => a + v, 0));
+  const series = top.filter(s => rangeSites[s]).map(s => ({ name: s, color: cssColor(color(top.indexOf(s))), values: keys.map(k => (day(k).sites[s] || 0) / 60) }));
+  const otherVals = keys.map(k => Object.entries(day(k).sites).filter(([s]) => !top.includes(s)).reduce((a, [, v]) => a + v, 0) / 60);
   if (otherVals.some(Boolean)) series.push({ name: 'Other', color: cssColor('var(--series-other)'), values: otherVals });
-  const minFmt = v => (v >= 3600 ? `${(v / 3600).toFixed(v % 3600 ? 1 : 0)}h` : `${Math.round(v / 60)}m`);
-  charts.push(barChart($('#c1'), { labels, tipTitles: titles, series: series.length ? series : [{ name: 'Time', color: cssColor('var(--series-1)'), values: keys.map(() => 0) }], stacked: true, format: minFmt, minMax: 600, height: 260, ariaLabel: 'Stacked bar chart of time on distracting sites per day' }));
+  // Values are plotted in minutes so axis ticks land on round numbers.
+  const minFmt = m => (m >= 60 ? `${+(m / 60).toFixed(1)}h` : `${Math.round(m)}m`);
+  const tipFmt = m => fmtDuration(m * 60);
+  const steps = [5, 10, 15, 30, 45, 60, 90, 120, 180, 240, 360];
+  charts.push(barChart($('#c1'), { labels, tipTitles: titles, series: series.length ? series : [{ name: 'Time', color: cssColor('var(--series-1)'), values: keys.map(() => 0) }], stacked: true, steps, format: minFmt, tipFormat: tipFmt, minMax: 10, height: 260, ariaLabel: 'Stacked bar chart of time on distracting sites per day' }));
   legend($('#c1Legend'), series);
   table($('#c1Table'), ['Day', ...series.map(s => s.name), 'Total'],
-    keys.map((k, i) => [titles[i], ...series.map(s => fmtDuration(s.values[i])), fmtDuration(series.reduce((a, s) => a + s.values[i], 0))]),
+    keys.map((k, i) => [titles[i], ...series.map(s => tipFmt(s.values[i])), tipFmt(series.reduce((a, s) => a + s.values[i], 0))]),
     series.map((_, i) => i + 1).concat(series.length + 1));
 
   const goal = data.settings && data.settings.pomodoro ? data.settings.pomodoro.dailyGoal * data.settings.pomodoro.work : 0;
   const focusVals = keys.map(k => day(k).focusMinutes);
-  charts.push(barChart($('#c2'), { labels, tipTitles: titles, series: [{ name: 'Focus', color: cssColor('var(--series-3)'), values: focusVals }], format: v => fmtDuration(v * 60), minMax: 60, goal, goalLabel: `Goal ${fmtDuration(goal * 60)}`, ariaLabel: 'Bar chart of focus minutes per day' }));
+  charts.push(barChart($('#c2'), { labels, tipTitles: titles, series: [{ name: 'Focus', color: cssColor('var(--series-3)'), values: focusVals }], steps, format: minFmt, tipFormat: v => fmtDuration(v * 60), minMax: 60, goal, goalLabel: `Goal ${fmtDuration(goal * 60)}`, ariaLabel: 'Bar chart of focus minutes per day' }));
   $('#c2Sub').textContent = goal ? `Per day. Dashed line is your daily goal (${data.settings.pomodoro.dailyGoal} sessions).` : 'Per day';
   table($('#c2Table'), ['Day', 'Focus', 'Sessions'], keys.map((k, i) => [titles[i], fmtDuration(focusVals[i] * 60), String(day(k).focusSessions)]), [1, 2]);
 
@@ -126,7 +130,7 @@ function renderCharts() {
     { name: 'Prompts', color: cssColor('var(--series-1)'), values: keys.map(k => sum(day(k).prompts)) },
     { name: 'Turned back', color: cssColor('var(--series-2)'), values: keys.map(k => sum(day(k).turnedBack)) },
   ];
-  charts.push(barChart($('#c3'), { labels, tipTitles: titles, series: pSeries, format: v => String(Math.round(v)), minMax: 4, ariaLabel: 'Bar chart of gate prompts and turn-backs per day' }));
+  charts.push(barChart($('#c3'), { labels, tipTitles: titles, series: pSeries, format: v => String(Math.round(v)), integer: true, minMax: 4, ariaLabel: 'Bar chart of gate prompts and turn-backs per day' }));
   legend($('#c3Legend'), pSeries);
   table($('#c3Table'), ['Day', 'Prompts', 'Turned back'], keys.map((k, i) => [titles[i], String(pSeries[0].values[i]), String(pSeries[1].values[i])]), [1, 2]);
 
