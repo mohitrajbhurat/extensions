@@ -44,7 +44,9 @@ export function convertText(text, ctx = {}) {
       label: i === 0 ? `Your time (${cityLabel(zone)})` : cityLabel(zone),
       value: `${formatInZone(t.ms, zone, { locale, withDate: true })} · ${formatOffset(zoneOffset(t.ms, zone))}`,
     }));
-    items.push({ label: 'UTC', value: new Date(t.ms).toISOString().replace('.000', '') });
+    if (!zones.some(z => z === 'UTC' || z === 'Etc/UTC')) {
+      items.push({ label: 'UTC', value: new Date(t.ms).toISOString().replace('.000', '') });
+    }
     return { kind: 'time', title: `${s} → ${cityLabel(home)}`, items, ms: t.ms };
   }
 

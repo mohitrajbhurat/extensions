@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings · Home Base</title>
+  <link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="page-head">
+      <img src="../icons/icon48.png" alt="" width="40" height="40">
+      <div>
+        <h1>Home Base settings</h1>
+        <p class="muted small">Changes save automatically. Everything stays on this device.</p>
+      </div>
+      <span class="saved small" id="saved" aria-live="polite"></span>
+    </header>
+
+    <form id="settings" autocomplete="off">
+      <section class="card">
+        <h2>You</h2>
+        <label class="field"><span>Your name</span><input class="input" data-path="name" type="text" maxlength="30" placeholder="Used in the greeting"></label>
+      </section>
+
+      <section class="card">
+        <h2>Clock and calendar</h2>
+        <label class="check"><input type="checkbox" data-path="h24"> Use 24-hour time</label>
+        <label class="check"><input type="checkbox" data-path="showSeconds"> Show seconds</label>
+        <label class="field"><span>Week starts on</span>
+          <select class="input" data-path="weekStart" data-type="number"><option value="1">Monday</option><option value="0">Sunday</option></select></label>
+      </section>
+
+      <section class="card">
+        <h2>Appearance</h2>
+        <label class="field"><span>Theme for widgets and pages</span>
+          <select class="input" data-path="theme"><option value="auto">Match system</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+        <fieldset>
+          <legend>Show on the new tab</legend>
+          <div class="checks">
+            <label class="check"><input type="checkbox" data-path="show.clock"> Clock</label>
+            <label class="check"><input type="checkbox" data-path="show.greeting"> Greeting</label>
+            <label class="check"><input type="checkbox" data-path="show.focus"> Daily focus</label>
+            <label class="check"><input type="checkbox" data-path="show.quote"> Line of the day</label>
+            <label class="check"><input type="checkbox" data-path="show.links"> Quick links</label>
+            <label class="check"><input type="checkbox" data-path="show.search"> Search box</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Widgets</legend>
+          <div class="checks" id="widget-checks"></div>
+        </fieldset>
+        <label class="field"><span>Search with</span>
+          <select class="input" data-path="searchEngine" id="engine">
+            <option value="default">Browser default</option>
+            <option value="google">Google</option>
+            <option value="duckduckgo">DuckDuckGo</option>
+            <option value="bing">Bing</option>
+            <option value="brave">Brave Search</option>
+            <option value="ecosia">Ecosia</option>
+          </select></label>
+      </section>
+
+      <section class="card">
+        <h2>Background</h2>
+        <div class="bg-grid">
+          <div class="bg-controls">
+            <label class="field"><span>Source</span>
+              <select class="input" data-path="background.mode">
+                <option value="generated">Generated scenes</option>
+                <option value="photos">My photos</option>
+                <option value="mixed">Mix of both</option>
+              </select></label>
+            <label class="field"><span>Scene style</span>
+              <select class="input" data-path="background.style" id="style-select"><option value="auto">Rotate daily</option></select></label>
+            <label class="field"><span>Dim the background: <output id="dim-out"></output></span>
+              <input type="range" min="0" max="70" step="5" data-path="background.dim" data-type="number" id="dim"></label>
+          </div>
+          <figure class="preview">
+            <canvas id="preview" width="480" height="270" aria-label="Background preview"></canvas>
+            <figcaption class="small muted" id="preview-name"></figcaption>
+          </figure>
+        </div>
+        <div class="photos">
+          <div class="row">
+            <h3 class="grow">My photos</h3>
+            <label class="btn small" for="photo-input">Add photos</label>
+            <input id="photo-input" type="file" accept="image/*" multiple class="sr-only">
+          </div>
+          <p class="small muted" id="photo-help">Photos are stored in this browser only (IndexedDB). Large images are resized to 2560 px.</p>
+          <ul class="photo-grid" id="photo-grid" role="list"></ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Tasks</h2>
+        <label class="check"><input type="checkbox" data-path="badge"> Show the number of tasks due today (and overdue) on the toolbar icon</label>
+        <label class="check"><input type="checkbox" data-path="reminders"> Notify me when a task with a time is due</label>
+        <label class="field"><span>Remind me</span>
+          <select class="input" data-path="reminderOffset" data-type="number">
+            <option value="0">At the due time</option>
+            <option value="5">5 minutes before</option>
+            <option value="10">10 minutes before</option>
+            <option value="15">15 minutes before</option>
+            <option value="30">30 minutes before</option>
+            <option value="60">1 hour before</option>
+          </select></label>
+        <p class="small"><a href="../tasks/tasks.html" id="tasks-link">Open the task manager</a> to manage projects and labels.</p>
+      </section>
+
+      <section class="card">
+        <h2>Pomodoro</h2>
+        <div class="grid-4">
+          <label class="field"><span>Focus (min)</span><input class="input" type="number" min="1" max="180" data-path="pomodoro.work" data-type="number"></label>
+          <label class="field"><span>Short break</span><input class="input" type="number" min="1" max="60" data-path="pomodoro.short" data-type="number"></label>
+          <label class="field"><span>Long break</span><input class="input" type="number" min="1" max="90" data-path="pomodoro.long" data-type="number"></label>
+          <label class="field"><span>Long break every</span><input class="input" type="number" min="2" max="12" data-path="pomodoro.every" data-type="number"></label>
+        </div>
+        <label class="check"><input type="checkbox" data-path="pomodoro.autoStart"> Start the next phase automatically</label>
+        <label class="check"><input type="checkbox" data-path="pomodoro.notify"> Notify when a phase ends</label>
+      </section>
+    </form>
+
+    <section class="card">
+      <h2>Backup</h2>
+      <p class="small muted">Export everything (settings, tasks, projects, notes, links, events, clocks, habits, layout) to a JSON file, or restore from one. Background photos are not included.</p>
+      <div class="row wrap-row">
+        <button class="btn" id="export" type="button">Export backup</button>
+        <label class="btn" for="import-input">Import backup…</label>
+        <input id="import-input" type="file" accept="application/json,.json" class="sr-only">
+        <button class="btn danger" id="reset" type="button">Reset everything</button>
+      </div>
+      <p class="small" id="backup-msg" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Keyboard shortcuts</h2>
+      <p class="small muted">New tab: <kbd>/</kbd> search, <kbd>f</kbd> focus, <kbd>n</kbd> new task, <kbd>b</kbd> new background. Task manager: press <kbd>?</kbd> for the full list. Global shortcuts for “Open the task manager” and “Add a task” can be assigned at <code>chrome://extensions/shortcuts</code>.</p>
+    </section>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>
