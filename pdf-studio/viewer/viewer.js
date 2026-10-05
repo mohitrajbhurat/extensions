@@ -1480,4 +1480,6 @@ async function init() {
   }
 }
 
+if (globalThis.chrome?.runtime?.getManifest) globalThis.__pdfStudio = { state, annots, fields };
+
 init();

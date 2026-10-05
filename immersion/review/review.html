@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review - Language Immersion</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="review.css">
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="#review"><img src="../icons/icon32.png" width="26" height="26" alt=""><span>Language Immersion</span></a>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tab-review" data-tab="review" aria-controls="panel-review">Review</button>
+      <button role="tab" id="tab-quiz" data-tab="quiz" aria-controls="panel-quiz">Quiz</button>
+      <button role="tab" id="tab-words" data-tab="words" aria-controls="panel-words">My words</button>
+      <button role="tab" id="tab-stats" data-tab="stats" aria-controls="panel-stats">Progress</button>
+    </nav>
+    <div class="spacer"></div>
+    <label class="lang-pick">
+      <span class="sr-only">Language</span>
+      <select id="langFilter"></select>
+    </label>
+    <button class="btn ghost sm" id="openOptions" title="Settings">Settings</button>
+  </header>
+
+  <main>
+    <!-- Review (flashcards) -->
+    <section id="panel-review" role="tabpanel" aria-labelledby="tab-review" class="panel">
+      <div class="deck-head">
+        <h2>Spaced repetition</h2>
+        <p class="muted">Words move up through five Leitner boxes. Each correct answer waits longer before coming back; a mistake sends it to box 1.</p>
+      </div>
+      <div class="boxes" id="boxes" aria-label="Leitner boxes"></div>
+      <div class="deck" id="deck"></div>
+    </section>
+
+    <!-- Quiz -->
+    <section id="panel-quiz" role="tabpanel" aria-labelledby="tab-quiz" class="panel" hidden>
+      <div id="quizSetup" class="card setup">
+        <h2>Quiz yourself</h2>
+        <p class="muted">Ten questions drawn from the words you have met while browsing. Answers feed back into your review schedule.</p>
+        <div class="setup-grid">
+          <div class="field">
+            <span class="label" id="qmodeLabel">Question type</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="qmodeLabel" id="quizMode">
+              <button type="button" role="radio" data-v="mixed">Mixed</button>
+              <button type="button" role="radio" data-v="choice">Multiple choice</button>
+              <button type="button" role="radio" data-v="type">Type it</button>
+              <button type="button" role="radio" data-v="listen">Listen &amp; type</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="label" id="qpoolLabel">Words</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="qpoolLabel" id="quizPool">
+              <button type="button" role="radio" data-v="due">Due now</button>
+              <button type="button" role="radio" data-v="learning">Learning</button>
+              <button type="button" role="radio" data-v="all">Everything</button>
+            </div>
+          </div>
+        </div>
+        <p class="muted small" id="quizPoolInfo"></p>
+        <button class="btn primary" id="startQuiz">Start quiz</button>
+      </div>
+      <div id="quizRun" class="hidden"></div>
+    </section>
+
+    <!-- Word list -->
+    <section id="panel-words" role="tabpanel" aria-labelledby="tab-words" class="panel" hidden>
+      <div class="toolbar">
+        <input type="search" id="search" placeholder="Search words" aria-label="Search words">
+        <div class="segmented" role="radiogroup" aria-label="Filter" id="wordFilter">
+          <button type="button" role="radio" data-v="all">All</button>
+          <button type="button" role="radio" data-v="learning">Learning</button>
+          <button type="button" role="radio" data-v="known">Known</button>
+          <button type="button" role="radio" data-v="saved">Saved</button>
+          <button type="button" role="radio" data-v="due">Due</button>
+        </div>
+        <select id="sort" aria-label="Sort by">
+          <option value="recent">Recently seen</option>
+          <option value="seen">Most seen</option>
+          <option value="alpha">A to Z</option>
+          <option value="due">Due first</option>
+          <option value="box">Leitner box</option>
+        </select>
+      </div>
+      <div id="wordList" class="word-list"></div>
+    </section>
+
+    <!-- Stats -->
+    <section id="panel-stats" role="tabpanel" aria-labelledby="tab-stats" class="panel" hidden>
+      <div class="stat-grid big" id="statGrid"></div>
+      <div class="card chart-card">
+        <h3>Last 30 days</h3>
+        <div class="chart" id="chart" role="img" aria-label="Daily activity chart"></div>
+        <div class="legend"><span><i class="sw seen"></i>Words seen</span><span><i class="sw rev"></i>Reviews</span></div>
+      </div>
+      <div class="card chart-card">
+        <h3>Vocabulary by language</h3>
+        <div id="byLang"></div>
+      </div>
+      <div class="card chart-card">
+        <h3>Your data</h3>
+        <p class="muted small">Everything is stored locally in this browser. Nothing is ever uploaded.</p>
+        <div class="row">
+          <button class="btn sm" id="exportBtn">Export JSON</button>
+          <button class="btn sm" id="importBtn">Import JSON</button>
+          <input type="file" id="importFile" accept="application/json" class="hidden">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="../lib/common.js"></script>
+  <script src="review.js" type="module"></script>
+</body>
+</html>

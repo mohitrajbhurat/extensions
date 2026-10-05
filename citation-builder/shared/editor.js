@@ -76,7 +76,7 @@ export function createEditor(root, { onChange, idPrefix = 'ed' } = {}) {
       ),
     );
     return h('fieldset.names', null,
-      h('legend', null, label, h('span.count', null, list.length ? ` (${list.length})` : '')),
+      h('legend', null, label, h('span.count', null, list.length ? `\u00a0(${list.length})` : '')),
       rows.length ? h('div.name-rows', null, rows) : h('p.empty-names', null, key === 'authors' ? 'No authors. Titles move to the author position in most styles.' : 'No editors.'),
       h('div.names-actions', null,
         h('button.btn.btn-sm', { type: 'button', id: `${idPrefix}-${key}-add`, onclick: () => addName(key, { given: '', family: '' }) }, `+ ${capital(noun)}`),
