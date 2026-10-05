@@ -21,7 +21,7 @@ export async function render(el, ctx) {
 
   el.innerHTML = `
     <div class="view-head"><h1>Projects &amp; rules</h1></div>
-    <div class="grid two">
+    <div class="stack" style="gap:16px">
       <section class="card projects">
         <header><h2>Projects</h2>
           <label class="check small"><input type="checkbox" id="showArchived" ${st.showArchived ? 'checked' : ''}> Show archived</label></header>
@@ -55,7 +55,7 @@ export async function render(el, ctx) {
         ${data.clients.length ? data.clients.map((c) => `<div class="list-row" data-id="${escapeHtml(c.id)}">
           <input data-f="name" value="${escapeHtml(c.name)}" aria-label="Client name" maxlength="80">
           <input data-f="rate" type="number" min="0" step="0.01" value="${c.rate ?? ''}" placeholder="${ctx.data.settings.defaultRate || 0}" aria-label="Hourly rate">
-          <input data-f="details" value="${escapeHtml(c.details || '')}" placeholder="Address, email (shown on invoices)" aria-label="Invoice details">
+          <textarea data-f="details" rows="2" style="min-height:32px" placeholder="Address, email (shown on invoices)" aria-label="Invoice details">${escapeHtml(c.details || '')}</textarea>
           <button class="btn ghost sm icon danger" type="button" data-del aria-label="Delete ${escapeHtml(c.name)}">${ICONS.trash}</button>
         </div>`).join('') : '<div class="empty">No clients yet.</div>'}
       </section>

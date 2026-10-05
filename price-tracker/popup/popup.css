@@ -11,9 +11,10 @@ main { padding: 16px; }
 .empty p { margin: 0; }
 .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); margin: 8px 0; }
 .recent { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.recent a { display: grid; grid-template-columns: 32px 1fr auto; gap: 8px; align-items: center; padding: 8px; border-radius: var(--radius-sm); text-decoration: none; color: var(--text); }
+.recent a { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px; border-radius: var(--radius-sm); text-decoration: none; color: var(--text); }
 .recent a:hover, .recent a:focus-visible { background: var(--surface-2); }
-.recent img, .recent .ph { width: 32px; height: 32px; border-radius: 6px; object-fit: contain; background: var(--surface-2); }
+.recent img, .recent .ph { width: 40px; height: 40px; border-radius: 6px; object-fit: contain; background: var(--surface-2); }
+.recent .mid { min-width: 0; display: grid; gap: 2px; justify-items: start; }
 .recent .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .recent .p { font-weight: 600; font-size: 13px; text-align: right; }
 

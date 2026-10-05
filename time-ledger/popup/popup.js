@@ -46,10 +46,12 @@ function renderTimer() {
   btn.className = 'btn ' + (t ? 'stop' : 'primary start');
   btn.setAttribute('aria-label', t ? 'Stop timer' : 'Start timer');
   btn.title = t ? 'Stop timer' : 'Start timer';
-  if (!editingTimer) {
-    $('#desc').value = t ? t.desc || '' : $('#desc').value;
-    $('#project').innerHTML = projectOptions(data, t ? t.projectId : $('#project').value || null);
-    if (t) $('#tags').value = (t.tags || []).join(', ');
+  const sel = $('#project');
+  const keep = editingTimer || !t ? sel.value || null : t.projectId;
+  sel.innerHTML = projectOptions(data, keep);
+  if (!editingTimer && t) {
+    $('#desc').value = t.desc || '';
+    $('#tags').value = (t.tags || []).join(', ');
   }
   $('#timerSub').textContent = t
     ? `Started ${new Date(t.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${projectName(t.projectId, data)}`
@@ -162,6 +164,8 @@ $('#timerForm').addEventListener('submit', async (e) => {
     if (data.timer) {
       const entry = await store.send('timer.stop');
       toast(entry ? `Saved ${fmtDur(entry.end - entry.start)}` : 'Timer discarded (under 1 second)');
+      $('#desc').value = '';
+      $('#tags').value = '';
     } else {
       await store.send('timer.start', {
         desc: $('#desc').value.trim(), projectId: $('#project').value || null, tags: parseTags($('#tags').value),

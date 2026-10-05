@@ -47,8 +47,8 @@ async function renderRecent(listId, titleId) {
     const img = safeImage(it.image) ? el('img', { src: it.image, alt: '' }) : el('span', { class: 'ph' });
     const a = el('a', { href: it.url, title: it.title },
       img,
-      el('span', { class: 'name' }, it.title),
-      el('span', { class: 'p num' }, fmt(stats.current, it.currency), el('div', { class: 'pill ' + verdict.level, style: 'margin-top:2px' }, verdict.label)));
+      el('span', { class: 'mid' }, el('span', { class: 'name' }, it.title), el('span', { class: 'pill ' + verdict.level }, verdict.label)),
+      el('span', { class: 'p num' }, fmt(stats.current, it.currency)));
     a.addEventListener('click', e => { e.preventDefault(); chrome.tabs.create({ url: it.url }); window.close(); });
     ul.append(el('li', {}, a));
   }

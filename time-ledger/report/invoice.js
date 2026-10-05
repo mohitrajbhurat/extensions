@@ -38,11 +38,13 @@ async function main() {
   const lines = bill.rows.filter((r) => r.ms > 0);
   const lineRows = lines.map((r) => {
     const p = data.projects.find((x) => x.id === r.projectId);
-    const n = items.filter((i) => (i.projectId || null) === r.projectId).length;
+    const mine = items.filter((i) => (i.projectId || null) === r.projectId);
+    const n = mine.filter((i) => i.source === 'manual').length;
+    const autoMs = mine.filter((i) => i.source === 'auto').reduce((a, i) => a + dur(i), 0);
     const billable = r.billableMs > 0;
     return `<tr>
       <td><span class="dot" style="background:${projectColor(r.projectId, data)}"></span><strong>${escapeHtml(projectName(r.projectId, data))}</strong>
-        <div class="soft">${n} entr${n === 1 ? 'y' : 'ies'}${p && p.billable === false ? ' · non-billable' : ''}</div></td>
+        <div class="soft">${[n ? `${n} timer entr${n === 1 ? 'y' : 'ies'}` : '', autoMs ? `${fmtHours(autoMs)} h tracked automatically` : '', p && p.billable === false ? 'non-billable' : ''].filter(Boolean).join(' · ')}</div></td>
       <td class="num">${fmtHours(asInvoice ? r.billableMs : r.ms)}</td>
       ${asInvoice ? `<td class="num">${billable ? fmtMoney(r.rate, cur) : '–'}</td><td class="num">${fmtMoney(r.amount, cur)}</td>` : `<td class="num">${fmtHours(r.billableMs)}</td>`}
     </tr>`;
@@ -66,6 +68,7 @@ async function main() {
         <td>${escapeHtml(projectName(m.projectId, data))}</td><td class="num">${asInvoice && m.billable !== false && m.projectId ? fmtMoney(rateFor(m.projectId, data), cur) : ''}</td><td class="num">${fmtHours(dur(m))}</td></tr>`);
     }
     for (const a of auto) {
+      if (a.ms < 60000) continue; // skip sub-minute noise
       const [pid, domain] = a.key.split('|');
       detail.push(`<tr><td class="soft">auto</td><td>${escapeHtml(domain)}</td><td>${escapeHtml(projectName(pid || null, data))}</td><td></td><td class="num">${fmtHours(a.ms)}</td></tr>`);
     }

@@ -478,8 +478,8 @@
     if (!sel || sel.isCollapsed || !sel.rangeCount) return UI.hidePill();
     const text = sel.toString().replace(/\s+/g, ' ').trim();
     if (!text || text.length > 1200 || !/\p{L}/u.test(text) || selectionInEditable(sel)) return UI.hidePill();
-    const hasTranslator = 'Translator' in self;
-    const lookup = hasTranslator ? null : dictionaryLookup(text);
+    const hasTranslator = 'Translator' in self && S.settings.engine !== 'dictionary';
+    const lookup = text.split(' ').length <= 4 ? dictionaryLookup(text) : null;
     if (!hasTranslator && !lookup) return UI.hidePill();
     const range = sel.getRangeAt(0);
     const rects = range.getClientRects();
@@ -491,13 +491,13 @@
   async function translateSelection(text, rect, lookup) {
     const { nativeLang, targetLang } = S.settings;
     let from = nativeLang, to = targetLang;
-    if (lookup) {
-      if (lookup.reverse) { from = targetLang; to = nativeLang; }
-      const card = UI.showSelectionCard(rect, { text, from, to, actions: selectionActions(text, () => out, from, to, lookup) });
+    const showLookup = () => {
+      const f = lookup.reverse ? targetLang : nativeLang, t = lookup.reverse ? nativeLang : targetLang;
       const out = lookup.reverse ? lookup.en : lookup.tr;
-      card.done(out, { canSave: true, note: 'From the offline dictionary' + (lookup.g && lookup.g !== 'x' ? ` · ${LIM.genderLabel(lookup.g)} noun` : '') });
-      return;
-    }
+      const card = UI.showSelectionCard(rect, { text, from: f, to: t, actions: selectionActions(text, () => out, f, t, lookup) });
+      card.done(out, { canSave: true, note: 'From the offline dictionary' + (lookup.g && lookup.g !== 'x' && lookup.g !== 'pl' ? ` · ${LIM.genderLabel(lookup.g)} noun` : '') });
+    };
+    if (lookup && (!('Translator' in self) || S.settings.engine === 'dictionary' || !(await translatorUsable()))) return showLookup();
     // Detect the selection's language; text already in the target language is translated back.
     if ('LanguageDetector' in self) {
       try {
@@ -516,6 +516,7 @@
     const card = UI.showSelectionCard(rect, { text, from, to, actions: selectionActions(text, () => result, from, to, null) });
     try {
       const av = await self.Translator.availability({ sourceLanguage: from, targetLanguage: to });
+      if (av === 'unavailable' && lookup) return showLookup();
       if (av === 'unavailable') { card.error(`On-device translation from ${LIM.langName(from)} to ${LIM.langName(to)} isn't available in this browser.`); return; }
       const tr = await self.Translator.create({
         sourceLanguage: from, targetLanguage: to,
@@ -526,8 +527,17 @@
       const words = text.split(/\s+/).length;
       card.done(result, { canSave: words <= 6 && (from === nativeLang || to === nativeLang), note: "Translated on-device with Chrome's built-in AI" });
     } catch (e) {
+      if (lookup) return showLookup();
       card.error('Translation failed: ' + (e && e.message ? e.message : e));
     }
+  }
+
+  // True when the Translator API can serve native<->target now or after a model download.
+  async function translatorUsable() {
+    try {
+      const av = await self.Translator.availability({ sourceLanguage: S.settings.nativeLang, targetLanguage: S.settings.targetLang });
+      return av === 'available' || (av !== 'unavailable' && navigator.onLine);
+    } catch (e) { return false; }
   }
 
   function selectionActions(text, getResult, from, to, lookup) {

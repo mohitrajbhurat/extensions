@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reading Studio</title>
+  <link rel="stylesheet" href="../common/ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="../icons/icon32.png" alt="" width="28" height="28">
+    <div class="grow">
+      <h1>Reading Studio</h1>
+      <div class="host muted small" id="host">–</div>
+    </div>
+    <button class="icon-btn" id="openOptions" title="Settings" aria-label="Open settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    </button>
+  </header>
+
+  <main class="stack">
+    <div class="notice warn" id="restricted" hidden>Reading Studio cannot run on this page. Browser pages and web stores are protected. Settings below still apply everywhere else.</div>
+
+    <section class="card stack" aria-labelledby="h-read">
+      <h2 id="h-read"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v14a1.6 1.6 0 0 0-1.6-1.6H5.5A1.5 1.5 0 0 1 4 16.9zM20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v14a1.6 1.6 0 0 1 1.6-1.6h4.9a1.5 1.5 0 0 0 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Read</h2>
+      <div class="actions">
+        <button class="btn primary big" id="reader" data-page>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="label">Reader view</span>
+          <kbd>Alt+Shift+R</kbd>
+        </button>
+        <button class="btn big" id="listen" data-page>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="ic-play"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z" fill="currentColor"/></svg>
+          <span class="label">Listen</span>
+        </button>
+        <button class="btn ghost big" id="stop" data-page hidden title="Stop reading" aria-label="Stop reading">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div>
+        <div class="seg" role="group" aria-label="What to read" id="source">
+          <button data-v="auto" title="Selection if any, otherwise the article">Auto</button>
+          <button data-v="selection">Selection</button>
+          <button data-v="article">Article</button>
+          <button data-v="page">Whole page</button>
+        </div>
+      </div>
+      <div class="row">
+        <label class="sr-only" for="voice">Voice</label>
+        <select class="input grow" id="voice"><option value="">Browser default voice</option></select>
+      </div>
+      <div class="slider">
+        <label for="rate">Speed</label>
+        <input type="range" id="rate" min="0.5" max="3" step="0.05">
+        <output id="rateOut">1×</output>
+      </div>
+    </section>
+
+    <section class="card stack" aria-labelledby="h-dark">
+      <div class="row between">
+        <h2 id="h-dark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Dark mode</h2>
+        <span class="pill" id="darkPill"><span class="dot"></span><span id="darkPillText">Off</span></span>
+      </div>
+      <label class="switch" data-page-wrap>
+        <input type="checkbox" id="darkSite" data-page>
+        <span class="track"></span>
+        <span class="grow">On this site <span class="muted small" id="darkHost"></span></span>
+      </label>
+      <div class="muted small" id="darkReason" hidden></div>
+      <div class="row small" id="darkRuleRow" hidden>
+        <span class="muted grow" id="darkRuleText"></span>
+        <button class="btn small ghost" id="darkReset">Use default</button>
+      </div>
+      <div class="row" id="permRow" hidden>
+        <span class="muted small grow" id="permText">Keep dark mode on every visit to this site.</span>
+        <button class="btn small" id="permBtn">Allow</button>
+      </div>
+      <div class="row">
+        <label class="muted small" for="darkDefault" style="width:92px">All sites</label>
+        <select class="input grow" id="darkDefault">
+          <option value="off">Off unless turned on per site</option>
+          <option value="on">On (skip sites already dark)</option>
+          <option value="system">Follow system dark mode</option>
+        </select>
+      </div>
+      <div class="seg" role="group" aria-label="Dark mode engine" id="darkMode">
+        <button data-v="dynamic" title="Analyzes page colors and rewrites them. Best quality.">Dynamic</button>
+        <button data-v="filter" title="Inverts the page with a CSS filter. Fast and works everywhere.">Filter</button>
+      </div>
+      <details id="adjust">
+        <summary class="row between"><span class="small">Adjust brightness, contrast, sepia</span><svg class="chev" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></summary>
+        <div class="stack" style="margin-top:12px">
+          <div class="slider"><label for="brightness">Brightness</label><input type="range" id="brightness" min="50" max="150" step="1"><output id="brightnessOut"></output></div>
+          <div class="slider"><label for="contrast">Contrast</label><input type="range" id="contrast" min="50" max="150" step="1"><output id="contrastOut"></output></div>
+          <div class="slider"><label for="sepia">Sepia</label><input type="range" id="sepia" min="0" max="100" step="1"><output id="sepiaOut"></output></div>
+          <div class="slider"><label for="grayscale">Grayscale</label><input type="range" id="grayscale" min="0" max="100" step="1"><output id="grayscaleOut"></output></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card stack" aria-labelledby="h-focus">
+      <h2 id="h-focus"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>Focus</h2>
+      <label class="switch">
+        <input type="checkbox" id="ruler" data-page>
+        <span class="track"></span>
+        <span class="grow">Reading ruler <span class="muted small">follows your pointer</span></span>
+      </label>
+      <label class="switch">
+        <input type="checkbox" id="bionic" data-page>
+        <span class="track"></span>
+        <span class="grow">Bold word starts <span class="muted small">guides the eye</span></span>
+      </label>
+    </section>
+
+    <details class="card" id="appearance">
+      <summary class="row between"><h2>Reader appearance</h2><svg class="chev" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></summary>
+      <div class="stack" style="margin-top:12px">
+        <div class="row">
+          <label class="muted small" for="font" style="width:92px">Font</label>
+          <select class="input grow" id="font">
+            <option value="serif">Serif</option>
+            <option value="sans">Sans-serif</option>
+            <option value="slab">Slab</option>
+            <option value="mono">Monospace</option>
+            <option value="dyslexic">Dyslexia-friendly</option>
+          </select>
+        </div>
+        <div class="slider"><label for="size">Text size</label><input type="range" id="size" min="14" max="32" step="1"><output id="sizeOut"></output></div>
+        <div class="slider"><label for="lineHeight">Line spacing</label><input type="range" id="lineHeight" min="1.2" max="2.4" step="0.1"><output id="lineHeightOut"></output></div>
+        <div class="slider"><label for="width">Width</label><input type="range" id="width" min="480" max="1100" step="20"><output id="widthOut"></output></div>
+        <div class="seg" role="group" aria-label="Reader theme" id="theme">
+          <button data-v="auto">Auto</button>
+          <button data-v="light">Light</button>
+          <button data-v="sepia">Sepia</button>
+          <button data-v="dark">Dark</button>
+          <button data-v="black">Black</button>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <footer class="foot row between small">
+    <a href="#" id="shortcuts">Keyboard shortcuts</a>
+    <span class="muted" id="status" role="status" aria-live="polite"></span>
+  </footer>
+
+  <script src="../common/defaults.js"></script>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
