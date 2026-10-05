@@ -1,0 +1,229 @@
+[
+ {
+  "id": 1,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "behavioralengine.com",
+    "clicktale.net",
+    "content-square.net",
+    "contentsquare.net",
+    "crazyegg.com",
+    "decibelinsight.net",
+    "glassboxdigital.com",
+    "glassboxdigital.io",
+    "howuku.com",
+    "inspectlet.com",
+    "luckyorange.com",
+    "luckyorange.net",
+    "mouse-stats.com",
+    "mouseflow.com",
+    "navilytics.com",
+    "plerdy.com",
+    "ptengine.com",
+    "quantummetric.com",
+    "sessioncam.com",
+    "smartlook.cloud",
+    "smartlook.com",
+    "userreplay.net",
+    "vwo-sessions.com",
+    "zarget.com"
+   ],
+   "domainType": "thirdParty",
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 2,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "fsrv.io",
+    "fullstory.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "fullstory.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 3,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "hotjar.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "hotjar.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "logrocket.com",
+    "logrocket.io",
+    "lr-in.com",
+    "lr-ingest.io"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "logrocket.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 5,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "clarity.ms"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "bing.com",
+    "live.com",
+    "microsoft.com",
+    "msn.com",
+    "office.com",
+    "outlook.com",
+    "skype.com",
+    "xbox.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 6,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "yandexmetrica.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "dzen.ru",
+    "kinopoisk.ru",
+    "ya.ru",
+    "yandex.com",
+    "yandex.ru"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ }
+]

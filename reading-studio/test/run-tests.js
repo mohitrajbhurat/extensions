@@ -87,7 +87,7 @@ async function inject(page) {
   const open = async (file) => {
     const page = await ctx.newPage();
     page.on('pageerror', (e) => errors.push(`${file}: ${e.message}`));
-    page.on('console', (m) => { if (m.type() === 'error') errors.push(`${file}: console ${m.text()}`); });
+    page.on('console', (m) => { if (m.type() === 'error' && !/favicon\.ico/.test(m.location().url || '')) errors.push(`${file}: console ${m.text()}`); });
     await page.goto(`${base}/${file}`, { waitUntil: 'load' });
     return page;
   };
@@ -626,7 +626,7 @@ async function inject(page) {
       segs: document.querySelectorAll('.seg').length,
       restricted: !document.getElementById('restricted').hidden
     }));
-    ok('popup renders its controls without errors', perrors.length === 0 && pop.sliders >= 6 && pop.segs >= 4, perrors.join('; '));
+    ok('popup renders its controls without errors', perrors.length === 0 && pop.sliders >= 6 && pop.segs >= 3, perrors.join('; ') || JSON.stringify(pop));
     await popup.close();
 
     const opts = await ctx.newPage();

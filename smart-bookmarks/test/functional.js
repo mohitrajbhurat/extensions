@@ -243,49 +243,53 @@ let ctxRef = null;
   ok('imported tags and notes', importedTags);
   fs.unlinkSync(fixture);
 
-  // Link health check against a local server (grant host permission first).
-  const http = require('http');
-  const server = http.createServer((req, res) => {
-    if (req.url === '/good') { res.writeHead(200, { 'content-type': 'text/html' }); res.end('<h1>ok</h1>'); }
-    else if (req.url === '/moved') { res.writeHead(301, { location: '/good' }); res.end(); }
-    else { res.writeHead(404); res.end('nope'); }
-  });
-  await new Promise(r => server.listen(0, '127.0.0.1', r));
-  const port = server.address().port;
-  const base = `http://127.0.0.1:${port}`;
-  const checkIds = await ev(async b => {
-    const good = await chrome.bookmarks.create({ parentId: '1', title: 'Good', url: b + '/good' });
-    const moved = await chrome.bookmarks.create({ parentId: '1', title: 'Moved', url: b + '/moved' });
-    const dead = await chrome.bookmarks.create({ parentId: '1', title: 'Dead', url: b + '/missing' });
-    return [good.id, moved.id, dead.id];
-  }, base);
-  // Local addresses are skipped by design; verify classify() directly plus a real fetch of each.
-  const probed = await page.evaluate(async b => {
+  // Link health logic. Real network access needs the optional host permission (a user
+  // prompt), so fetch is stubbed in the page to exercise HEAD -> GET fallback,
+  // redirects, dead links and network failures deterministically.
+  const health = await page.evaluate(async () => {
     const { checkUrl } = await import('/manager/health.js');
-    const sig = new AbortController().signal;
+    const realFetch = window.fetch;
+    const calls = [];
+    const resp = (status, url, redirected = false) => ({ status, url, redirected, body: null });
+    window.fetch = async (url, opts) => {
+      calls.push(`${opts.method} ${url}`);
+      const u = new URL(url);
+      if (u.pathname === '/head-405') return opts.method === 'HEAD' ? resp(405, url) : resp(200, url);
+      if (u.pathname === '/moved') return resp(200, 'https://new.example.com/landing', true);
+      if (u.pathname === '/https') return resp(200, url.replace('http:', 'https:'), true);
+      if (u.pathname === '/gone') return resp(404, url);
+      if (u.pathname === '/login') return resp(200, 'https://auth.example.com/login', true);
+      if (u.pathname === '/down') throw new TypeError('Failed to fetch');
+      return resp(200, url);
+    };
+    const signal = new AbortController().signal;
     const r = {};
-    for (const [k, u] of [['good', b + '/good'], ['moved', b + '/moved'], ['dead', b + '/missing']]) {
-      r[k] = await checkUrl(u.replace('127.0.0.1', 'localhost.test.invalid'), { timeout: 3000, signal: sig });
-    }
-    // and the real ones, bypassing the local-address skip by calling fetch-based classify via checkUrl on a public-looking host alias
-    return r;
-  }, base);
-  ok('local addresses are skipped', probed.good && probed.good.status === 'skipped', JSON.stringify(probed.good));
-  const realProbe = await page.evaluate(async b => {
-    const out = {};
-    for (const [k, u] of [['good', b + '/good'], ['moved', b + '/moved'], ['dead', b + '/missing']]) {
-      try {
-        const res = await fetch(u, { method: 'HEAD', redirect: 'follow' });
-        out[k] = { code: res.status, redirected: res.redirected, finalUrl: res.url };
-      } catch (e) { out[k] = { error: String(e.message) }; }
-    }
-    return out;
-  }, base);
-  ok('HEAD probe reaches live server', realProbe.good && realProbe.good.code === 200, JSON.stringify(realProbe.good));
-  ok('redirect observed', realProbe.moved && realProbe.moved.redirected === true, JSON.stringify(realProbe.moved));
-  ok('404 observed', realProbe.dead && realProbe.dead.code === 404, JSON.stringify(realProbe.dead));
-  await ev(ids => Promise.all(ids.map(i => chrome.bookmarks.remove(i))), checkIds);
-  server.close();
+    try {
+      for (const k of ['ok', 'head-405', 'moved', 'https', 'gone', 'login', 'down']) {
+        const base = k === 'https' ? 'http://site.example.com/' : 'https://site.example.com/';
+        r[k] = await checkUrl(base + k, { timeout: 3000, signal });
+      }
+      r.local = await checkUrl('http://localhost:8080/x', { timeout: 3000, signal });
+      const c = new AbortController(); c.abort();
+      r.cancelled = await checkUrl('https://site.example.com/ok', { timeout: 3000, signal: c.signal });
+    } finally { window.fetch = realFetch; }
+    return { r, calls };
+  });
+  const H = health.r;
+  ok('health: OK link', H.ok && H.ok.status === 'ok');
+  ok('health: HEAD 405 falls back to GET', H['head-405'].status === 'ok' && health.calls.includes('GET https://site.example.com/head-405'));
+  ok('health: redirect detected with new URL', H.moved.status === 'redirect' && H.moved.finalUrl === 'https://new.example.com/landing');
+  ok('health: http to https upgrade', H.https.status === 'redirect' && /HTTPS/.test(H.https.label));
+  ok('health: 404 is dead', H.gone.status === 'dead' && H.gone.code === 404);
+  ok('health: login redirect is a warning', H.login.status === 'warn');
+  ok('health: network failure is unreachable', H.down.status === 'dead');
+  ok('health: local addresses skipped', H.local.status === 'skipped');
+  ok('health: cancelled scan returns nothing', H.cancelled === null);
+
+  // Health page renders with a stored report and no permission prompt.
+  await page.click('a[href="#health"]');
+  await page.waitForSelector('.tabs .tab');
+  ok('health page renders', await page.locator('.tabs .tab').count() >= 3);
 
   // Drag and drop: move a bookmark into a folder by dispatching DnD events.
   const moved = await page.evaluate(async workId => {

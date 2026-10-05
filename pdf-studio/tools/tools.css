@@ -111,3 +111,12 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
   .tool-nav small { display: none; }
   .tool-panel { padding: var(--s4); }
 }
+
+.panel.dragover { outline: 2px dashed var(--accent); outline-offset: 8px; border-radius: var(--radius-lg); }
+.panel.dragover .dropzone { border-color: var(--accent); background: var(--accent-soft); }
+.file-row input[aria-invalid="true"] { border-color: var(--danger); }
+.file-row .err:empty { display: none; }
+.org-grid:focus-within .org-page:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.img-item .cap .btn.icon.small { width: 24px; height: 24px; min-height: 0; }
+.img-item .cap .btn svg { width: 14px; height: 14px; }
+.file-row .btn svg { width: 16px; height: 16px; }

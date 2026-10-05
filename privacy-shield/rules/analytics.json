@@ -1,0 +1,509 @@
+[
+ {
+  "id": 1,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "6sc.co",
+    "6sense.com",
+    "abtasty.com",
+    "act-on.net",
+    "activehosted.com",
+    "adswizz.com",
+    "airship.com",
+    "albacross.com",
+    "amplitude.com",
+    "appboy.com",
+    "appcues.com",
+    "barilliance.net",
+    "bloomreach.com",
+    "blueconic.net",
+    "bombora.com",
+    "bounceexchange.com",
+    "braze.com",
+    "bugsnag.com",
+    "cdn.pbbl.co",
+    "certona.net",
+    "chameleon.io",
+    "chartable.com",
+    "chartbeat.com",
+    "chartbeat.net",
+    "clearbit.com",
+    "clearbitjs.com",
+    "clicky.com",
+    "cnzz.com",
+    "convertexperiments.com",
+    "conviva.com",
+    "countly.com",
+    "cronitor.io",
+    "customer.io",
+    "cxense.com",
+    "demandbase.com",
+    "drip.com",
+    "dynamicyield.com",
+    "effectivemeasure.net",
+    "embluemail.com",
+    "en25.com",
+    "ensighten.com",
+    "exponea.com",
+    "flurry.com",
+    "foresee.com",
+    "gemius.pl",
+    "getclicky.com",
+    "getsitecontrol.com",
+    "gleam.io",
+    "go-mpulse.net",
+    "gosquared.com",
+    "granify.com",
+    "growingio.com",
+    "heap.io",
+    "heapanalytics.com",
+    "histats.com",
+    "hit.gemius.pl",
+    "hs-analytics.net",
+    "hs-scripts.com",
+    "imrworldwide.com",
+    "ioam.de",
+    "iterable.com",
+    "june.so",
+    "justuno.com",
+    "kameleoon.eu",
+    "kampyle.com",
+    "keen.io",
+    "kissmetrics.com",
+    "kissmetrics.io",
+    "klaviyo.com",
+    "leadfeeder.com",
+    "liveinternet.ru",
+    "localytics.com",
+    "lux.speedcurve.com",
+    "lytics.io",
+    "mailchimp.com",
+    "mailerlite.com",
+    "marketo.net",
+    "matomo.cloud",
+    "maxymiser.net",
+    "medallia.com",
+    "megaphone.fm",
+    "mktoresp.com",
+    "monetate.net",
+    "mparticle.com",
+    "mpulse.net",
+    "newrelic.com",
+    "nosto.com",
+    "npttech.com",
+    "nr-data.net",
+    "omappapi.com",
+    "omniconvert.com",
+    "onesignal.com",
+    "openstat.net",
+    "optimizely.com",
+    "optimizelyapis.com",
+    "optinmonster.com",
+    "pardot.com",
+    "parse.ly",
+    "parsely.com",
+    "pdst.fm",
+    "pendo.io",
+    "permutive.app",
+    "permutive.com",
+    "piano.io",
+    "piwik.pro",
+    "podtrac.com",
+    "posthog.com",
+    "privy.com",
+    "pushwoosh.com",
+    "qualaroo.com",
+    "quantcount.com",
+    "quantserve.com",
+    "raygun.io",
+    "richrelevance.com",
+    "rollbar.com",
+    "rollworks.com",
+    "rr-returns.com",
+    "rudderlabs.com",
+    "rudderstack.com",
+    "sailthru.com",
+    "scorecardresearch.com",
+    "segment.com",
+    "segment.io",
+    "segmentapis.com",
+    "sendgrid.net",
+    "sensorsdata.cn",
+    "sentry-cdn.com",
+    "sharpspring.com",
+    "sitegainer.com",
+    "sitemeter.com",
+    "snowplowanalytics.com",
+    "speedcurve.com",
+    "statcounter.com",
+    "sumo.com",
+    "survicate.com",
+    "talkingdata.com",
+    "tealiumiq.com",
+    "tinypass.com",
+    "tiqcdn.com",
+    "trackjs.com",
+    "trbo.com",
+    "treasuredata.com",
+    "umeng.com",
+    "umengcloud.com",
+    "urbanairship.com",
+    "usabilla.com",
+    "userpilot.io",
+    "visualwebsiteoptimizer.com",
+    "vwo.com",
+    "walkme.com",
+    "webtrekk.net",
+    "wemfbox.ch",
+    "wisepops.com",
+    "woopra.com",
+    "wt-safetag.com",
+    "zoominfo.com"
+   ],
+   "domainType": "thirdParty",
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 2,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "2o7.net",
+    "adobedtm.com",
+    "omtrdc.net"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "adobe.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 3,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "hm.baidu.com",
+    "tongji.baidu.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "baidu.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "drift.com",
+    "driftt.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "drift.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 5,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "analytics.google.com",
+    "google-analytics.com",
+    "googletagmanager.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "android.com",
+    "blogger.com",
+    "chromium.org",
+    "firebase.google.com",
+    "gmail.com",
+    "google.ca",
+    "google.co.in",
+    "google.co.jp",
+    "google.co.uk",
+    "google.com",
+    "google.com.au",
+    "google.com.br",
+    "google.de",
+    "google.es",
+    "google.fr",
+    "google.it",
+    "googleblog.com",
+    "web.dev",
+    "withgoogle.com",
+    "youtube.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 6,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "hotjar.io"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "hotjar.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 7,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "intercom.io",
+    "intercomcdn.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "intercom.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 8,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "mixpanel.com",
+    "mxpnl.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "mixpanel.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 9,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "top-fwz1.mail.ru"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "mail.ru",
+    "ok.ru",
+    "vk.com",
+    "vk.ru"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 10,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "mc.yandex.ru",
+    "metrika.yandex.ru"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "dzen.ru",
+    "kinopoisk.ru",
+    "ya.ru",
+    "yandex.com",
+    "yandex.ru"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ }
+]

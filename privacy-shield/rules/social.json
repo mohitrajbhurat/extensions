@@ -1,0 +1,365 @@
+[
+ {
+  "id": 1,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "addthis.com",
+    "addtoany.com",
+    "kakao.com",
+    "line.me",
+    "livefyre.com",
+    "nextdoor.com",
+    "openweb.com",
+    "po.st",
+    "quora.com",
+    "sharethis.com",
+    "spot.im",
+    "tumblr.com",
+    "viafoura.co",
+    "weibo.com"
+   ],
+   "domainType": "thirdParty",
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 2,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "byteoversea.com",
+    "tiktok.com",
+    "tiktokv.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "tiktok.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 3,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "disqus.com",
+    "disquscdn.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "disqus.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "licdn.com",
+    "linkedin.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "linkedin.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 5,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "facebook.com",
+    "facebook.net",
+    "fbcdn.net",
+    "instagram.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "facebook.com",
+    "instagram.com",
+    "messenger.com",
+    "meta.com",
+    "oculus.com",
+    "threads.net",
+    "whatsapp.com",
+    "workplace.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 6,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "pinimg.com",
+    "pinterest.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "pinterest.ca",
+    "pinterest.co.uk",
+    "pinterest.com",
+    "pinterest.de",
+    "pinterest.fr"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 7,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "reddit.com",
+    "redditmedia.com",
+    "redditstatic.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "redd.it",
+    "reddit.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 8,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "sc-static.net",
+    "snapchat.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "snap.com",
+    "snapchat.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 9,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "ok.ru",
+    "vk.com",
+    "vk.ru"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "mail.ru",
+    "ok.ru",
+    "vk.com",
+    "vk.ru"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 10,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "ads-twitter.com",
+    "t.co",
+    "twitter.com",
+    "x.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "twitter.com",
+    "x.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ }
+]

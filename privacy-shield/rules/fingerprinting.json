@@ -1,0 +1,57 @@
+[
+ {
+  "id": 1,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "adscore.com",
+    "augur.io",
+    "bluecava.com",
+    "castle.io",
+    "clickcease.com",
+    "deviceatlas.com",
+    "fingerprintjs.com",
+    "forter.com",
+    "fpjs.io",
+    "fpjscdn.net",
+    "fpnpmcdn.net",
+    "fraudlogix.com",
+    "iesnare.com",
+    "iovation.com",
+    "online-metrix.net",
+    "perimeterx.net",
+    "px-cdn.net",
+    "px-cloud.net",
+    "ravelin.click",
+    "riskified.com",
+    "seon.io",
+    "shieldsquare.com",
+    "sift.com",
+    "siftscience.com",
+    "signifyd.com",
+    "threatmetrix.com",
+    "trustdecision.com"
+   ],
+   "domainType": "thirdParty",
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ }
+]

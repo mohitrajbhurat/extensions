@@ -307,7 +307,7 @@ function updateSplitPreview() {
 function describeGroup(g) {
   if (g.length === 1) return `p${g[0] + 1}`;
   const contiguous = g.every((v, i) => !i || v === g[i - 1] + 1);
-  return contiguous ? `p${g[0] + 1}-${g[g.length - 1] + 1}` : `${g.length} pages`;
+  return contiguous ? `p${g[0] + 1}-${g[g.length - 1] + 1}` : `${g.length}-pages`;
 }
 
 async function doSplit() {
@@ -379,6 +379,7 @@ const cloneItems = (items) => items.map((it) => ({ ...it }));
 
 function pushUndo() {
   org.undo.push({ items: cloneItems(org.items), selected: [...org.selected] });
+  org.dirty = true;
   if (org.undo.length > 100) org.undo.shift();
   $('org-undo').disabled = false;
 }
@@ -563,6 +564,7 @@ async function orgSave() {
   const out = await buildOrg(org.items);
   if (!out) return;
   downloadBlob(out, orgName('organized'));
+  org.dirty = false;
   toast(`Saved ${org.items.length} pages`, 'success');
 }
 
@@ -633,7 +635,7 @@ function onOrgKey(e) {
     const d = deltas[e.key];
     if (mod || e.altKey) {
       if (!org.selected.has(card.dataset.id)) org.selected = new Set([card.dataset.id]);
-      moveSelected(Math.sign(d) * (e.key === 'ArrowUp' || e.key === 'ArrowDown' ? 1 : 1) * (Math.abs(d) === 1 ? 1 : 1));
+      moveSelected(d < 0 ? -1 : 1);
       return;
     }
     const j = Math.min(Math.max(idx + d, 0), org.items.length - 1);
@@ -995,9 +997,7 @@ function bind() {
   // File drops anywhere in a panel go to that tool.
   const handlers = { merge: mergeAdd, split: splitLoad, organize: orgAdd, images: imgAdd, compress: cmpLoad };
   document.querySelectorAll('.panel').forEach((panel) => {
-    makeDropTarget(panel, (files) => handlers[panel.dataset.panel](files), {
-      highlightEl: panel.querySelector('.dropzone:not([hidden])') ? panel.querySelector('.dropzone') : panel
-    });
+    makeDropTarget(panel, (files) => handlers[panel.dataset.panel](files));
   });
   // Stop the browser from navigating away when a file misses the drop target.
   window.addEventListener('dragover', (e) => e.preventDefault());
@@ -1023,7 +1023,7 @@ function bind() {
     }
   });
   window.addEventListener('beforeunload', (e) => {
-    if (org.undo.length) e.preventDefault();
+    if (org.dirty) e.preventDefault();
   });
 }
 

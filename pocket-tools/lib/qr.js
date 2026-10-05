@@ -434,10 +434,12 @@ export function penaltyScore(matrix) {
   const pattern = [1, 0, 1, 1, 1, 0, 1];
   const matches = (vals, start) => {
     for (let i = 0; i < 7; i++) if (vals[start + i] !== pattern[i]) return false;
-    const before = vals.slice(Math.max(0, start - 4), start);
-    const after = vals.slice(start + 7, start + 11);
-    const quietBefore = before.length === 4 && before.every(v => v === 0);
-    const quietAfter = after.length === 4 && after.every(v => v === 0);
+    // Modules outside the symbol count as light (they are the quiet zone).
+    let quietBefore = true, quietAfter = true;
+    for (let i = 1; i <= 4; i++) {
+      if (start - i >= 0 && vals[start - i] !== 0) quietBefore = false;
+      if (start + 6 + i < vals.length && vals[start + 6 + i] !== 0) quietAfter = false;
+    }
     return quietBefore || quietAfter;
   };
   const lines = [];

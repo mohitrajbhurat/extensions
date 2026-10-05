@@ -118,17 +118,22 @@ function drawText(ctx, s) {
 }
 
 function effectRegion(ctx, s, offset) {
-  // Reads the pixels rendered so far (canvas pixel space) and redraws them obscured.
+  // Reads the pixels rendered so far and redraws them obscured. The context is translated
+  // by `offset` (image px -> canvas px), so canvas pixel cx is drawn at cx - offset.x.
   const src = ctx.canvas;
   const r = norm(s);
-  const sx = Math.max(0, Math.round(r.x - offset.x));
-  const sy = Math.max(0, Math.round(r.y - offset.y));
-  const sw = Math.min(src.width - sx, Math.round(r.w));
-  const sh = Math.min(src.height - sy, Math.round(r.h));
+  const x0 = Math.max(0, Math.round(r.x + offset.x));
+  const y0 = Math.max(0, Math.round(r.y + offset.y));
+  const x1 = Math.min(src.width, Math.round(r.x + r.w + offset.x));
+  const y1 = Math.min(src.height, Math.round(r.y + r.h + offset.y));
+  const sw = x1 - x0;
+  const sh = y1 - y0;
   if (sw < 2 || sh < 2) return;
+  const dx = x0 - offset.x;
+  const dy = y0 - offset.y;
   ctx.save();
   ctx.beginPath();
-  ctx.rect(sx + offset.x, sy + offset.y, sw, sh);
+  ctx.rect(dx, dy, sw, sh);
   ctx.clip();
   if (s.type === 'pixelate') {
     const block = Math.max(4, Math.round((6 + s.level * 4) * unit()));
@@ -137,22 +142,22 @@ function effectRegion(ctx, s, offset) {
     const tmp = new OffscreenCanvas(tw, th);
     const t = tmp.getContext('2d');
     t.imageSmoothingQuality = 'medium';
-    t.drawImage(src, sx, sy, sw, sh, 0, 0, tw, th);
+    t.drawImage(src, x0, y0, sw, sh, 0, 0, tw, th);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(tmp, 0, 0, tw, th, sx + offset.x, sy + offset.y, tw * block, th * block);
+    ctx.drawImage(tmp, 0, 0, tw, th, dx, dy, tw * block, th * block);
   } else {
     const radius = Math.round((4 + s.level * 4) * unit());
     const pad = radius * 2;
-    const px = Math.max(0, sx - pad);
-    const py = Math.max(0, sy - pad);
+    const px = Math.max(0, x0 - pad);
+    const py = Math.max(0, y0 - pad);
     const pw = Math.min(src.width - px, sw + pad * 2);
     const ph = Math.min(src.height - py, sh + pad * 2);
     const tmp = new OffscreenCanvas(pw, ph);
     tmp.getContext('2d').drawImage(src, px, py, pw, ph, 0, 0, pw, ph);
     ctx.filter = `blur(${radius}px)`;
     // Draw twice to avoid soft see-through edges.
-    ctx.drawImage(tmp, px + offset.x, py + offset.y);
-    ctx.drawImage(tmp, px + offset.x, py + offset.y);
+    ctx.drawImage(tmp, px - offset.x, py - offset.y);
+    ctx.drawImage(tmp, px - offset.x, py - offset.y);
     ctx.filter = 'none';
   }
   ctx.restore();
@@ -660,7 +665,11 @@ function openTextInput(value) {
   textInput.value = value;
   textInput.hidden = false;
   styleTextInput();
-  setTimeout(() => { textInput.focus(); textInput.select(); }, 0);
+  // Focus synchronously so the very first keystroke lands in the text box
+  // (otherwise single-letter tool shortcuts could steal it).
+  textInput.focus({ preventScroll: true });
+  textInput.select();
+  setTimeout(() => { if (state.textEdit && document.activeElement !== textInput) textInput.focus({ preventScroll: true }); }, 0);
 }
 function commitText(cancel = false) {
   const te = state.textEdit;

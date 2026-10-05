@@ -119,10 +119,23 @@ export function isOurs(node) {
 /** Topmost page element under the pointer, skipping our own overlay. */
 export function elementAt(x, y) {
   const stack = document.elementsFromPoint(x, y);
+  let found = null;
   for (const el of stack) {
-    if (!isOurs(el)) return el;
+    if (!isOurs(el)) {
+      found = el;
+      break;
+    }
   }
-  return null;
+  // Descend into open shadow roots of page components.
+  for (let depth = 0; found && found.shadowRoot && depth < 8; depth++) {
+    let inner = null;
+    try {
+      inner = found.shadowRoot.elementsFromPoint(x, y).find(n => n !== found && found.shadowRoot.contains(n));
+    } catch {}
+    if (!inner || inner === found) break;
+    found = inner;
+  }
+  return found;
 }
 
 /** A short, reasonably stable CSS selector for an element. */

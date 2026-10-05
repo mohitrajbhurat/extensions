@@ -1,0 +1,594 @@
+[
+ {
+  "id": 1,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "33across.com",
+    "360yield.com",
+    "3lift.com",
+    "ad-delivery.net",
+    "ad-stir.com",
+    "adblade.com",
+    "adblockanalytics.com",
+    "adcash.com",
+    "adcolony.com",
+    "adform.net",
+    "adfox.ru",
+    "adhese.com",
+    "adhigh.net",
+    "adingo.jp",
+    "adition.com",
+    "adjust.com",
+    "adjust.io",
+    "admitad.com",
+    "adnami.io",
+    "adriver.ru",
+    "adroll.com",
+    "adrollmail.com",
+    "adsafeprotected.com",
+    "adscale.de",
+    "adsco.re",
+    "adspirit.de",
+    "adsrvme.com",
+    "adsrvr.org",
+    "adsterra.com",
+    "adsymptotic.com",
+    "adtech.de",
+    "adtechus.com",
+    "adtelligent.com",
+    "adthrive.com",
+    "advertising.com",
+    "adyoulike.com",
+    "adzerk.net",
+    "agkn.com",
+    "amobee.com",
+    "anrdoezrs.net",
+    "app.link",
+    "applovin.com",
+    "applvn.com",
+    "appsflyer.com",
+    "apsalar.com",
+    "avantlink.com",
+    "awin1.com",
+    "beeswax.com",
+    "betweendigital.com",
+    "bidr.io",
+    "bidswitch.net",
+    "bidvertiser.com",
+    "bluekai.com",
+    "branch.io",
+    "bttrack.com",
+    "buysellads.com",
+    "buzzoola.com",
+    "carbonads.com",
+    "carbonads.net",
+    "casalemedia.com",
+    "celtra.com",
+    "chartboost.com",
+    "clickadu.com",
+    "confiant-integrations.net",
+    "contextweb.com",
+    "conversantmedia.com",
+    "creativecdn.com",
+    "crwdcntrl.net",
+    "districtm.io",
+    "dotomi.com",
+    "doubleverify.com",
+    "dpbolvw.net",
+    "dwin1.com",
+    "emetriq.de",
+    "emjcd.com",
+    "emxdgt.com",
+    "exelator.com",
+    "exoclick.com",
+    "eyeota.net",
+    "eyeviewads.com",
+    "ezoic.net",
+    "ezojs.com",
+    "flashtalking.com",
+    "flexlinkspro.com",
+    "flexoffers.com",
+    "freewheel.tv",
+    "ftjcfx.com",
+    "fwmrm.net",
+    "fyber.com",
+    "gammaplatform.com",
+    "geniee.co.jp",
+    "go2cloud.org",
+    "gumgum.com",
+    "gumgumcdn.com",
+    "hasoffers.com",
+    "hilltopads.net",
+    "i-mobile.co.jp",
+    "id5-sync.com",
+    "impact.com",
+    "impactradius-event.com",
+    "improvedigital.com",
+    "infolinks.com",
+    "inmobi.com",
+    "innovid.com",
+    "intergient.com",
+    "jdoqocy.com",
+    "juicyads.com",
+    "kevel.co",
+    "kochava.com",
+    "kochavatracking.com",
+    "kqzyfj.com",
+    "krxd.net",
+    "ligatus.com",
+    "lijit.com",
+    "linksynergy.com",
+    "liveramp.com",
+    "lkqd.net",
+    "logly.co.jp",
+    "mathtag.com",
+    "media.net",
+    "mediamath.com",
+    "mediavine.com",
+    "meetrics.net",
+    "mgid.com",
+    "microad.jp",
+    "moatads.com",
+    "monumetric.com",
+    "mopub.com",
+    "narrativ.com",
+    "nativo.com",
+    "nexac.com",
+    "ntv.io",
+    "nuggad.net",
+    "omnitagjs.com",
+    "onetag-sys.com",
+    "openx.com",
+    "openx.net",
+    "owneriq.net",
+    "partnerize.com",
+    "pbstck.com",
+    "pippio.com",
+    "pjtra.com",
+    "playwire.com",
+    "plista.com",
+    "pntra.com",
+    "popads.net",
+    "popin.cc",
+    "powerlinks.com",
+    "prebid.org",
+    "prf.hn",
+    "propellerads.com",
+    "pubmatic.com",
+    "pubnative.net",
+    "pulsepoint.com",
+    "qksrv.net",
+    "quantumdex.io",
+    "raptive.com",
+    "redirectingat.com",
+    "relap.io",
+    "revcontent.com",
+    "rlcdn.com",
+    "rtbhouse.com",
+    "rtbsuperhub.com",
+    "rubiconproject.com",
+    "sape.ru",
+    "sascdn.com",
+    "seedtag.com",
+    "semasio.net",
+    "servedby-buysellads.com",
+    "shareasale.com",
+    "sharethrough.com",
+    "simpli.fi",
+    "singular.net",
+    "sitescout.com",
+    "skimlinks.com",
+    "skimresources.com",
+    "smaato.net",
+    "smartadserver.com",
+    "smartyads.com",
+    "sociomantic.com",
+    "sovrn.com",
+    "spotx.tv",
+    "spotxchange.com",
+    "springserve.com",
+    "startappservice.com",
+    "stickyadstv.com",
+    "supersonicads.com",
+    "tapad.com",
+    "tapjoy.com",
+    "teads.tv",
+    "telaria.com",
+    "tenjin.io",
+    "theadex.com",
+    "tkqlhce.com",
+    "tradedoubler.com",
+    "tradetracker.net",
+    "trafficfactory.biz",
+    "trafficjunky.com",
+    "tremorhub.com",
+    "triplelift.com",
+    "tune.com",
+    "unityads.unity3d.com",
+    "unrulymedia.com",
+    "viglink.com",
+    "vungle.com",
+    "w55c.net",
+    "webgains.com",
+    "yadro.ru",
+    "yieldlab.net",
+    "yieldmanager.com",
+    "yieldmo.com",
+    "yieldoptimizer.com",
+    "zenaps.com",
+    "zeotap.com",
+    "zergnet.com"
+   ],
+   "domainType": "thirdParty",
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 2,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "demdex.net",
+    "everesttech.net"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "adobe.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 3,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "amazon-adsystem.com",
+    "serving-sys.com",
+    "sizmek.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "amazon.ca",
+    "amazon.co.jp",
+    "amazon.co.uk",
+    "amazon.com",
+    "amazon.com.au",
+    "amazon.com.br",
+    "amazon.com.mx",
+    "amazon.de",
+    "amazon.es",
+    "amazon.fr",
+    "amazon.in",
+    "amazon.it",
+    "audible.com",
+    "imdb.com",
+    "twitch.tv"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "criteo.com",
+    "criteo.net"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "criteo.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 5,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "2mdn.net",
+    "app-measurement.com",
+    "doubleclick.net",
+    "googleadservices.com",
+    "googlesyndication.com",
+    "googletagservices.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "android.com",
+    "blogger.com",
+    "chromium.org",
+    "firebase.google.com",
+    "gmail.com",
+    "google.ca",
+    "google.co.in",
+    "google.co.jp",
+    "google.co.uk",
+    "google.com",
+    "google.com.au",
+    "google.com.br",
+    "google.de",
+    "google.es",
+    "google.fr",
+    "google.it",
+    "googleblog.com",
+    "web.dev",
+    "withgoogle.com",
+    "youtube.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 6,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "adnxs-simple.com",
+    "adnxs.com",
+    "bat.bing.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "bing.com",
+    "live.com",
+    "microsoft.com",
+    "msn.com",
+    "office.com",
+    "outlook.com",
+    "skype.com",
+    "xbox.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 7,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "outbrain.com",
+    "outbrainimg.com",
+    "zemanta.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "outbrain.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 8,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "taboola.com",
+    "taboolasyndication.com"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "taboola.com"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 9,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "mail.ru"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "mail.ru",
+    "ok.ru",
+    "vk.com",
+    "vk.ru"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": 10,
+  "priority": 1,
+  "action": {
+   "type": "block"
+  },
+  "condition": {
+   "requestDomains": [
+    "an.yandex.ru"
+   ],
+   "domainType": "thirdParty",
+   "excludedInitiatorDomains": [
+    "dzen.ru",
+    "kinopoisk.ru",
+    "ya.ru",
+    "yandex.com",
+    "yandex.ru"
+   ],
+   "resourceTypes": [
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "webtransport",
+    "webbundle",
+    "other"
+   ]
+  }
+ }
+]

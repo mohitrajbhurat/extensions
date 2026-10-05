@@ -90,6 +90,12 @@ Nothing is ever sent anywhere: there are no network requests of any kind.
 node tools/make-icons.js research-canvas
 node tools/smoke-test.js research-canvas "sidepanel/sidepanel.html?mode=tab" "sidepanel/sidepanel.html?mode=popup"
 ```
+Tests:
+```
+node research-canvas/test/markdown.test.mjs   # Markdown renderer, export helpers, URL keys, tags
+node research-canvas/test/e2e.js              # Playwright: highlight, comment/recolor, sticky notes,
+                                              # clipping, re-anchoring, panel search, backlinks, import/export
+```
 `test/test-page.html` is a small page for trying the highlighter and sticky notes by hand:
 `python3 -m http.server 8765 --directory research-canvas/test`, then open `http://localhost:8765/test-page.html`.
 

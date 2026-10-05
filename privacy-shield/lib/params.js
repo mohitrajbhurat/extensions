@@ -1,0 +1,51 @@
+// Query parameters that exist only to track the click that brought you to a page.
+// declarativeNetRequest `removeParams` takes exact names (no wildcards), so the common
+// utm_* variants are listed individually.
+
+export const TRACKING_PARAMS = [
+  // Google Analytics / Urchin
+  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'utm_id', 'utm_name',
+  'utm_cid', 'utm_reader', 'utm_referrer', 'utm_social', 'utm_social-type', 'utm_brand',
+  'utm_place', 'utm_pubreferrer', 'utm_swu', 'utm_viz_id', 'utm_source_platform',
+  'utm_creative_format', 'utm_marketing_tactic', 'utm_campaign_id', 'utm_adgroup', 'utm_keyword',
+  'utm_device', 'utm_network', 'utm_placement', 'utm_matchtype', 'utm_channel', 'utm_type',
+  // Click identifiers
+  'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'gad_source', 'gad_campaignid',
+  'fbclid', 'igshid', 'igsh', 'msclkid', 'twclid', 'ttclid', 'li_fat_id', 'epik', 'rdt_cid',
+  'scclid', 'yclid', 'ysclid', 'srsltid', 'wickedid', 'irclickid', 'ir_campaignid',
+  // Email marketing
+  'mc_eid', 'mc_cid', 'mkt_tok', '_hsenc', '_hsmi', '__hssc', '__hstc', '__hsfp', 'hsCtaTracking',
+  'vero_id', 'vero_conv', 'oly_anon_id', 'oly_enc_id', 'rb_clickid', 's_cid', 'ml_subscriber',
+  'ml_subscriber_hash', 'ss_campaign_id', 'ss_source', 'sms_click', 'sms_source', 'sms_uph',
+  // Misc analytics / referral
+  '_ga', '_gl', '_ke', '_kx', 'trk_contact', 'trk_msg', 'trk_module', 'trk_sid', 'wt_mc', 'wt_zmc',
+  'pk_campaign', 'pk_kwd', 'pk_source', 'pk_medium', 'pk_content', 'piwik_campaign', 'piwik_kwd',
+  'mtm_campaign', 'mtm_keyword', 'mtm_source', 'mtm_medium', 'mtm_content', 'mtm_cid', 'mtm_group',
+  'mtm_placement', 'ef_id', 's_kwcid', 'cmpid', 'icid', 'spm', 'si', 'xtor', 'at_medium', 'at_campaign',
+  'hmb_campaign', 'hmb_medium', 'hmb_source', 'guccounter', 'guce_referrer', 'guce_referrer_sig',
+  '__s', 'ncid', 'sr_share', 'zanpid', 'ranMID', 'ranEAID', 'ranSiteID', 'awc', 'cvid', 'oicd',
+];
+
+/**
+ * Parameters that are ambiguous enough that we only strip them when another tracking
+ * parameter is also present is not something DNR can express, so the list above already
+ * leaves out names that are commonly functional (for example "ref", "source", "id").
+ */
+export const TRACKING_PARAM_SET = new Set(TRACKING_PARAMS);
+
+/** Pure helper used by tests and the dashboard preview. */
+export function stripTrackingParams(url) {
+  let u;
+  try {
+    u = new URL(url);
+  } catch {
+    return { url, removed: [] };
+  }
+  const removed = [];
+  for (const key of [...u.searchParams.keys()]) {
+    if (TRACKING_PARAM_SET.has(key) && !removed.includes(key)) removed.push(key);
+  }
+  if (!removed.length) return { url, removed };
+  for (const key of removed) u.searchParams.delete(key);
+  return { url: u.toString(), removed };
+}

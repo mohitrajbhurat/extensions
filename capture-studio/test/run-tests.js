@@ -250,6 +250,9 @@ function colorNear(px, rgb, tol = 24) { return px && rgb.every((v, i) => Math.ab
 
   // Crop
   await ed.keyboard.press('c');
+  await sleep(200);
+  // The crop bar changes the available space, so measure the canvas again.
+  Object.assign(box, await ed.locator('#canvas').boundingBox());
   await drag([0.25, 0.25], [0.75, 0.75]);
   await ed.keyboard.press('Enter');
   await sleep(1000);

@@ -16,6 +16,7 @@ let scopeFolder = null;
 
 // ---------- Link probing ----------
 async function probe(url, method, timeoutMs, signal) {
+  if (signal.aborted) return { error: 'cancelled' };
   const ctrl = new AbortController();
   let timedOut = false;
   const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, timeoutMs);
