@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reading Studio Settings</title>
+  <link rel="stylesheet" href="../common/ui.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="layout">
+    <nav class="side" aria-label="Settings sections">
+      <div class="brand"><img src="../icons/icon48.png" alt="" width="32" height="32"><div><strong>Reading Studio</strong><div class="muted small">Settings</div></div></div>
+      <a href="#reader" class="nav">Reader view</a>
+      <a href="#tts" class="nav">Read aloud</a>
+      <a href="#dark" class="nav">Dark mode</a>
+      <a href="#focus" class="nav">Focus aids</a>
+      <a href="#shortcuts" class="nav">Shortcuts</a>
+      <a href="#data" class="nav">Data and privacy</a>
+    </nav>
+
+    <main class="content">
+      <section id="reader" class="card stack">
+        <h2>Reader view</h2>
+        <p class="muted small">Press <kbd>Alt+Shift+R</kbd> on any article to open a clean, distraction-free copy. Changes apply live to open reader views.</p>
+        <div class="grid2">
+          <div class="field"><label for="r-font">Font</label>
+            <select class="input" id="r-font">
+              <option value="serif">Serif</option><option value="sans">Sans-serif</option><option value="slab">Slab</option>
+              <option value="mono">Monospace</option><option value="dyslexic">Dyslexia-friendly (OpenDyslexic, Lexend, Atkinson Hyperlegible or Comic Sans if installed)</option>
+            </select></div>
+          <div class="field"><label>Theme</label>
+            <div class="seg" role="group" aria-label="Theme" id="r-theme">
+              <button data-v="auto">Auto</button><button data-v="light">Light</button><button data-v="sepia">Sepia</button><button data-v="dark">Dark</button><button data-v="black">Black</button>
+            </div></div>
+        </div>
+        <div class="slider"><label for="r-size">Text size</label><input type="range" id="r-size" min="14" max="32" step="1"><output id="r-size-o"></output></div>
+        <div class="slider"><label for="r-lineHeight">Line spacing</label><input type="range" id="r-lineHeight" min="1.2" max="2.4" step="0.1"><output id="r-lineHeight-o"></output></div>
+        <div class="slider"><label for="r-width">Column width</label><input type="range" id="r-width" min="480" max="1100" step="20"><output id="r-width-o"></output></div>
+        <div class="slider"><label for="r-wpm">Reading speed</label><input type="range" id="r-wpm" min="120" max="500" step="10"><output id="r-wpm-o"></output></div>
+        <div class="field"><label>Alignment</label>
+          <div class="seg narrow" role="group" aria-label="Alignment" id="r-align"><button data-v="left">Left</button><button data-v="justify">Justified</button></div></div>
+        <div class="preview" id="preview" aria-label="Preview">
+          <h3>The quiet art of reading</h3>
+          <p>Good typography disappears. When the measure is comfortable and the spacing generous, the eye glides from line to line and the words do the work.</p>
+          <p>Adjust the settings above and this preview follows along.</p>
+        </div>
+      </section>
+
+      <section id="tts" class="card stack">
+        <h2>Read aloud</h2>
+        <p class="muted small">The current sentence is highlighted and scrolled into view. Click any sentence to jump there. Your place is remembered for each page.</p>
+        <div class="grid2">
+          <div class="field"><label for="t-engine">Speech engine</label>
+            <select class="input" id="t-engine">
+              <option value="chrome">Browser speech (chrome.tts)</option>
+              <option value="web">Web Speech API (speechSynthesis)</option>
+            </select></div>
+          <div class="field"><label for="t-source">Default reading source</label>
+            <select class="input" id="t-source">
+              <option value="auto">Auto: selection if any, otherwise the article</option>
+              <option value="selection">Selected text</option>
+              <option value="article">Main article</option>
+              <option value="page">Whole page</option>
+            </select></div>
+        </div>
+        <div class="field"><label for="t-voice">Voice</label>
+          <div class="row"><select class="input grow" id="t-voice"><option value="">Browser default</option></select><button class="btn" id="t-test">Test voice</button></div>
+          <div class="muted small" id="t-voice-note"></div></div>
+        <div class="slider"><label for="t-rate">Speed</label><input type="range" id="t-rate" min="0.5" max="3" step="0.05"><output id="t-rate-o"></output></div>
+        <div class="slider"><label for="t-pitch">Pitch</label><input type="range" id="t-pitch" min="0.5" max="2" step="0.05"><output id="t-pitch-o"></output></div>
+        <div class="slider"><label for="t-volume">Volume</label><input type="range" id="t-volume" min="0" max="1" step="0.05"><output id="t-volume-o"></output></div>
+        <label class="switch"><input type="checkbox" id="t-highlightWord"><span class="track"></span><span>Highlight each spoken word (when the voice reports word positions)</span></label>
+        <label class="switch"><input type="checkbox" id="t-autoScroll"><span class="track"></span><span>Auto-scroll to the spoken sentence (pauses briefly when you scroll yourself)</span></label>
+      </section>
+
+      <section id="dark" class="card stack">
+        <h2>Dark mode</h2>
+        <div class="grid2">
+          <div class="field"><label for="d-enabled">Default for all sites</label>
+            <select class="input" id="d-enabled">
+              <option value="off">Off (turn on per site)</option>
+              <option value="on">On</option>
+              <option value="system">Follow system dark mode</option>
+            </select></div>
+          <div class="field"><label>Engine</label>
+            <div class="seg" role="group" aria-label="Engine" id="d-mode"><button data-v="dynamic">Dynamic</button><button data-v="filter">Filter</button></div>
+            <div class="muted small" id="d-mode-note"></div></div>
+        </div>
+        <label class="switch"><input type="checkbox" id="d-skipDarkSites"><span class="track"></span><span>Leave sites that are already dark untouched</span></label>
+        <div class="slider"><label for="d-brightness">Brightness</label><input type="range" id="d-brightness" min="50" max="150"><output id="d-brightness-o"></output></div>
+        <div class="slider"><label for="d-contrast">Contrast</label><input type="range" id="d-contrast" min="50" max="150"><output id="d-contrast-o"></output></div>
+        <div class="slider"><label for="d-sepia">Sepia</label><input type="range" id="d-sepia" min="0" max="100"><output id="d-sepia-o"></output></div>
+        <div class="slider"><label for="d-grayscale">Grayscale</label><input type="range" id="d-grayscale" min="0" max="100"><output id="d-grayscale-o"></output></div>
+        <div class="access">
+          <div class="grow">
+            <strong>Automatic dark mode</strong>
+            <div class="muted small" id="d-access-text"></div>
+          </div>
+          <button class="btn" id="d-access">Allow on all sites</button>
+        </div>
+        <div>
+          <div class="row between"><strong>Site rules</strong><span class="muted small" id="d-sites-count"></span></div>
+          <ul class="sites" id="d-sites"></ul>
+          <form class="row" id="d-add">
+            <input class="input grow" id="d-add-host" placeholder="example.com" aria-label="Site to add" autocomplete="off">
+            <select class="input" id="d-add-rule" style="width:140px" aria-label="Rule"><option value="on">Always dark</option><option value="off">Never dark</option></select>
+            <button class="btn" type="submit">Add</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="focus" class="card stack">
+        <h2>Focus aids</h2>
+        <div class="field"><label>Reading ruler style</label>
+          <div class="seg narrow" role="group" aria-label="Ruler style" id="f-rulerMode"><button data-v="focus">Spotlight</button><button data-v="band">Tinted band</button><button data-v="underline">Underline</button></div></div>
+        <div class="slider"><label for="f-rulerHeight">Ruler height</label><input type="range" id="f-rulerHeight" min="20" max="200" step="2"><output id="f-rulerHeight-o"></output></div>
+        <div class="slider"><label for="f-rulerOpacity">Dimming</label><input type="range" id="f-rulerOpacity" min="0.1" max="0.9" step="0.05"><output id="f-rulerOpacity-o"></output></div>
+        <div class="field"><label for="f-rulerColor">Band color</label><input type="color" id="f-rulerColor" class="color"></div>
+        <div class="slider"><label for="f-bionicStrength">Bold word starts</label><input type="range" id="f-bionicStrength" min="0.3" max="0.7" step="0.05"><output id="f-bionicStrength-o"></output></div>
+        <p class="bionic-demo" id="bionic-demo" aria-hidden="true"></p>
+        <p class="muted small">Tip: with the ruler on, <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd> moves it with the keyboard.</p>
+      </section>
+
+      <section id="shortcuts" class="card stack">
+        <h2>Keyboard shortcuts</h2>
+        <table class="keys"><tbody id="keys"></tbody></table>
+        <div class="row"><button class="btn" id="edit-keys">Change shortcuts</button><span class="muted small">Opens chrome://extensions/shortcuts</span></div>
+        <ul class="muted small tips">
+          <li>Right-click a page or selection for <em>Read selection aloud</em>, <em>Read this page aloud</em>, <em>Open in Reader view</em> and <em>Toggle dark mode</em>.</li>
+          <li>Alt+click any paragraph on a page (after using Reading Studio there once) to start reading from it.</li>
+          <li>In reader view, <kbd>Esc</kbd> closes the overlay.</li>
+        </ul>
+      </section>
+
+      <section id="data" class="card stack">
+        <h2>Data and privacy</h2>
+        <p class="muted small">Everything stays in your browser. Settings sync through your browser profile if sync is on; saved reading positions and site rules stay on this device. Reading Studio makes no network requests of its own.</p>
+        <div class="row wrap">
+          <span class="grow" id="resume-count">Saved reading positions: –</span>
+          <button class="btn" id="clear-resume">Clear positions</button>
+        </div>
+        <div class="row wrap">
+          <span class="grow">Reset every setting to its default.</span>
+          <button class="btn danger" id="reset">Reset settings</button>
+        </div>
+      </section>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </main>
+  </div>
+  <script src="../common/defaults.js"></script>
+  <script src="options.js" type="module"></script>
+</body>
+</html>
