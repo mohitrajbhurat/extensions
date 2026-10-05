@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Capture Studio",
+  "short_name": "Capture Studio",
+  "description": "Screenshots (visible, region, full page), an annotation editor and screen recording with webcam and audio. All local.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Capture Studio",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "scripting", "tabCapture", "offscreen", "storage", "unlimitedStorage"],
+  "commands": {
+    "capture-screenshot": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Screenshot: select a region (Enter = visible area, F = full page)"
+    },
+    "capture-visible": { "description": "Screenshot: visible area" },
+    "capture-full-page": { "description": "Screenshot: full scrolling page" },
+    "pause-recording": { "description": "Pause or resume the recording" },
+    "stop-recording": { "description": "Stop and save the recording" }
+  },
+  "web_accessible_resources": [
+    { "resources": ["camera/bubble.html", "camera/bubble.css", "camera/bubble.js"], "matches": ["<all_urls>"] }
+  ]
+}

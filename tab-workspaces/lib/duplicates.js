@@ -15,9 +15,7 @@ function keyOpts(s) { return { ignoreHash: s.dupIgnoreHash, ignoreTracking: s.du
 
 /** Called when a tab commits a URL. */
 export async function check(tab) {
-  chrome.storage.session.get('dbg').then(r => chrome.storage.session.set({ dbg: [...(r.dbg || []), [tab.id, tabUrl(tab), created.has(tab.id), quiet.opening.has(tab.id), checked.has(tab.id), quiet.windows.has(tab.windowId)]] }));
   if (!created.has(tab.id) || quiet.opening.has(tab.id) || checked.has(tab.id)) return;
-  if (quiet.windows.has(tab.windowId)) return;
   const s = await store.getSettings();
   if (s.duplicateMode === 'off') return;
   const key = normalizeUrl(tabUrl(tab), keyOpts(s));

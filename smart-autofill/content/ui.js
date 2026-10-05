@@ -14,7 +14,7 @@
   .box.off { border-style: dashed; --c: #8a8f98; background: transparent; }
   .box.done { --c: #16a34a; }
   .box.fail { --c: #dc2626; }
-  .badge { position: absolute; left: -2px; bottom: calc(100% + 2px); display: flex; align-items: center; gap: 4px; max-width: 340px;
+  .badge { position: absolute; right: -2px; bottom: calc(100% + 2px); display: flex; align-items: center; gap: 4px; max-width: 340px;
     padding: 2px 4px 2px 2px; border-radius: 6px; background: var(--c); color: #fff; pointer-events: auto; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
   .badge.below { bottom: auto; top: calc(100% + 2px); }
   .badge button { all: unset; cursor: pointer; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 4px; background: rgba(255,255,255,.22); font-weight: 700; }

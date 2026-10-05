@@ -56,6 +56,7 @@
   const CSS_TEXT = `
   :host { all: initial; }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   .wrap {
     --bg: #ffffff; --bg2: #f4f6f8; --bg3: #e9edf1; --fg: #0f172a; --muted: #5b6676; --line: #d9dee5;
     --accent: #0d9488; --accent-fg: #ffffff; --accent-soft: rgba(13,148,136,.12); --danger: #dc2626;
@@ -115,7 +116,7 @@
   details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 8px; }
   details[open] summary { margin-bottom: 4px; }
   .cols { display: flex; flex-direction: column; gap: 4px; }
-  .col { display: grid; grid-template-columns: 1fr 104px auto; gap: 4px; align-items: center; padding: 4px; border-radius: 8px; border: 1px solid transparent; }
+  .col { display: grid; grid-template-columns: 1fr 116px auto; gap: 4px; align-items: center; padding: 4px; border-radius: 8px; border: 1px solid transparent; }
   .col:hover, .col:focus-within { border-color: var(--line); background: var(--bg2); }
   .col .acts { display: flex; }
   .col .attr { grid-column: 1 / -1; }

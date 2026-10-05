@@ -136,7 +136,6 @@ async function waitFor(fn, timeout = 8000, step = 150) {
   const countUrl = async u => (await webTabs()).filter(t => t.url === u).length;
   await openTab(`${base}/alpha1`, true);
   await sleep(2500);
-  console.log(JSON.stringify(await dash.evaluate(() => chrome.storage.session.get('dbg'))));
   check('auto mode closes a newly opened duplicate', (await countUrl(`${base}/alpha1`)) === 1, String(await countUrl(`${base}/alpha1`)));
   await msg('settings.set', { patch: { duplicateMode: 'off' } });
   await sleep(200);
@@ -177,14 +176,39 @@ async function waitFor(fn, timeout = 8000, step = 150) {
   check('rule puts matching tab into named group', gInfo && gInfo.title === 'Docs' && gInfo.color === 'purple', JSON.stringify(gInfo));
 
   // ---------------- Memory saver ----------------
+  // Real chrome.tabs.discard takes down Playwright-driven Chromium, so the worker's discard call is
+  // replaced with a recorder; everything else (idle clock, protections, sweep) runs for real.
   console.log('Memory saver');
+  const stubbed = await sw.evaluate(() => {
+    globalThis.__discarded = [];
+    try { chrome.tabs.discard = async id => { globalThis.__discarded.push(id); return {}; }; } catch { return false; }
+    return true;
+  });
   const sleepy = await openTab(`${base}/sleepy`);
-  await waitFor(async () => (await dash.evaluate(id => chrome.tabs.get(id), sleepy)).status === 'complete');
+  const pinned = await openTab(`${base}/pinme`);
+  const white = await openTab(`${base}/whitelisted`);
+  await dash.evaluate(id => chrome.tabs.update(id, { pinned: true }), pinned);
+  await msg('settings.set', { patch: { memoryEnabled: true, idleMinutes: 1, whitelist: ['*/whitelisted*'] } });
+  await sleep(300);
+  await dash.evaluate(ids => chrome.storage.session.get('tabActivity').then(r => {
+    const a = r.tabActivity || {};
+    for (const id of ids) a[id] = Date.now() - 5 * 60000;
+    return chrome.storage.session.set({ tabActivity: a });
+  }), [sleepy, pinned, white]);
+  const swept = await msg('mem.sweep');
+  const discarded = await sw.evaluate(() => globalThis.__discarded);
+  check('discard API stub installed', stubbed);
+  check('idle sweep suspends an idle tab', discarded.includes(sleepy), JSON.stringify(discarded));
+  check('idle sweep skips pinned and whitelisted tabs', !discarded.includes(pinned) && !discarded.includes(white));
+  check('fresh tabs are not suspended', swept === discarded.length && discarded.length >= 1);
+  const reasons = await msg('mem.reasons');
+  check('protection reasons reported', reasons[pinned] === 'pinned' && reasons[white] === 'whitelisted', JSON.stringify([reasons[pinned], reasons[white]]));
+  await sw.evaluate(() => { globalThis.__discarded = []; });
+  await dash.evaluate(id => chrome.tabs.update(id, { active: true }), sleepy);
   await msg('mem.suspendTab', { tabId: sleepy });
-  const disc = await waitFor(async () => {
-    try { return (await dash.evaluate(() => chrome.tabs.query({ discarded: true }))).some(t => (t.url || '').endsWith('/sleepy')); } catch { return false; }
-  }, 3000);
-  check('suspend now discards a background tab', !!disc);
+  const after = await dash.evaluate(id => chrome.tabs.get(id), sleepy);
+  check('suspend now on the active tab moves focus away first', !after.active && (await sw.evaluate(() => globalThis.__discarded)).includes(sleepy));
+  await msg('settings.set', { patch: { memoryEnabled: false } });
 
   // ---------------- Import / export ----------------
   console.log('Import / export');

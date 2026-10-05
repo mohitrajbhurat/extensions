@@ -1,6 +1,6 @@
 // Workspaces: named, colored sets of tabs (with groups) that can be swapped into a window.
 import * as store from './store.js';
-import { uid, isMeaningfulUrl, GROUP_COLORS } from './util.js';
+import { uid, GROUP_COLORS } from './util.js';
 import { captureWindow, openTabs, openInNewWindow, closeTabs, quiet, tabUrl, lastFocusedNormalWindow, isOwnPage } from './tabs.js';
 import { createStash } from './stash.js';
 
@@ -40,7 +40,7 @@ function pickColor(list) {
 export async function createWorkspace({ name, color, source = 'window', windowId, switchTo = false } = {}) {
   const win = windowId ? { id: windowId } : await lastFocusedNormalWindow();
   let data = { tabs: [], groups: [] };
-  if (source === 'window' && win) data = await captureWindow(win.id);
+  if (source === 'window' && win) data = await captureWindow(win.id, { includeBlank: false });
   else if (source === 'selected' && win) data = await captureWindow(win.id, { filter: t => t.highlighted });
   const s = await store.getSettings();
   if (source === 'window' && s.keepPinnedOnSwitch) data = dropPinned(data);
@@ -68,11 +68,9 @@ function dropPinned(data) {
 /** Persist the window's current tabs into its workspace. */
 export async function saveWindow(wsId, windowId) {
   let data;
-  try { data = await captureWindow(windowId); } catch { return; }
+  try { data = await captureWindow(windowId, { includeBlank: false }); } catch { return; }
   const s = await store.getSettings();
   if (s.keepPinnedOnSwitch) data = dropPinned(data);
-  // A window that only holds a new tab page counts as empty.
-  if (data.tabs.length === 1 && !isMeaningfulUrl(data.tabs[0].url)) data.tabs = [];
   await store.update(WS, [], list => {
     const ws = list.find(w => w.id === wsId);
     if (!ws) return;
@@ -86,7 +84,7 @@ export function scheduleAutosave(windowId) {
   clearTimeout(timers.get(windowId));
   timers.set(windowId, setTimeout(async () => {
     timers.delete(windowId);
-    if (quiet.windows.has(windowId)) return;
+    if (quiet.windows.has(windowId)) { scheduleAutosave(windowId); return; }
     const s = await store.getSettings();
     if (!s.autosaveWorkspaces) return;
     const wsId = await workspaceForWindow(windowId);
@@ -153,7 +151,7 @@ export async function switchWorkspace(wsId, { windowId, newWindow = false } = {}
     await touch();
     return { windowId: wid };
   } finally {
-    setTimeout(() => quiet.windows.delete(wid), 1500);
+    setTimeout(() => quiet.windows.delete(wid), 800);
   }
 }
 
@@ -172,7 +170,7 @@ export async function closeWorkspace(windowId) {
     await closeTabs(toClose);
     await unbindWindow(windowId);
   } finally {
-    setTimeout(() => quiet.windows.delete(windowId), 1500);
+    setTimeout(() => quiet.windows.delete(windowId), 800);
   }
 }
 

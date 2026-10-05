@@ -500,6 +500,7 @@
   function preview(raw, def) {
     if (raw == null) return '';
     if (typeof raw === 'object') return raw.name ? raw.name : '';
+    if (def && def.type === 'bool') return raw && raw !== 'no' ? 'check' : 'leave unchecked';
     let s = String(raw);
     if (def && def.type === 'yesno') s = yesNo(raw) === 'yes' ? 'Yes' : yesNo(raw) === 'no' ? 'No' : s;
     return s.length > 40 ? s.slice(0, 38) + '...' : s;

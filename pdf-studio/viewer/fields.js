@@ -16,6 +16,23 @@ export class FieldLayer {
     this.fieldCount = 0;
     this.attached = new Set();
     this.highlight = true;
+    this.restored = new Map();
+  }
+
+  /** Values from a saved draft; applied as each field is first rendered. */
+  restore(obj) {
+    this.restored = new Map(Object.entries(obj || {}));
+    for (const [k, v] of this.restored) {
+      this.values.set(k, v);
+      this.changed.add(k);
+    }
+  }
+
+  /** Changed values only, for drafts. */
+  changedValues() {
+    const out = {};
+    for (const k of this.changed) out[k] = this.values.get(k);
+    return out;
   }
 
   reset() {
@@ -24,6 +41,7 @@ export class FieldLayer {
     this.inputs.clear();
     this.changed.clear();
     this.attached.clear();
+    this.restored = new Map();
     this.fieldCount = 0;
   }
 
@@ -132,7 +150,7 @@ export class FieldLayer {
       el.style.fontSize = (a.multiLine ? Math.min(fs, 12) : fs) + 'px';
       if (a.comb && a.maxLen) el.style.letterSpacing = `calc(${r.w / a.maxLen}px - 1ch)`;
       el.style.textAlign = ['left', 'center', 'right'][a.textAlignment || 0];
-      if (!this.values.has(name)) this._init(name, a.fieldValue ?? '');
+      if (!this.initial.has(name)) this._init(name, a.fieldValue ?? '');
       el.value = this.values.get(name) ?? '';
       el.addEventListener('input', () => this._setValue(name, el.value, el));
     } else if (a.fieldType === 'Btn' && (a.checkBox || a.radioButton)) {
@@ -141,7 +159,7 @@ export class FieldLayer {
       const on = a.checkBox ? a.exportValue : a.buttonValue;
       el.dataset.on = on;
       el.name = 'f_' + name;
-      if (!this.values.has(name)) {
+      if (!this.initial.has(name)) {
         const v = a.fieldValue;
         const init = a.checkBox ? (v && v !== 'Off' ? v : 'Off') : (v && v !== 'Off' ? v : null);
         this._init(name, init);
@@ -177,7 +195,7 @@ export class FieldLayer {
         o.textContent = opt.displayValue ?? opt.exportValue;
         el.append(o);
       }
-      if (!this.values.has(name)) {
+      if (!this.initial.has(name)) {
         const v = a.fieldValue;
         this._init(name, a.multiSelect ? (Array.isArray(v) ? v : v ? [v] : []) : (Array.isArray(v) ? v[0] ?? '' : v ?? ''));
       }
@@ -209,8 +227,13 @@ export class FieldLayer {
   }
 
   _init(name, value) {
-    this.values.set(name, value);
     this.initial.set(name, value);
+    if (this.restored.has(name)) {
+      this.values.set(name, this.restored.get(name));
+      if (JSON.stringify(this.restored.get(name)) === JSON.stringify(value)) this.changed.delete(name);
+    } else {
+      this.values.set(name, value);
+    }
   }
 
   get dirty() {

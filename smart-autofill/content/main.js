@@ -108,7 +108,13 @@
   async function analyze(profile, settings) {
     const entries = scanEntries();
     const rules = await getRules();
-    const qa = (profile.qa || []).filter(q => q && q.question && q.answer);
+    state.ctx = pageContext();
+    const ctx = state.ctx;
+    // Expand {company}/{role} in stored questions so they compare against the page's wording.
+    const qa = (profile.qa || []).filter(q => q && q.question && q.answer).map(q => ({
+      ...q,
+      question: q.question.replace(/\{\{?\s*company\s*\}?\}/gi, ctx.company || '').replace(/\{\{?\s*(role|position)\s*\}?\}/gi, ctx.role || ''),
+    }));
     const matches = [];
     for (const entry of entries) {
       const rule = rules[entry.sig];
@@ -128,7 +134,6 @@
     assignIndices(matches);
     // When two different fields claim the same single-value key, keep the stronger as primary
     // but still allow both (forms often repeat email for confirmation).
-    state.ctx = pageContext();
     for (const m of matches) refreshValue(m, profile, settings);
     return matches;
   }

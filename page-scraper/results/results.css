@@ -22,7 +22,7 @@ table { border-collapse: separate; border-spacing: 0; font-size: 13px; width: ma
 th, td { padding: 6px 12px; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); text-align: left; vertical-align: top; max-width: 360px; }
 td { overflow-wrap: anywhere; }
 th { position: sticky; top: 0; background: var(--bg2); z-index: 2; padding: 0; white-space: nowrap; }
-th.rownum, td.rownum { color: var(--muted); text-align: right; width: 1%; padding: 6px 8px; font-variant-numeric: tabular-nums; }
+th.rownum, td.rownum { color: var(--muted); text-align: right; width: 1%; padding: 6px 8px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow-wrap: normal; }
 th.rownum { padding: 6px 8px; }
 th .h { display: flex; align-items: center; gap: 4px; width: 100%; border: 0; border-radius: 0; background: transparent; padding: 6px 12px; font-weight: 600; text-align: left; min-height: 34px; }
 th .h:hover { background: var(--bg3); }

@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Assistant</title>
+<link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L20 10l-5.8 1.9L12 18l-2.2-6.1L4 10l5.8-1.7z" fill="currentColor"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" fill="currentColor"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="avatar" id="page-avatar" aria-hidden="true">P</div>
+  <div class="page-info">
+    <div id="page-title" class="page-title">Page Assistant</div>
+    <div id="page-meta" class="page-meta">Open a web page to get started</div>
+  </div>
+  <button id="btn-refresh" class="icon-btn" type="button" title="Re-read page" aria-label="Re-read page"><svg><use href="#i-refresh"/></svg></button>
+  <button id="btn-settings" class="icon-btn" type="button" title="Settings" aria-label="Settings"><svg><use href="#i-gear"/></svg></button>
+</header>
+
+<div id="notice" class="notice" role="status" hidden></div>
+
+<section id="ai-status" class="ai-status" aria-live="polite">
+  <button id="ai-toggle" class="ai-summary" type="button" aria-expanded="false" aria-controls="ai-details">
+    <span id="ai-dot" class="dot"></span><span id="ai-label">Checking on-device AI…</span>
+  </button>
+  <button id="ai-download" class="mini-btn" type="button" hidden><svg><use href="#i-download"/></svg>Download model</button>
+  <div id="ai-progress" class="progress" hidden><div class="bar" id="ai-progress-bar"></div><span id="ai-progress-text">0%</span></div>
+  <div id="ai-details" class="ai-details" hidden></div>
+</section>
+
+<nav class="tabs" role="tablist" aria-label="Page Assistant tools">
+  <button role="tab" id="tab-summary" aria-controls="panel-summary" aria-selected="true" data-tab="summary">Summary</button>
+  <button role="tab" id="tab-ask" aria-controls="panel-ask" aria-selected="false" tabindex="-1" data-tab="ask">Ask</button>
+  <button role="tab" id="tab-tools" aria-controls="panel-tools" aria-selected="false" tabindex="-1" data-tab="tools">Selection</button>
+  <button role="tab" id="tab-study" aria-controls="panel-study" aria-selected="false" tabindex="-1" data-tab="study">Study</button>
+  <button role="tab" id="tab-insights" aria-controls="panel-insights" aria-selected="false" tabindex="-1" data-tab="insights">Insights</button>
+  <button role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" tabindex="-1" data-tab="history">History</button>
+</nav>
+
+<main>
+  <!-- Summary -->
+  <section id="panel-summary" class="panel" role="tabpanel" aria-labelledby="tab-summary">
+    <div class="controls">
+      <div class="seg" id="sum-type" role="radiogroup" aria-label="Summary type">
+        <button type="button" role="radio" data-v="key-points">Key points</button>
+        <button type="button" role="radio" data-v="tldr">TL;DR</button>
+        <button type="button" role="radio" data-v="headline">Headline</button>
+      </div>
+      <div class="seg" id="sum-length" role="radiogroup" aria-label="Summary length">
+        <button type="button" role="radio" data-v="short">Short</button>
+        <button type="button" role="radio" data-v="medium">Medium</button>
+        <button type="button" role="radio" data-v="long">Long</button>
+      </div>
+      <div class="row">
+        <label class="chk" id="sum-sel-wrap" hidden><input type="checkbox" id="sum-selection"> <span>Selection only <span id="sum-sel-count" class="muted"></span></span></label>
+        <span class="spacer"></span>
+        <button id="btn-summarize" class="primary" type="button"><svg><use href="#i-spark"/></svg>Summarize</button>
+      </div>
+    </div>
+    <div id="sum-status" class="status-line" aria-live="polite"></div>
+    <article id="sum-output" class="output md" tabindex="-1"></article>
+    <div id="sum-actions" class="actions" hidden>
+      <span id="sum-engine" class="pill"></span>
+      <span class="spacer"></span>
+      <button id="sum-copy" class="ghost" type="button"><svg><use href="#i-copy"/></svg>Copy Markdown</button>
+      <button id="sum-regen" class="ghost" type="button"><svg><use href="#i-refresh"/></svg>Again</button>
+    </div>
+    <div id="sum-empty" class="empty">
+      <p><strong>Get the gist in seconds.</strong> Summaries run entirely on your device. Nothing you read is sent anywhere.</p>
+      <p class="muted">Tip: press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Y</kbd> on any page to open this panel.</p>
+    </div>
+  </section>
+
+  <!-- Ask -->
+  <section id="panel-ask" class="panel" role="tabpanel" aria-labelledby="tab-ask" hidden>
+    <div class="chat-head">
+      <span id="chat-mode" class="muted small"></span>
+      <span class="spacer"></span>
+      <button id="chat-new" class="ghost small" type="button"><svg><use href="#i-plus"/></svg>New chat</button>
+    </div>
+    <div id="chat-log" class="chat-log" role="log" aria-live="polite"></div>
+    <div id="chat-suggest" class="chips"></div>
+    <div id="chat-context" class="chat-context" hidden>
+      <span class="small muted">About the selected passage:</span>
+      <q id="chat-context-text"></q>
+      <button id="chat-context-clear" class="icon-btn small" type="button" aria-label="Remove passage">×</button>
+    </div>
+    <form id="chat-form" class="composer">
+      <label for="chat-input" class="sr-only">Ask a question about this page</label>
+      <textarea id="chat-input" rows="2" placeholder="Ask anything about this page…"></textarea>
+      <button id="chat-send" class="primary icon-only" type="submit" aria-label="Send"><svg><use href="#i-send"/></svg></button>
+      <button id="chat-stop" class="danger icon-only" type="button" aria-label="Stop" hidden><svg><use href="#i-stop"/></svg></button>
+    </form>
+  </section>
+
+  <!-- Selection tools -->
+  <section id="panel-tools" class="panel" role="tabpanel" aria-labelledby="tab-tools" hidden>
+    <div class="row">
+      <label for="sel-text" class="label">Selected text</label>
+      <span class="spacer"></span>
+      <button id="sel-grab" class="ghost small" type="button"><svg><use href="#i-refresh"/></svg>Use page selection</button>
+    </div>
+    <textarea id="sel-text" rows="5" placeholder="Select text on the page and click “Use page selection”, or paste text here."></textarea>
+    <div class="btn-grid">
+      <button class="tool" type="button" data-tool="explain">Explain</button>
+      <button class="tool" type="button" data-tool="simplify">Simplify</button>
+      <button class="tool" type="button" data-tool="summarize">Summarize</button>
+      <button class="tool" type="button" data-tool="ask">Ask about it</button>
+    </div>
+    <details class="sub" id="rewrite-box">
+      <summary>Rewrite</summary>
+      <div class="row wrap">
+        <label class="small">Tone <select id="rw-tone"><option value="as-is">As is</option><option value="more-formal">More formal</option><option value="more-casual">More casual</option></select></label>
+        <label class="small">Length <select id="rw-length"><option value="as-is">As is</option><option value="shorter">Shorter</option><option value="longer">Longer</option></select></label>
+        <span class="spacer"></span>
+        <button class="tool" type="button" data-tool="rewrite">Rewrite</button>
+      </div>
+    </details>
+    <details class="sub" id="write-box">
+      <summary>Write about this page</summary>
+      <div class="row wrap">
+        <label class="small">Draft <select id="wr-preset">
+          <option value="share">Post sharing this article</option>
+          <option value="email">Email to a colleague</option>
+          <option value="questions">Discussion questions</option>
+          <option value="notes">Study notes</option>
+          <option value="custom">Custom…</option>
+        </select></label>
+        <label class="small">Tone <select id="wr-tone"><option value="neutral">Neutral</option><option value="formal">Formal</option><option value="casual">Casual</option></select></label>
+      </div>
+      <textarea id="wr-custom" rows="2" placeholder="Describe what to write…" hidden></textarea>
+      <div class="row"><span class="spacer"></span><button class="tool" type="button" data-tool="write">Write draft</button></div>
+    </details>
+    <div id="tool-status" class="status-line" aria-live="polite"></div>
+    <article id="tool-output" class="output md"></article>
+    <div id="tool-actions" class="actions" hidden>
+      <span id="tool-engine" class="pill"></span>
+      <span class="spacer"></span>
+      <button id="tool-copy" class="ghost" type="button"><svg><use href="#i-copy"/></svg>Copy</button>
+    </div>
+  </section>
+
+  <!-- Study -->
+  <section id="panel-study" class="panel" role="tabpanel" aria-labelledby="tab-study" hidden>
+    <div class="controls">
+      <div class="seg" id="study-mode" role="radiogroup" aria-label="Study mode">
+        <button type="button" role="radio" data-v="cards">Flashcards</button>
+        <button type="button" role="radio" data-v="quiz">Quiz</button>
+      </div>
+      <div class="row">
+        <label class="small">How many <select id="study-count"><option>5</option><option selected>8</option><option>12</option></select></label>
+        <span class="spacer"></span>
+        <button id="btn-study" class="primary" type="button"><svg><use href="#i-spark"/></svg>Generate</button>
+      </div>
+    </div>
+    <div id="study-status" class="status-line" aria-live="polite"></div>
+    <div id="study-output"></div>
+    <div id="study-actions" class="actions" hidden>
+      <span id="study-engine" class="pill"></span>
+      <span class="spacer"></span>
+      <button id="study-copy" class="ghost" type="button"><svg><use href="#i-copy"/></svg>Markdown</button>
+      <button id="study-anki" class="ghost" type="button" title="Tab-separated, ready to import into Anki"><svg><use href="#i-copy"/></svg>Anki TSV</button>
+    </div>
+  </section>
+
+  <!-- Insights -->
+  <section id="panel-insights" class="panel" role="tabpanel" aria-labelledby="tab-insights" hidden>
+    <div id="stats" class="stats"></div>
+    <h2 class="h">Keywords <span class="muted small">click to find on page</span></h2>
+    <div id="keywords" class="chips"></div>
+    <h2 class="h">Outline <span id="outline-kind" class="muted small"></span></h2>
+    <ol id="outline" class="outline"></ol>
+    <h2 class="h">About this page</h2>
+    <dl id="page-details" class="details"></dl>
+  </section>
+
+  <!-- History -->
+  <section id="panel-history" class="panel" role="tabpanel" aria-labelledby="tab-history" hidden>
+    <div class="row">
+      <label for="hist-search" class="sr-only">Search history</label>
+      <input id="hist-search" type="search" placeholder="Search saved summaries…">
+      <button id="hist-clear" class="ghost small danger-text" type="button"><svg><use href="#i-trash"/></svg>Clear all</button>
+    </div>
+    <h2 class="h">This page</h2>
+    <div id="hist-current" class="hist-list"></div>
+    <h2 class="h">All pages</h2>
+    <div id="hist-all" class="hist-list"></div>
+  </section>
+</main>
+
+<dialog id="settings" aria-labelledby="settings-title">
+  <form method="dialog" class="settings-form">
+    <h2 id="settings-title">Settings</h2>
+    <label class="field">Engine
+      <select id="set-engine">
+        <option value="auto">Auto: on-device AI when available</option>
+        <option value="ai">On-device AI only</option>
+        <option value="extractive">Offline extractive only</option>
+      </select>
+    </label>
+    <label class="field">AI output language
+      <select id="set-lang">
+        <option value="auto">Match the page (English, Spanish or Japanese)</option>
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="ja">Japanese</option>
+      </select>
+    </label>
+    <label class="chk"><input type="checkbox" id="set-auto"> Summarize automatically when a page is read</label>
+    <label class="chk"><input type="checkbox" id="set-follow"> Follow the active tab when I switch tabs</label>
+    <label class="chk"><input type="checkbox" id="set-history"> Save summaries and answers to history</label>
+    <div class="field">
+      <span>Site access</span>
+      <p class="small muted" id="perm-text">Page Assistant reads a page only when you open it on that tab. Allow all sites to read pages automatically as you switch tabs, and to load PDFs.</p>
+      <button id="perm-btn" class="ghost" type="button">Allow on all sites</button>
+    </div>
+    <div class="dialog-actions"><button value="close" class="primary">Done</button></div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script type="module" src="sidepanel.js"></script>
+</body>
+</html>

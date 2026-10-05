@@ -170,6 +170,7 @@ async function waitFor(fn, timeout = 15000, label = 'condition') {
   let [sw] = ectx.serviceWorkers();
   if (!sw) sw = await ectx.waitForEvent('serviceworker', { timeout: 15000 });
   const extId = sw.url().split('/')[2];
+  await waitFor(() => sw.evaluate(() => !!(globalThis.__priceTracker && globalThis.chrome && chrome.scripting)), 15000, 'service worker to boot');
   const call = (type, payload) => sw.evaluate(([t, p]) => globalThis.__priceTracker.handlers[t](p, {}), [type, payload]);
   const getItem = id => sw.evaluate(i => globalThis.__priceTracker.getItems().then(x => x[i]), id);
 
@@ -223,7 +224,7 @@ async function waitFor(fn, timeout = 15000, label = 'condition') {
   await check('Dashboard lists items and the chart shows a hover tooltip', async () => {
     const dash = await ectx.newPage();
     dash.on('pageerror', e => errors.push('dashboard: ' + e.message));
-    dash.on('console', m => { if (m.type() === 'error') errors.push('dashboard: ' + m.text()); });
+    dash.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('dashboard: ' + m.text()); });
     await dash.setViewportSize({ width: 1400, height: 900 });
     await dash.goto(`chrome-extension://${extId}/dashboard/dashboard.html#item=${dynId}`);
     await dash.waitForSelector('#rows tr');

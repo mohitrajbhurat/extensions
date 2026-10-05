@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Studio settings</title>
+  <link rel="stylesheet" href="../lib/ui.css">
+  <link rel="stylesheet" href="options.css">
+  <script src="../lib/defaults.js"></script>
+  <script type="module" src="options.js"></script>
+</head>
+<body>
+  <header class="page-head">
+    <img src="../icons/icon48.png" width="40" height="40" alt="">
+    <div>
+      <h1>Video Studio settings</h1>
+      <p class="muted">Speed control and note-taking for any HTML5 video. Changes save automatically.</p>
+    </div>
+    <span class="spacer"></span>
+    <span class="saved" id="saved" role="status" aria-live="polite"></span>
+    <a class="btn" href="../library/library.html" id="open-library">Open library</a>
+  </header>
+
+  <main class="sections">
+    <section class="panel">
+      <h2>Playback speed</h2>
+      <div class="grid">
+        <label>Default speed<input class="input" type="number" id="defaultSpeed" min="0.07" max="16" step="0.05"></label>
+        <label>Preferred speed (toggle key)<input class="input" type="number" id="preferredSpeed" min="0.07" max="16" step="0.05"></label>
+        <label>Speed step<input class="input" type="number" id="speedStep" min="0.01" max="4" step="0.05"></label>
+        <label>Rewind and advance (seconds)<input class="input" type="number" id="seekSeconds" min="1" max="600" step="1"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="rememberPerSite"> Remember the last speed for each site</label>
+      <label class="check"><input type="checkbox" id="forceSpeed"> Keep my speed even when a site's player tries to change it</label>
+      <p class="hint">Speeds range from 0.07× to 16×. Browsers mute audio above 4×.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Speed badge</h2>
+      <div class="grid">
+        <label>Show the badge<select class="input" id="overlayMode">
+          <option value="always">Always (dimmed until hover)</option>
+          <option value="onchange">Only when the speed changes</option>
+          <option value="never">Never</option>
+        </select></label>
+        <label>Position<select class="input" id="overlayPosition">
+          <option value="top-left">Top left of the video</option>
+          <option value="top-right">Top right of the video</option>
+        </select></label>
+        <label>Resting opacity <span class="muted" id="opacity-val"></span><input type="range" id="overlayOpacity" min="0.1" max="1" step="0.05"></label>
+      </div>
+    </section>
+
+    <section class="panel wide">
+      <div class="panel-head">
+        <h2>Keyboard shortcuts on video pages</h2>
+        <button class="btn small" id="reset-keys">Reset to defaults</button>
+      </div>
+      <p class="hint">Click a shortcut and press the new key. Press Backspace to remove it, Escape to cancel. Shortcuts are ignored while you type in a text field.</p>
+      <div id="bindings" class="bindings"></div>
+      <p class="hint">Browser-wide shortcuts (open notes, add note, open library) can be set at
+        <button class="linklike" id="open-shortcuts">chrome://extensions/shortcuts</button>.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Notes</h2>
+      <label class="check"><input type="checkbox" id="pauseWhileTyping"> Pause the video while I type a note</label>
+      <label class="check"><input type="checkbox" id="openPanelOnNote"> Open the notes panel when I add a note from the video</label>
+      <div class="grid">
+        <label>Notes panel<select class="input" id="panelMode">
+          <option value="auto">Browser side panel (in-page panel when unavailable)</option>
+          <option value="inpage">Always in-page panel</option>
+        </select></label>
+      </div>
+      <p class="hint" id="sidepanel-support"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Screenshots</h2>
+      <div class="grid">
+        <label>Maximum width (px)<input class="input" type="number" id="screenshotMaxWidth" min="320" max="3840" step="160"></label>
+        <label>JPEG quality <span class="muted" id="quality-val"></span><input type="range" id="screenshotQuality" min="0.3" max="1" step="0.05"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="autoTabCapture"> When a site blocks frame capture, capture the visible tab instead</label>
+      <div class="perm">
+        <div>
+          <strong>Tab capture permission</strong>
+          <p class="hint" id="perm-text">Some sites (often ones that stream from a separate video server) do not allow extensions to read video pixels. The fallback takes a screenshot of the visible tab and crops it to the video. It needs permission to capture pages.</p>
+        </div>
+        <button class="btn" id="perm-btn">Grant</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Sites</h2>
+      <h3>Remembered speeds</h3>
+      <ul class="site-list" id="site-speeds"></ul>
+      <h3>Disable the speed controller on</h3>
+      <textarea class="input" id="disabledSites" rows="4" placeholder="example.com&#10;one site per line"></textarea>
+      <p class="hint">Notes still work on disabled sites. Subdomains are included.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Data</h2>
+      <p class="muted" id="usage">Calculating storage…</p>
+      <p class="hint">Everything is stored only in this browser profile. Use the library to export a backup (JSON) or individual videos (Markdown or HTML).</p>
+      <div class="row">
+        <a class="btn" href="../library/library.html">Open library</a>
+        <button class="btn danger" id="clear-data">Delete all notes…</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

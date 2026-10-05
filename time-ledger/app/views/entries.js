@@ -53,7 +53,7 @@ export async function render(el, ctx, alive) {
       <input class="desc" id="tbDesc" placeholder="What are you working on?" aria-label="Description" value="${escapeHtml(t ? t.desc : st.draftDesc || '')}" maxlength="200">
       <select id="tbProject" aria-label="Project">${projectOptions(data, t ? t.projectId : st.draftProject || null)}</select>
       <input id="tbTags" placeholder="tags" aria-label="Tags" value="${escapeHtml(t ? (t.tags || []).join(', ') : st.draftTags || '')}">
-      <label class="check small" title="Billable"><input type="checkbox" id="tbBillable" ${!t || t.billable !== false ? 'checked' : ''}> $</label>
+      <label class="check small" title="Billable"><input type="checkbox" id="tbBillable" ${!t || t.billable !== false ? 'checked' : ''}> Billable</label>
       <span class="clock" id="tbClock">${fmtClock(t ? Date.now() - t.start : 0)}</span>
       <button class="btn go ${t ? 'stop' : 'primary'}" type="submit" aria-label="${t ? 'Stop timer' : 'Start timer'}" title="${t ? 'Stop timer' : 'Start timer'}">${t ? ICONS.stop : ICONS.play}</button>
     </form>

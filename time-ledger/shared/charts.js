@@ -28,12 +28,13 @@ function ensureTip(wrap) {
   return tip;
 }
 
-function niceMax(v) {
-  if (v <= 0) return 1;
+/** Round an axis maximum up to a clean value; returns { max, ticks }. */
+function niceAxis(v) {
+  if (!(v > 0)) return { max: 1, ticks: 4 };
   const exp = Math.pow(10, Math.floor(Math.log10(v)));
   const f = v / exp;
   const nf = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
-  return nf * exp;
+  return { max: nf * exp, ticks: nf === 2 ? 4 : 5 };
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -63,8 +64,13 @@ export function stackedBars(canvas, opts) {
     const grid = cssVar(canvas, '--border', '#ddd');
     const n = opts.labels.length;
     const totals = opts.labels.map((_, i) => opts.series.reduce((a, s) => a + (s.values[i] || 0), 0));
-    const toUnit = (v) => v / 3600000;
-    const maxH = niceMax(Math.max(...totals.map(toUnit), 0.01));
+    // Axis in minutes when the busiest bar is under an hour, else in hours.
+    const peak = Math.max(...totals, 0);
+    const inMinutes = peak < 3600000;
+    const unitMs = inMinutes ? 60000 : 3600000;
+    const toUnit = (v) => v / unitMs;
+    const axis = niceAxis(Math.max(toUnit(peak), inMinutes ? 5 : 1));
+    const maxH = axis.max;
     const pad = { l: 40, r: 8, t: 8, b: 24 };
     const plotW = width - pad.l - pad.r;
     const plotH = height - pad.t - pad.b;
@@ -75,7 +81,7 @@ export function stackedBars(canvas, opts) {
     ctx.lineWidth = 1;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    const ticks = 4;
+    const ticks = axis.ticks;
     for (let i = 0; i <= ticks; i++) {
       const v = (maxH / ticks) * i;
       const y = pad.t + plotH - (v / maxH) * plotH;
@@ -83,7 +89,7 @@ export function stackedBars(canvas, opts) {
       ctx.moveTo(pad.l, Math.round(y) + 0.5);
       ctx.lineTo(width - pad.r, Math.round(y) + 0.5);
       ctx.stroke();
-      const label = maxH < 1 ? `${Math.round(v * 60)}m` : `${+v.toFixed(1)}h`;
+      const label = `${+v.toFixed(1)}${inMinutes ? 'm' : 'h'}`;
       ctx.fillText(label, pad.l - 6, y);
     }
     const slot = plotW / Math.max(n, 1);

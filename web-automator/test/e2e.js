@@ -111,6 +111,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await page.keyboard.press('Tab');
     await page.mouse.wheel(0, 600);
     await sleep(1200);
+    await page.click('#bottom');
     const stop2 = await bg({ type: 'wa:stopRecording' });
     await sleep(200); // let the trailing scroll be trimmed only if last
     await page.click('#fullName'); // no longer recording
@@ -118,6 +119,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     const c2 = rec2.steps.map(s => `${s.command} ${s.target} ${s.value}`.trim());
     console.log('    keystroke-mode recording:\n      ' + c2.join('\n      '));
     check('keystroke mode records typeKeys', rec2.steps.some(s => s.command === 'typeKeys' && s.value === 'Key by key'));
+    check('window scroll recorded', rec2.steps.some(s => s.command === 'scroll' && !s.target && /^0,\d+/.test(s.value) && s.value !== '0,0'));
     check('keystroke mode records Tab', rec2.steps.some(s => s.command === 'pressKey' && s.value === 'Tab'));
     await ctl.evaluate(() => chrome.storage.local.set({ settings: {} }));
 

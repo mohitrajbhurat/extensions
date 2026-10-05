@@ -12,7 +12,7 @@ export async function applyToTab(tab, { force = false } = {}) {
   if (!chrome.tabGroups) return null;
   const s = await store.getSettings();
   if (!s.groupingEnabled && !force) return null;
-  if (tab.pinned || quiet.opening.has(tab.id) || quiet.windows.has(tab.windowId)) return null;
+  if (tab.pinned || quiet.opening.has(tab.id)) return null;
   const rules = await store.get('rules', []);
   const rule = findRule(tabUrl(tab), rules);
   if (!rule) return null;

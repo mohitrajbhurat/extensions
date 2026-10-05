@@ -585,11 +585,11 @@ async function moveClipBy(id, delta) {
 }
 let pendingFocus = null;
 
+let dragId = null;
 function setupDnD(ul) {
-  let dragId = null;
   const clear = () => ul.querySelectorAll('.drop-before,.drop-after').forEach(n => n.classList.remove('drop-before', 'drop-after'));
   ul.addEventListener('dragstart', e => {
-    const li = e.target.closest('.card');
+    const li = e.target.closest && e.target.closest('.card');
     if (!li) return;
     dragId = li.dataset.id;
     li.classList.add('dragging');
@@ -597,10 +597,10 @@ function setupDnD(ul) {
     e.dataTransfer.setData('text/plain', clipToMarkdown(clipById(dragId)));
   });
   ul.addEventListener('dragend', e => {
-    const li = e.target.closest('.card');
+    const li = e.target.closest && e.target.closest('.card');
     if (li) li.classList.remove('dragging');
     clear();
-    dragId = null;
+    setTimeout(() => { dragId = null; }, 0);
   });
   ul.addEventListener('dragover', e => {
     if (!dragId) return;
@@ -612,19 +612,20 @@ function setupDnD(ul) {
     const r = li.getBoundingClientRect();
     li.classList.add(e.clientY < r.top + r.height / 2 ? 'drop-before' : 'drop-after');
   });
-  ul.addEventListener('drop', async e => {
+  ul.addEventListener('drop', e => {
     if (!dragId) return;
     e.preventDefault();
     const li = ul.querySelector('.drop-before,.drop-after');
     clear();
-    if (!li) return;
-    const before = li.classList.contains('drop-before');
-    const rest = visibleClips().filter(c => c.id !== dragId);
-    const idx = rest.findIndex(c => c.id === li.dataset.id);
-    const insertAt = before ? idx : idx + 1;
     const id = dragId;
     dragId = null;
-    await setOrderBetween(id, rest[insertAt - 1], rest[insertAt]).catch(fail);
+    if (!li) return;
+    const before = li.classList.contains('drop-before');
+    const rest = visibleClips().filter(c => c.id !== id);
+    const idx = rest.findIndex(c => c.id === li.dataset.id);
+    const insertAt = before ? idx : idx + 1;
+    pendingFocus = id;
+    setOrderBetween(id, rest[insertAt - 1], rest[insertAt]).catch(fail);
   });
 }
 
@@ -1418,7 +1419,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
       updateLinks();
       return;
     }
-    if (document.querySelector('#dialog[open]') || document.querySelector('.composer textarea:focus')) { renderHeader(); return; }
+    if (document.querySelector('#dialog[open]') || document.querySelector('.composer textarea:focus') || dragId) { renderHeader(); return; }
     if (editor && editor.root.isConnected) editor.root.remove();
     render();
   }, 80);
